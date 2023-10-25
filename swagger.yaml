@@ -1,0 +1,11 @@
+openapi: 3.0.3
+info:
+  title: Inženjerstvo serverskog sloja - projekat 2022
+  version: 2.0.1
+paths:
+  /api:
+    post:
+      summary: probaaa
+      responses:
+        "200":
+          description: asd
