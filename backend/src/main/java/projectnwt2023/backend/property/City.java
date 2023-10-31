@@ -1,7 +1,14 @@
 package projectnwt2023.backend.property;
 
+import lombok.*;
+
 import javax.persistence.*;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@ToString
 @Entity
 public class City {
 
