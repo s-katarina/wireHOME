@@ -35,5 +35,13 @@ public class Property {
 
     private PropertyStatus propertyStatus;
 
-
+    public Property(PropertyType propertyType, String address, City city, double area, int floorCount,
+                    PropertyStatus propertyStatus) {
+        this.propertyType = propertyType;
+        this.Address = address;
+        this.city = city;
+        this.area = area;
+        this.floorCount = floorCount;
+        this.propertyStatus = propertyStatus;
+    }
 }
