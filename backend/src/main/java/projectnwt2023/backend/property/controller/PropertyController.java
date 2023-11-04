@@ -6,13 +6,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import projectnwt2023.backend.helper.DTOConverter;
+import projectnwt2023.backend.property.City;
 import projectnwt2023.backend.property.Property;
+import projectnwt2023.backend.property.dto.CityDTO;
+import projectnwt2023.backend.property.dto.CountryDTO;
 import projectnwt2023.backend.property.dto.PropertyRequestDTO;
 import projectnwt2023.backend.property.dto.PropertyResponseDTO;
 import projectnwt2023.backend.property.service.interfaces.IPropertyService;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -38,6 +43,18 @@ public class PropertyController {
         Property p = propertyService.add(dto);
 
         return new ResponseEntity<>(new PropertyResponseDTO(p), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/city", produces = "application/json")
+    ResponseEntity<List<CityDTO>> getCities(){
+
+        List<City> cities = propertyService.getCities();
+        List<CityDTO> dtos = new ArrayList<>();
+        for (City c : cities) {
+            dtos.add(new CityDTO(c.getId(), c.getName(), new CountryDTO(c.getCountry().getId(), c.getCountry().getName())));
+        }
+
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
 }

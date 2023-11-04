@@ -3,6 +3,10 @@
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
+/* #A3C0C6 accent color */
+
+
+
 @font-face {
     font-family: 'Sora-semibold';
     src: url('assets/fonts/sora/static/Sora-SemiBold.ttf') format('truetype');

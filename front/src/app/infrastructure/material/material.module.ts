@@ -22,8 +22,13 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSortModule } from '@angular/material/sort';
 import {MatGridListModule} from '@angular/material/grid-list';
 import { MatBadgeModule } from "@angular/material/badge";
-
-
+import { MatTable } from '@angular/material/table';
+import {MatTabsModule} from '@angular/material/tabs';
+import {MatExpansionModule} from '@angular/material/expansion';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import {MatStepperModule} from '@angular/material/stepper';
 
 @NgModule({
   imports: [
@@ -49,7 +54,13 @@ import { MatBadgeModule } from "@angular/material/badge";
     MatSelectModule,
     MatRippleModule,
     MatGridListModule,
-    MatBadgeModule
+    MatBadgeModule,
+    MatExpansionModule,
+    MatTabsModule,
+    MatChipsModule,
+    MatAutocompleteModule,
+    MatProgressSpinnerModule,
+    MatStepperModule
   ],
   exports: [
     MatButtonModule,
@@ -75,7 +86,14 @@ import { MatBadgeModule } from "@angular/material/badge";
     MatSortModule,
     MatRippleModule,
     MatGridListModule,
-    MatBadgeModule
+    MatBadgeModule, 
+    MatTabsModule,
+    MatTable,
+    MatExpansionModule,
+    MatChipsModule,
+    MatAutocompleteModule,
+    MatProgressSpinnerModule,
+    MatStepperModule
   ],
 })
 export class MaterialModule {}

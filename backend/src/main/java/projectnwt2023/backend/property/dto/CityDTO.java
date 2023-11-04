@@ -2,6 +2,7 @@ package projectnwt2023.backend.property.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import projectnwt2023.backend.property.City;
 import projectnwt2023.backend.property.Country;
@@ -13,12 +14,13 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 public class CityDTO {
 
     @NotNull
-    private Integer id;
+    private Long id;
 
     @NotBlank
     private String name;
@@ -28,9 +30,9 @@ public class CityDTO {
     private CountryDTO country;
 
     public CityDTO(City city){
-        this.id = city.getId().intValue();
+        this.id = city.getId();
         this.name = city.getName();
-        this.country = new CountryDTO(city.getCountry().getId().intValue(), city.getCountry().getName());
+        this.country = new CountryDTO(city.getCountry().getId(), city.getCountry().getName());
     }
 
 }

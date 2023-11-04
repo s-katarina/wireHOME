@@ -70,6 +70,7 @@ div.col-center > * {
   margin: 0vh!important;
 }
 
+
 .instruction > *{
   text-align: center;
   text-justify: initial;
@@ -104,6 +105,7 @@ p.li-title {
     line-height: 1.6em;
     font-family: 'Heebo-medium' !important;
     margin-bottom: 10vh;
+    font-style: italic;
 }
 
 .subheader {
@@ -136,9 +138,6 @@ h2 {
   font-family: 'Sora-semibold','Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 
-button:hover {
-  background-color: #6A7A9E !important;
-}
 
 .page-bottom {
   padding-bottom: 20vh;
@@ -155,8 +154,8 @@ button:hover {
 }
 
 .mat-button:hover {
-    background-color: #A3C0C6 !important; /* Change background color on hover */
-  }
+    background-color: #A3C0C6 !important;
+}
 
 .img-bg {
     background-image: url('../../../../assets/images/background-landing-1.jpg');

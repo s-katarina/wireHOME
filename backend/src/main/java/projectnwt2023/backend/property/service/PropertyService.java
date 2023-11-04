@@ -12,6 +12,7 @@ import projectnwt2023.backend.property.repository.CityRepository;
 import projectnwt2023.backend.property.repository.PropertyRepository;
 import projectnwt2023.backend.property.service.interfaces.IPropertyService;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -45,6 +46,11 @@ public class PropertyService implements IPropertyService {
         Property p = new Property(PropertyType.valueOf(dto.getPropertyType()), dto.getAddress(), city.get(),
                 dto.getArea(), dto.getFloorCount(), PropertyStatus.PENDING);
         return propertyRepository.save(p);
+    }
+
+    @Override
+    public List<City> getCities() {
+        return cityRepository.findAll();
     }
 
 

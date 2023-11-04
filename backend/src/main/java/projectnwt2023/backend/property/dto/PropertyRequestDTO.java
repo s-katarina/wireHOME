@@ -33,10 +33,12 @@ public class PropertyRequestDTO {
 
     @NotNull
     @Max(value = 10000, message = "Field area must be less than or equal to 10000")
+    @Min(value = 0, message = "Field area must be greater than 0")
     private double area;
 
     @NotNull
     @Max(value = 100, message = "Field floor count must be less than or equal to 100")
+    @Min(value = 0, message = "Field floor count must be greater than 0")
     private int floorCount;
 
 }
