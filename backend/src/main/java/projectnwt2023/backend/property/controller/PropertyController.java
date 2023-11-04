@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import projectnwt2023.backend.helper.DTOConverter;
 import projectnwt2023.backend.property.City;
 import projectnwt2023.backend.property.Property;
 import projectnwt2023.backend.property.dto.CityDTO;
@@ -22,7 +21,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/property")
-//@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "http://localhost:4200")
 @Validated
 public class PropertyController {
 
