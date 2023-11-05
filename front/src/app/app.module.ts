@@ -8,7 +8,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { Interceptor } from './infrastructure/interceptor/interceptor.interceptor';
 import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { MaterialModule } from './infrastructure/material/material.module';
-import { LayoutModule } from './modules/layout/layout.module';
+import { AppLayoutModule } from './modules/layout/layout.module';
 import { PropertyModule } from './modules/property/property.module';
 
 @NgModule({
@@ -20,7 +20,7 @@ import { PropertyModule } from './modules/property/property.module';
     AppRoutingModule,
     BrowserAnimationsModule,
     MaterialModule,
-    LayoutModule,
+    AppLayoutModule,
     PropertyModule,
     ReactiveFormsModule,
     FormsModule,

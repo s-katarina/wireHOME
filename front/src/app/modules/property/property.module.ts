@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/infrastructure/material/material.module';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CreatePropertyComponent } from './create-property/create-property.component';
+import { AppLayoutModule } from '../layout/layout.module';
 
 
 
@@ -14,7 +15,8 @@ import { CreatePropertyComponent } from './create-property/create-property.compo
     CommonModule,
     MaterialModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    AppLayoutModule
   ]
 })
 export class PropertyModule { }

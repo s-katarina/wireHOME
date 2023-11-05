@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import projectnwt2023.backend.helper.ApiResponse;
 import projectnwt2023.backend.property.City;
 import projectnwt2023.backend.property.Property;
 import projectnwt2023.backend.property.dto.CityDTO;
@@ -37,11 +38,12 @@ public class PropertyController {
     }
 
     @PostMapping(consumes = "application/json", produces = "application/json")
-    ResponseEntity<PropertyResponseDTO> addProperty(@Valid @RequestBody PropertyRequestDTO dto){
+    ResponseEntity<ApiResponse<PropertyResponseDTO>> addProperty(@Valid @RequestBody PropertyRequestDTO dto){
 
         Property p = propertyService.add(dto);
 
-        return new ResponseEntity<>(new PropertyResponseDTO(p), HttpStatus.OK);
+        ApiResponse<PropertyResponseDTO> response = new ApiResponse<>(200, new PropertyResponseDTO((p)));
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping(value = "/city", produces = "application/json")

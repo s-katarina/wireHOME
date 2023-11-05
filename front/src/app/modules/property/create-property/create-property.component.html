@@ -44,10 +44,14 @@
         </mat-step>
         <mat-step [stepControl]="secondFormGroup" label="Address" [editable]="isStepEditable">
             <form [formGroup]="secondFormGroup" class="form-type">
+                <div class="map-container">
+                    <app-map></app-map>
+                </div>
                 <mat-form-field>
               <mat-label>Address</mat-label>
               <input matInput formControlName="address" placeholder="Ex. 1 Main St, New York, NY"
-                     required>
+                     required
+                     (blur)="onAddressInputChanged()">
             </mat-form-field>
             <mat-form-field>
                 <input matInput [matAutocomplete]="auto" [formControl]="selectedCityControl"  
@@ -71,11 +75,18 @@
         </mat-step>
         <mat-step>
             <div class="center">
-                <ng-template matStepLabel>Done</ng-template>
-                <p>Request for creating property is done!</p>
-                <p>Check your email sometime soon for confirmation of approval.</p>
+                <div *ngIf="success">
+                    <ng-template matStepLabel>Done</ng-template>
+                    <p>Request for creating property is done!</p>
+                    <p>Check your email sometime soon for confirmation of approval.</p>
+                </div>
+                <div *ngIf="!success">
+                    <ng-template matStepLabel>Oops!</ng-template>
+                    <p>Something went wrong.</p>
+                    <p>Please try again later.</p>
+                </div>
                 <div>
-                    <button mat-button (click)="stepper.reset()">Add another property</button>
+                    <button mat-button (click)="stepper.reset()" >Add another property</button>
                 </div>
             </div>
         </mat-step>

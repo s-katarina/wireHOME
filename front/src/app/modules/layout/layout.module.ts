@@ -3,20 +3,24 @@ import { CommonModule } from '@angular/common';
 import { MaterialModule } from 'src/app/infrastructure/material/material.module';
 import { ToolbarComponent } from './toolbar/toolbar.component';
 import { LandingComponent } from './landing/landing.component';
-
+import { AppRoutingModule } from 'src/app/infrastructure/app-routing.module';
+import { MapComponent } from './map/map.component';
 
 
 @NgModule({
   declarations: [
     ToolbarComponent,
-    LandingComponent
+    LandingComponent,
+    MapComponent
   ],
   imports: [
     CommonModule,
-    MaterialModule
+    MaterialModule,
+    AppRoutingModule
   ],
   exports: [
-    ToolbarComponent
+    ToolbarComponent,
+    MapComponent
   ]
 })
-export class LayoutModule { }
+export class AppLayoutModule { }
