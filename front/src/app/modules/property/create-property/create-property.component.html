@@ -51,10 +51,15 @@
             </mat-form-field>
             <mat-form-field>
                 <input matInput [matAutocomplete]="auto" [formControl]="selectedCityControl"  
-                placeholder="City" (blur)="onInputBlur()" [value]="cityChoices[0]">
-                <mat-autocomplete #auto="matAutocomplete" (optionSelected)="onCitySelectionChange($event)">
+                placeholder="City" formControlName="city"
+                (input)="onCityInputChanged($event)">
+                <mat-error *ngIf="secondFormGroup.get('city')!.hasError('required')">City selection is required.</mat-error>
+                <mat-autocomplete #auto="matAutocomplete" 
+                    [displayWith]="displayFn"
+                    requireSelection
+                    (optionSelected)="onCitySelectionChange($event)">
                     <mat-option *ngFor="let choice of filteredChoices | async" [value]="choice">
-                        {{ choice }}
+                        {{ choice.name }}
                     </mat-option>
                 </mat-autocomplete>
             </mat-form-field>

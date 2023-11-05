@@ -50,7 +50,7 @@ public class PropertyController {
         List<City> cities = propertyService.getCities();
         List<CityDTO> dtos = new ArrayList<>();
         for (City c : cities) {
-            dtos.add(new CityDTO(c.getId(), c.getName(), new CountryDTO(c.getCountry().getId(), c.getCountry().getName())));
+            dtos.add(new CityDTO(c));
         }
 
         return new ResponseEntity<>(dtos, HttpStatus.OK);
