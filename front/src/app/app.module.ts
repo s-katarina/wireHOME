@@ -10,10 +10,12 @@ import { MAT_FORM_FIELD_DEFAULT_OPTIONS } from '@angular/material/form-field';
 import { MaterialModule } from './infrastructure/material/material.module';
 import { AppLayoutModule } from './modules/layout/layout.module';
 import { PropertyModule } from './modules/property/property.module';
+import { CreateDeviceComponent } from './modules/devices/create-device/create-device.component';
 
 @NgModule({
   declarations: [
     AppComponent,
+    CreateDeviceComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,28 @@
+.main_container{
+    padding-bottom: 20vh;
+    margin: 1%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.device_type{
+    padding-left: 2vh;
+    padding-top: 2vh;
+    margin: 3vh;
+    border-radius: 20px;
+    background-color: #e1dede8f;
+    width: 27%;
+    justify-content: center;
+}
+
+h1{
+    font-size: xx-large;
+    text-align: center;
+    padding-bottom: 2vh;
+}
+
+mat-radio-button{
+    padding-bottom: 2vh;
+    width: 100%;
+}
