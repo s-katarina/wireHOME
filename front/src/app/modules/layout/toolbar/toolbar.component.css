@@ -1,0 +1,50 @@
+  
+  mat-toolbar{
+    margin-bottom: 10vh;
+    margin-top: 1vh;
+    margin-left: 0.5%;
+    height: 3.5em;
+    display: flex;
+    width: 99%;
+    justify-content: space-between;
+  }
+
+  .mat-toolbar.rounded-toolbar {
+    border-radius: 20px;
+    background-color: #e1dede8f;
+    color: rgb(0, 0, 0); 
+  }
+
+  .mat-toolbar.rounded-toolbar span {
+    flex: 1; 
+  }
+  
+  a.logo {
+      font-family: 'Sora-semibold';
+      margin-left: 2%;
+      cursor: pointer;
+      text-decoration: none;
+      color: black;
+  }
+  /* .example-spacer {
+    flex: 1 1 auto;
+  } */
+  
+  .white-text {
+    color: white;
+  }
+  
+  .center-text {
+    margin: 0 auto;
+    /* text-align: center; */
+  }
+  
+  .bigger-text {
+    font-size: larger;
+  }
+  
+  
+  ::ng-deep .mat-badge-content {
+    background-color: rgb(72, 121, 122);
+    color: white;
+  }

@@ -1,1 +1,33 @@
 /* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+/* #A3C0C6 accent color */
+
+
+
+@font-face {
+    font-family: 'Sora-semibold';
+    src: url('assets/fonts/sora/static/Sora-SemiBold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: bold;
+}
+
+@font-face {
+    font-family: 'Heebo-regular';
+    src: url('assets/fonts/heebo/static/Heebo-Regular.ttf') format('truetype');
+    font-weight: regular;
+    font-style: regular;
+}
+
+
+@font-face {
+    font-family: 'Heebo-medium';
+    src: url('assets/fonts/heebo/static/Heebo-Medium.ttf') format('truetype');
+    font-weight: medium;
+    font-style: medium;
+}
+p {
+    font-family: 'Heebo-regular';
+}
