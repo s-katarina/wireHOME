@@ -13,12 +13,9 @@ import java.util.Collection;
 @Entity
 @Table
 @Inheritance(strategy = InheritanceType.JOINED)
-public class WashingMashine extends Device{
-
-    private ArrayList<RegimeType> availableRegimes;
-
-    @OneToMany(fetch = FetchType.LAZY,
-            mappedBy = "device")
-    private Collection<Regime> programedRegimes;
+public class Charger extends Device{
+    private double chargingStrength;
+    private int portNumber;
+    private int percentage;
 
 }

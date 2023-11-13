@@ -15,7 +15,7 @@ import javax.persistence.Table;
 @Entity
 @Table
 @Inheritance(strategy = InheritanceType.JOINED)
-public class Gate extends Device{
-    private boolean isPublic;
-    //mogao bi u bazi eventualno da ima i spisak vozila ali necemo to sebi raditi
+public class SolarPanel extends Device{
+    private double surfaceSize;
+    private double efficiency;
 }

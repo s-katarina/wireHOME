@@ -1,10 +1,10 @@
 package projectnwt2023.backend.devices;
+
 import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -13,9 +13,8 @@ import java.util.Collection;
 @Entity
 @Table
 @Inheritance(strategy = InheritanceType.JOINED)
-public class WashingMashine extends Device{
-
-    private ArrayList<RegimeType> availableRegimes;
+public class Sprinklers extends Device{
+//    private ArrayList<RegimeType> availableRegimes;
 
     @OneToMany(fetch = FetchType.LAZY,
             mappedBy = "device")

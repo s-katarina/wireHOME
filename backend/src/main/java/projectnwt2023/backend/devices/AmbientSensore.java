@@ -8,14 +8,12 @@ import javax.persistence.InheritanceType;
 import javax.persistence.Table;
 
 @NoArgsConstructor
-@AllArgsConstructor
+//@AllArgsConstructor
 @Getter
 @Setter
 @ToString
 @Entity
 @Table
 @Inheritance(strategy = InheritanceType.JOINED)
-public class Gate extends Device{
-    private boolean isPublic;
-    //mogao bi u bazi eventualno da ima i spisak vozila ali necemo to sebi raditi
+public class AmbientSensore extends Device{
 }

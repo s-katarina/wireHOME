@@ -1,10 +1,9 @@
 package projectnwt2023.backend.devices;
 import lombok.*;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+
+import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Collection;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -12,14 +11,15 @@ import java.util.ArrayList;
 @Setter
 @ToString
 @Entity
-public class AirConditioner {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@Table
+@Inheritance(strategy = InheritanceType.JOINED)
+public class AirConditioner extends Device{
 
-    private String modelName;
+    private ArrayList<RegimeType> availableRegimes;
 
-    private ArrayList<String> regime;
+    @OneToMany(fetch = FetchType.LAZY,
+    mappedBy = "device")
+    private Collection<Regime> programedRegimes;
 
     private int temp;
 

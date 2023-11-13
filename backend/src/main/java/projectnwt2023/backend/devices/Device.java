@@ -1,0 +1,33 @@
+package projectnwt2023.backend.devices;
+
+import lombok.*;
+
+import javax.persistence.*;
+
+import static javax.persistence.InheritanceType.JOINED;
+
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+@ToString
+@Entity
+@TableGenerator(name="device_id_generator", table="primary_keys", pkColumnName="key_pk", pkColumnValue="appUser", valueColumnName="value_pk")
+@Inheritance(strategy=JOINED)
+public abstract class Device {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String modelName;
+
+    private State state;
+
+    private boolean usesElectricity;  //false ako je na bateriju true ako koristi struju iz distribucije,
+                                      // mozda i visak atribut ali neka ga
+
+    private double consumptionAmount; //koliko struje iz distribucije koristi
+
+    //bice i slika
+}
+
