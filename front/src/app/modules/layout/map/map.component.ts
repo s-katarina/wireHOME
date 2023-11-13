@@ -53,10 +53,16 @@ export class MapComponent implements AfterViewInit {
     this.marker = L.marker(e.latlng).addTo(this.map);
   }
 
+  public removeMarker() {
+    if (this.marker) {
+      this.map.removeLayer(this.marker);
+    }
+  }
+
   public addMarkerAndAdjustView(latitude: number, longitude: number): void {
     this.map.setView([latitude, longitude], 13);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(this.map);
-    L.marker([latitude, longitude]).addTo(this.map);
+    this.marker = L.marker([latitude, longitude]).addTo(this.map);
   }
 
 

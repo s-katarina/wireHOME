@@ -23,7 +23,14 @@
                 </mat-expansion-panel-header>
                 <form [formGroup]="firstFormGroup" class="form-type">
                     <ng-template matStepLabel>Property type</ng-template>
-                    <button mat-raised-button class="upload-image"><mat-icon>image</mat-icon> Upload image</button>
+                    <button mat-raised-button class="upload-image" (click)="openFileInput()"><mat-icon>image</mat-icon> Upload image</button>
+                    <input type="file" #fileInput style="display: none" (change)="onFileSelected($event)">
+                    <div class="image-container">
+                        <button mat-icon-button class="delete-button" (click)="deleteImage()"  *ngIf="imgURL">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                        <img *ngIf="imgURL" class="uploaded-img" src="{{imgURL}}" >
+                    </div>
                     <mat-form-field>
                       <mat-label>Floor count</mat-label>
                       <input matInput placeholder="Floor count" formControlName="floorCount"  required type="number">
