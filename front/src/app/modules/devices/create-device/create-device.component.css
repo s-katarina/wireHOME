@@ -1,5 +1,5 @@
 .main_container{
-    padding-bottom: 20vh;
+    padding-bottom: 8vh;
     margin: 1%;
     display: flex;
     justify-content: center;
@@ -26,3 +26,53 @@ mat-radio-button{
     padding-bottom: 2vh;
     width: 100%;
 }
+
+.half-flex{
+    text-align: center;
+    width: 60%;
+    justify-content: center;
+}
+
+.checkbox {
+    width: 20%;
+}
+
+.flex-container {
+    display: flex;
+    flex-wrap: wrap; /* Allow items to wrap to the next line */
+    justify-content: center;
+  }
+  
+.item {
+    width: 200px; /* Set the fixed width for each item */
+    height: 30px; /* Set the height if needed */
+    margin: 10px; /* Add margin between items if needed */
+    /* border: 1px solid #ddd; Add border for better visibility */
+  }
+
+  button.upload-image {
+    font-family: 'Sora-semibold';
+    /* width: max-content; */
+    /* width: 40%; */
+    /* margin-right: 20%; */
+    height: 5em;
+    font-size: 1.1em;
+    /* margin: 30px; */
+    /* padding: 20px; */
+}
+
+.reg-btn {
+    font-family: 'Sora-semibold';
+    height: 5em;
+    font-size: 1.1em;
+}
+
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+    color: rgb(57, 57, 57) !important;
+}
+
+/* mat-label focused style */
+::ng-deep .mat-form-field.mat-focused .mat-form-field-label {
+    color: black !important ;
+}
+  
