@@ -4,12 +4,16 @@ import { MaterialModule } from 'src/app/infrastructure/material/material.module'
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CreatePropertyComponent } from './create-property/create-property.component';
 import { AppLayoutModule } from '../layout/layout.module';
+import { PropertyOverviewComponent } from './property-overview/property-overview.component';
+import { PropertyImgComponent } from './property-img/property-img.component';
 
 
 
 @NgModule({
   declarations: [
-    CreatePropertyComponent
+    CreatePropertyComponent,
+    PropertyOverviewComponent,
+    PropertyImgComponent
   ],
   imports: [
     CommonModule,

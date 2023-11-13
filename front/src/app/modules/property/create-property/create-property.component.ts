@@ -103,14 +103,14 @@ export class CreatePropertyComponent implements OnInit, AfterViewInit {
         this.success = false
         return
       }
-      this.imageService.uploadFile(this.img!, resObj.data.id).subscribe((res: any) => {
+      this.imageService.uploadPropertyImage(this.img!, resObj.data.id).subscribe((res: any) => {
         console.log(res);
         this.isStepEditable = false;
         this.firstFormGroup.reset();
         this.secondFormGroup.reset();
       }, (err: any) => {
         console.log("Img", err)
-        this.success = false
+        this.success = true
       });
     }, (err: any) => {
       console.log("Upload", err)
@@ -196,6 +196,13 @@ export class CreatePropertyComponent implements OnInit, AfterViewInit {
     
     if (fileInput.files && fileInput.files.length > 0) {
       this.img = fileInput.files[0];
+
+      const mimeType = this.img.type;
+      if (mimeType.match(/image\/*/) == null) {
+          alert("Only images are supported.");
+          return;
+      }
+
 
       const reader = new FileReader();
       reader.readAsDataURL(this.img);

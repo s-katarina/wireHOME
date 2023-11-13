@@ -10,10 +10,19 @@ export class ImageServiceService {
 
   constructor(private http: HttpClient) {}
 
-  uploadFile(file: File, name:string): Observable<any> {
+  uploadPropertyImage(file: File, name:string): Observable<any> {
     const formData: FormData = new FormData();
     formData.append('file', file);
     formData.append('customFileName', name);
     console.log(name)
-    return this.http.post<any>(`${environment.apiHost}images/upload`, formData);
-  }}
+    return this.http.post<any>(`${environment.apiHost}images/property/upload`, formData);
+  }
+
+  getPropertyImage(propertyId: string): Observable<Blob> {
+    return this.http.get(`${environment.apiHost}images/property-${propertyId}.jpg`, { responseType: 'blob' });
+  }
+
+
+}
+
+

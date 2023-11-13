@@ -53,6 +53,12 @@ public class PropertyService implements IPropertyService {
         return cityRepository.findAll();
     }
 
+    @Override
+    public List<Property> getProperties(Long userId) {
+        return propertyRepository.findAll();
+    }
+
+
 
 }
 

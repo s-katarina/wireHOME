@@ -7,7 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import projectnwt2023.backend.helper.ApiResponse;
-import projectnwt2023.backend.helper.Message;
+import projectnwt2023.backend.helper.MessageDTO;
 
 import java.io.IOException;
 
@@ -20,14 +20,14 @@ public class ImageController {
     @Autowired
     private ImageService imageService;
 
-    @PostMapping(value="/upload", consumes = { "multipart/form-data" })
-    public ResponseEntity<ApiResponse<Message>> uploadPropertyImage(@RequestParam("file") MultipartFile file,
-                                                                    @RequestParam("customFileName") String customFileName) {
+    @PostMapping(value="/property/upload", consumes = { "multipart/form-data" })
+    public ResponseEntity<ApiResponse<MessageDTO>> uploadPropertyImage(@RequestParam("file") MultipartFile file,
+                                                                       @RequestParam("customFileName") String customFileName) {
         try {
             imageService.savePropertyImage(file, customFileName);
-            return new ResponseEntity<>(new ApiResponse<>(200, new Message("Image upload success.")), HttpStatus.OK);
+            return new ResponseEntity<>(new ApiResponse<>(200, new MessageDTO("Image upload success.")), HttpStatus.OK);
         } catch (IOException e) {
-            return new ResponseEntity<>(new ApiResponse<>(400, new Message("Image upload fail.")), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new ApiResponse<>(400, new MessageDTO("Image upload fail.")), HttpStatus.BAD_REQUEST);
         }
     }
 }

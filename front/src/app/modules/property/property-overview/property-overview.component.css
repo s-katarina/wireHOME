@@ -1,0 +1,112 @@
+.page {
+    padding-bottom: 20vh;
+    margin: 5%;
+}
+
+mat-card {
+    max-width: 800px;
+    min-width: 250px;
+    margin-bottom: 8px;
+    border-radius: 20px !important;
+    box-shadow: 0 4px 8px rgba(0, 0.1, 0.1, 0.1) !important;
+    position: relative !important;
+    overflow: hidden; /* Ensure the image doesn't overflow the card */
+}
+
+.grid { 
+    padding-top: 10vh;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(auto, 500px));
+    grid-row-gap: 8vh;
+    grid-column-gap: 4vh !important;
+    align-items: stretch !important;
+    justify-content: space-evenly;
+}
+
+mat-card-header{
+    padding: 2vh !important;
+}
+
+.title {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.locations {
+    display: block;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+mat-card-actions {
+    padding-right: 5px;
+}
+
+::ng-deep .mat-card-header-text {  
+    margin: 0px 0px 0px 0px !important;
+}
+
+
+mat-card-title {
+    font-family: 'Sora-semibold', Roboto, "Helvetica Neue", sans-serif !important;
+    margin-bottom: 4vh !important;
+}
+
+mat-card-subtitle {
+    font-family: 'Sora-semibold', Roboto, "Helvetica Neue", sans-serif !important;
+    color: rgb(41, 41, 41) !important;
+}
+
+mat-card-content {
+    padding: 2vh !important;
+    padding-top: 4vh !important;
+}
+ 
+
+::ng-deep .mat-tooltip {
+    font-family: 'Heebo-regular', Roboto, "Helvetica Neue", sans-serif !important; 
+    padding: 15px 28px !important; 
+    font-size: medium;
+}
+
+h2 {
+    font-size: 2.5em;
+    line-height: 1.3em;
+    font-family: 'Sora-semibold', Roboto, "Helvetica Neue", sans-serif !important; 
+} 
+
+h3 {
+    font-family: 'Sora-semibold', Roboto, "Helvetica Neue", sans-serif !important; 
+} 
+
+p {
+    font-family: 'Heebo-medium', Roboto, "Helvetica Neue", sans-serif !important; 
+} 
+
+::ng-deep mat-icon{
+    margin-left: 2vh;
+    margin-right: 0.7em;
+    font-size: 1.5em !important;
+}
+
+.hover-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; 
+    visibility: hidden; /* Initially hidden */
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.property-card:hover .hover-image {
+    opacity: 1;
+    visibility: visible !important;
+    border-radius: 20px !important;
+}
+

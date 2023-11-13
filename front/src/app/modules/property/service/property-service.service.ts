@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { CityDTO, PropertyRequestDTO } from 'src/app/model/model';
+import { CityDTO, PropertyRequestDTO, PropertyResponseDTO } from 'src/app/model/model';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -15,7 +15,7 @@ export class PropertyServiceService {
     return this.http.get<CityDTO[]>(environment.apiHost + 'property/city')
   }
 
-  create (property: PropertyRequestDTO): Observable<any> {
+  create(property: PropertyRequestDTO): Observable<any> {
     const options: any = {
       responseType: 'text'
     }
@@ -26,6 +26,10 @@ export class PropertyServiceService {
       area: property.area,
       floorCount: property.floorCount
     }, options)
+  }
+
+  getProperties(): Observable<PropertyResponseDTO[]> {
+    return this.http.get<PropertyResponseDTO[]>(environment.apiHost + 'property')
   }
 
 }

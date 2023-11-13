@@ -58,4 +58,16 @@ public class PropertyController {
         return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
+    @GetMapping(value = "", produces = "application/json")
+    ResponseEntity<List<PropertyResponseDTO>> getProperties(){
+
+        List<Property> properties = propertyService.getProperties(0L);
+        List<PropertyResponseDTO> dtos = new ArrayList<>();
+        for (Property p : properties) {
+            dtos.add(new PropertyResponseDTO(p));
+        }
+
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
+    }
+
 }

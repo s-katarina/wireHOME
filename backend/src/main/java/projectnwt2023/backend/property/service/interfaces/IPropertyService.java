@@ -14,4 +14,6 @@ public interface IPropertyService {
 
     List<City> getCities();
 
+    List<Property> getProperties(Long userId);
+
 }
