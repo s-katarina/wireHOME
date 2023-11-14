@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PropertyImgComponent } from './property-img.component';
+import { PropertyImageComponent } from './property-image.component';
 
-describe('PropertyImgComponent', () => {
-  let component: PropertyImgComponent;
-  let fixture: ComponentFixture<PropertyImgComponent>;
+describe('PropertyImageComponent', () => {
+  let component: PropertyImageComponent;
+  let fixture: ComponentFixture<PropertyImageComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PropertyImgComponent ]
+      declarations: [ PropertyImageComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(PropertyImgComponent);
+    fixture = TestBed.createComponent(PropertyImageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

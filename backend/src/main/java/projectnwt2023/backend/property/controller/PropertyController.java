@@ -22,7 +22,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/property")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {"http://localhost:4200", "http://localhost"})
 @Validated
 public class PropertyController {
 

@@ -3,14 +3,15 @@
     margin: 5%;
 }
 
-mat-card {
+::ng-deep mat-card {
     max-width: 800px;
     min-width: 250px;
+    max-height: 400px !important;
     margin-bottom: 8px;
     border-radius: 20px !important;
     box-shadow: 0 4px 8px rgba(0, 0.1, 0.1, 0.1) !important;
     position: relative !important;
-    overflow: hidden; /* Ensure the image doesn't overflow the card */
+    overflow: hidden !important; /* Ensure the image doesn't overflow the card */
 }
 
 .grid { 
@@ -64,6 +65,7 @@ mat-card-subtitle {
 mat-card-content {
     padding: 2vh !important;
     padding-top: 4vh !important;
+    margin-bottom: 0 !important;
 }
  
 
@@ -100,7 +102,7 @@ p {
     width: 100%;
     height: 100%;
     object-fit: cover; 
-    visibility: hidden; /* Initially hidden */
+    visibility: hidden; 
     transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
@@ -110,3 +112,6 @@ p {
     border-radius: 20px !important;
 }
 
+.property-card:hover ::ng-deep mat-card-content {
+    margin-bottom: 0 !important;
+}

@@ -5,7 +5,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CreatePropertyComponent } from './create-property/create-property.component';
 import { AppLayoutModule } from '../layout/layout.module';
 import { PropertyOverviewComponent } from './property-overview/property-overview.component';
-import { PropertyImgComponent } from './property-img/property-img.component';
+import { PropertyImageComponent } from './property-image/property-image.component';
 
 
 
@@ -13,7 +13,7 @@ import { PropertyImgComponent } from './property-img/property-img.component';
   declarations: [
     CreatePropertyComponent,
     PropertyOverviewComponent,
-    PropertyImgComponent
+    PropertyImageComponent,
   ],
   imports: [
     CommonModule,

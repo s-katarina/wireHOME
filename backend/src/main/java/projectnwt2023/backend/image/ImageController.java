@@ -13,7 +13,7 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/images")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {"http://localhost:4200", "http://localhost"})
 @Validated
 public class ImageController {
 
