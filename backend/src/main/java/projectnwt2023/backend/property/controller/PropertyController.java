@@ -1,6 +1,8 @@
 package projectnwt2023.backend.property.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -9,10 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import projectnwt2023.backend.helper.ApiResponse;
 import projectnwt2023.backend.property.City;
 import projectnwt2023.backend.property.Property;
-import projectnwt2023.backend.property.dto.CityDTO;
-import projectnwt2023.backend.property.dto.CountryDTO;
-import projectnwt2023.backend.property.dto.PropertyRequestDTO;
-import projectnwt2023.backend.property.dto.PropertyResponseDTO;
+import projectnwt2023.backend.property.PropertyStatus;
+import projectnwt2023.backend.property.dto.*;
 import projectnwt2023.backend.property.service.interfaces.IPropertyService;
 
 import javax.validation.Valid;
@@ -70,4 +70,41 @@ public class PropertyController {
         return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
+    @GetMapping(value = "/all", produces = "application/json")
+    ResponseEntity<List<PropertyResponseDTO>> getPropertiesForUser(){
+
+        Long userId = 1L;
+        List<Property> properties = propertyService.getPropertiesPendingOrAcceptedForUser(userId);
+        List<PropertyResponseDTO> dtos = new ArrayList<>();
+        for (Property p : properties) {
+            dtos.add(new PropertyResponseDTO(p));
+        }
+
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
+    }
+
+
+    @GetMapping(value = "/pending", produces = "application/json")
+    ResponseEntity<List<PendingPropertyResponseDTO>> getPendingProperties(){
+
+        Page<Property> properties = propertyService.getPropertiesByStatus(PropertyStatus.PENDING, Pageable.unpaged());
+        List<PendingPropertyResponseDTO> dtos = new ArrayList<>();
+        for (Property p : properties.getContent()) {
+            dtos.add(new PendingPropertyResponseDTO(p));
+        }
+
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
+    }
+    @PutMapping(value = "/accept-pending/{propertyId}", produces = "application/json")
+    ResponseEntity<PropertyResponseDTO> acceptPending(@PathVariable Integer propertyId){
+
+        return new ResponseEntity<>(new PropertyResponseDTO(propertyService.changePropertyStatus(propertyId.longValue(), PropertyStatus.ACCEPTED)), HttpStatus.OK);
+    }
+
+    @PutMapping(value = "/reject-pending/{propertyId}", produces = "application/json")
+    ResponseEntity<PropertyResponseDTO> rejectPending(@PathVariable Integer propertyId,
+                                                      @RequestBody PropertyRejectionRequestDTO rejectionRequest){
+
+        return new ResponseEntity<>(new PropertyResponseDTO(propertyService.rejectProperty(propertyId.longValue(), rejectionRequest.getRejectionReason())), HttpStatus.OK);
+    }
 }

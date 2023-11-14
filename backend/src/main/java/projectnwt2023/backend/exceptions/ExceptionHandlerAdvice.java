@@ -1,6 +1,5 @@
 package projectnwt2023.backend.exceptions;
 
-import lombok.AllArgsConstructor;
 import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -68,5 +67,9 @@ public class ExceptionHandlerAdvice {
         return new ResponseEntity<>("Wrong type. Field (" + fieldName + ") format is not valid!\n", HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(UserForbiddenOperationException.class)
+    protected ResponseEntity<String> handleEntityNotFound(UserForbiddenOperationException ex) {
+        return new ResponseEntity<>(ex.message, ex.httpStatus);
+    }
 
 }
