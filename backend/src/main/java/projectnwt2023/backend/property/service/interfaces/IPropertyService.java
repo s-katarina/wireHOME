@@ -25,5 +25,6 @@ public interface IPropertyService {
 
     Property rejectProperty(Long id, String reason);
 
+    String sendMail();
 
 }

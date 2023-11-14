@@ -107,4 +107,11 @@ public class PropertyController {
 
         return new ResponseEntity<>(new PropertyResponseDTO(propertyService.rejectProperty(propertyId.longValue(), rejectionRequest.getRejectionReason())), HttpStatus.OK);
     }
+
+    @PutMapping(value = "/mail")
+    ResponseEntity<ApiResponse<String>> testMail(){
+
+        return new ResponseEntity<>(new ApiResponse<String>(200, propertyService.sendMail()), HttpStatus.OK);
+    }
+
 }
