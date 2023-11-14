@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { PendingPropertyRequestDTO } from 'src/app/model/model';
 import { PropertyServiceService } from '../service/property-service.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-property-requests',
@@ -38,9 +39,11 @@ export class PropertyRequestsComponent implements OnInit {
             this.requests.forEach( (item, index) => {
               if (item === request) this.requests.splice(index, 1)
             })
-        })
-    }, (error) => {
+          })
+        this.fireSwalToast(true, "Successfully accepted.")
+      }, (error) => {
       console.error('Error accepting:', error);
+      this.fireSwalToast(false, "Oops. Something went wrong.")
     })
   }
 
@@ -57,9 +60,11 @@ export class PropertyRequestsComponent implements OnInit {
             this.requests.forEach( (item, index) => {
               if (item === this.propertyForRejection) this.requests.splice(index, 1)
             })
-        })
+          })
+      this.fireSwalToast(true, "Successfully rejected.")
     }, (error) => {
       console.error('Error rejecting:', error);
+      this.fireSwalToast(false, "Oops. Something went wrong.")
     })
     this.showRejectionPopup = false;
   }
@@ -69,4 +74,24 @@ export class PropertyRequestsComponent implements OnInit {
     this.propertyForRejection = null;
     this.rejectionReason = '';
   }
+
+  private fireSwalToast(success: boolean, title: string): void {
+    const Toast = Swal.mixin({
+      toast: true,
+      position: 'top-end',
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.addEventListener('mouseenter', Swal.stopTimer)
+        toast.addEventListener('mouseleave', Swal.resumeTimer)
+      }
+    })
+    
+    Toast.fire({
+      icon: success ? 'success' : 'error',
+      title: title
+    })
+  }
+
 }
