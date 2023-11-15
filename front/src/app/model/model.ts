@@ -16,3 +16,17 @@ export interface PropertyRequestDTO {
     area: number | null;
     floorCount: number | null;
 }
+
+export interface DeviceRequestDTO {
+    modelName: string;
+    usesElectricity: boolean;
+    consumptionAmount: number;
+    propertyId: number;
+    regimes: string[];
+    minTemp: number;
+    maxTemp: number;
+    panelSize: number;
+    efficiency: number;
+    capacity: number;
+    portNumber: number;
+}

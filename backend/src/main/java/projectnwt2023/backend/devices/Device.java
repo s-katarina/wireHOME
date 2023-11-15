@@ -1,6 +1,8 @@
 package projectnwt2023.backend.devices;
 
 import lombok.*;
+import projectnwt2023.backend.devices.dto.DeviceRequestDTO;
+import projectnwt2023.backend.property.Property;
 
 import javax.persistence.*;
 
@@ -28,6 +30,15 @@ public abstract class Device {
 
     private double consumptionAmount; //koliko struje iz distribucije koristi
 
+    @ManyToOne
+    private Property property;
+
+    public Device(DeviceRequestDTO deviceRequestDTO) {
+        this.modelName = deviceRequestDTO.getModelName();
+        this.state = State.offline;
+        this.usesElectricity = deviceRequestDTO.isUsesElectricity();
+        this.consumptionAmount = deviceRequestDTO.getConsumptionAmount();
+    }
     //bice i slika
 }
 

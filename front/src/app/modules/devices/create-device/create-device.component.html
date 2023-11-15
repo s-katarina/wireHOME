@@ -63,7 +63,7 @@
 <p>mogao bi neki search</p>
 <form class="flex-container">
     <div *ngFor="let regime of regimes" class="item">
-       <input value="{{regime}}" type="checkbox"> {{regime}}
+       <input (change)="onCheckboxChange($event)" value="{{regime}}" type="checkbox"> {{regime}}
     </div>
  </form>
 </div>

@@ -1,5 +1,6 @@
 package projectnwt2023.backend.devices;
 import lombok.*;
+import projectnwt2023.backend.devices.dto.DeviceRequestDTO;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -26,4 +27,13 @@ public class AirConditioner extends Device{
     private int minTemp;
 
     private int maxTemp;
+
+    public AirConditioner(DeviceRequestDTO deviceRequestDTO) {
+        super(deviceRequestDTO);
+        this.availableRegimes = new ArrayList<>();
+        this.programedRegimes = new ArrayList<>();
+        this.temp = deviceRequestDTO.getMinTemp();
+        this.maxTemp = deviceRequestDTO.getMaxTemp();
+        this.minTemp = deviceRequestDTO.getMinTemp();
+    }
 }

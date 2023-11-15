@@ -1,5 +1,6 @@
 package projectnwt2023.backend.devices;
 import lombok.*;
+import projectnwt2023.backend.devices.dto.DeviceRequestDTO;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -21,4 +22,9 @@ public class WashingMashine extends Device{
             mappedBy = "device")
     private Collection<Regime> programedRegimes;
 
+    public WashingMashine(DeviceRequestDTO deviceRequestDTO) {
+        super(deviceRequestDTO);
+        this.availableRegimes = new ArrayList<>();
+        this.programedRegimes = new ArrayList<>();
+    }
 }

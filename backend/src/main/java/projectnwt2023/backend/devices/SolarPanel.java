@@ -1,6 +1,7 @@
 package projectnwt2023.backend.devices;
 
 import lombok.*;
+import projectnwt2023.backend.devices.dto.DeviceRequestDTO;
 
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
@@ -18,4 +19,10 @@ import javax.persistence.Table;
 public class SolarPanel extends Device{
     private double surfaceSize;
     private double efficiency;
+
+    public SolarPanel(DeviceRequestDTO deviceRequestDTO) {
+        super();
+        this.surfaceSize = deviceRequestDTO.getPanelSize();
+        this.efficiency = deviceRequestDTO.getEfficiency();
+    }
 }

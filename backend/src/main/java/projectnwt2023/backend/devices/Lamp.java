@@ -1,6 +1,7 @@
 package projectnwt2023.backend.devices;
 
 import lombok.*;
+import projectnwt2023.backend.devices.dto.DeviceRequestDTO;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -21,4 +22,8 @@ public class Lamp extends Device{
             mappedBy = "device")
     private Collection<Regime> programedRegimes;
 
+    public Lamp(DeviceRequestDTO deviceRequestDTO) {
+        super(deviceRequestDTO);
+        this.programedRegimes = new ArrayList<>();
+    }
 }
