@@ -153,11 +153,32 @@ button.upload-image {
     font-family: 'Sora-semibold';
     font-size: 1.2em !important; 
     padding: 15px 28px !important; 
-  }
+}
 
 .map-container {
     position: relative; 
     width: 50%;
     height: 50vh;
     padding: 2vw !important;
+}
+
+.uploaded-img {
+    width: 300px;
+    margin-bottom: 30px;
+}
+
+.image-container {
+    position: relative;
+    display: inline-block;
+}
+
+.delete-button {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: white;
+    color: rgb(0, 0, 0);
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
 }

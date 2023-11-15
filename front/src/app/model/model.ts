@@ -30,3 +30,30 @@ export interface DeviceRequestDTO {
     capacity: number;
     portNumber: number;
 }
+
+export interface PropertyResponseDTO {
+    id: string;
+    propertyType: string;
+    address: string;
+    city: CityDTO;
+    imagePath: string;
+    area: number | null;
+    floorCount: number | null;
+    propertyStatus: string;
+}
+
+export interface OwnerDTO {
+    id: string;
+    username: string;
+}
+
+export interface PendingPropertyRequestDTO {
+    id: string;
+    propertyType: string;
+    address: string;
+    // owner: OwnerDTO;
+    city: CityDTO;
+    area: number | null;
+    floorCount: number | null;
+    propertyStatus: string;
+}

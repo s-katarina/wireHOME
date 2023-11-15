@@ -1,0 +1,36 @@
+<div class="page">
+    <h2>Properties page</h2>
+    <mat-divider></mat-divider>
+    <div class="grid">
+        <div *ngFor="let property of properties">
+            <mat-card class="property-card"  (mouseenter)="showImage(property.id)" (mouseleave)="hideImage()">
+                <mat-card-header class="locations">
+                    <div class="title">
+                        <mat-card-title>{{property.propertyType}}</mat-card-title>
+                        <mat-card-subtitle *ngIf="property.propertyStatus === 'PENDING'"
+                            matTooltip="Waiting for admin approval"
+                            [matTooltipPosition]='"above"'>PENDING</mat-card-subtitle>
+                    </div>
+                    <div class="locations">
+                        <mat-card-subtitle>Address: {{property.address}}</mat-card-subtitle>
+                        <mat-card-subtitle>City: {{property.city.name}}, {{property.city.country.name}}</mat-card-subtitle>
+                    </div>
+                </mat-card-header>
+                <mat-divider></mat-divider>
+                <mat-card-content>
+                    <h3>Details</h3>
+                    <p><mat-icon>location_city</mat-icon>Floor count: {{property.floorCount}}</p>
+                    <p><mat-icon>photo_size_select_small</mat-icon>Area: {{property.area}}</p>
+                </mat-card-content>
+                <!-- <app-property-img [propertyId]="property.id" class="hover-image" *ngIf="isHovered"></app-property-img> -->
+                <img [src]="'/images/property-' + property.id + '.jpg'" class="hover-image" (error)="handleImageError($event)"/>
+                <!-- <img [src]="getImageSrc(property.id)" class="hover-image" *ngIf="isPropertyHovered(property.id)" (error)="handleImageError($event)"/> -->
+                <!-- <app-property-img [propertyId]="property.id" class="hover-image" *ngIf="isPropertyHovered(property.id)"></app-property-img> -->
+
+                <!-- <mat-card-actions align="end">
+                    <button mat-button >ACTION</button>
+                </mat-card-actions> -->
+            </mat-card>
+        </div>
+    </div>
+</div>

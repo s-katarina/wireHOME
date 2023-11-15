@@ -1,0 +1,45 @@
+<div class="page">
+    <h2>Pending properties requests</h2>
+    <mat-divider></mat-divider>
+    <div class="grid">
+        <div *ngFor="let request of requests">
+            <mat-card class="request-card" >
+                <mat-card-header class="locations">
+                    <div class="title">
+                        <mat-card-title>{{request.propertyType}}</mat-card-title>
+                    </div>
+                    <div class="locations">
+                        <!-- <mat-card-subtitle>Owner username: {{request.owner.username}}</mat-card-subtitle> -->
+                        <mat-card-subtitle>Address: {{request.address}}</mat-card-subtitle>
+                        <mat-card-subtitle>City: {{request.city.name}}, {{request.city.country.name}}</mat-card-subtitle>
+                    </div>
+                    <div class="image-container">
+                        <img [src]="'/images/property-' + request.id + '.jpg'"/>
+                    </div>
+                </mat-card-header>
+                <mat-divider></mat-divider>
+                <mat-card-content>
+                    <h3>Details</h3>
+                    <p><mat-icon>location_city</mat-icon>Floor count: {{request.floorCount}}</p>
+                    <p><mat-icon>photo_size_select_small</mat-icon>Area: {{request.area}}</p>
+                </mat-card-content>
+
+                <mat-card-actions align="end">
+                    <button mat-button (click)="openRejectionPopup(request)">REJECT</button>
+                    <button mat-button (click)="onAcceptClick(request)">ACCEPT</button>
+                </mat-card-actions>
+            </mat-card>
+        </div>
+    </div>
+    <div class="overlay" *ngIf="showRejectionPopup">
+        <div class="popup-container">
+          <h2>Rejection Reason</h2>
+          <textarea [(ngModel)]="rejectionReason" placeholder="Write your rejection reason..."></textarea>
+          <div class="button-container">
+            <button mat-button (click)="onCancelClick()">Cancel</button>
+            <button mat-button (click)="onSubmitClick()">Send</button>
+          </div>
+        </div>
+    </div>
+      
+</div>
