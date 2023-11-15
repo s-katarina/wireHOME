@@ -23,5 +23,6 @@ public class Battery extends Device{
     public Battery(DeviceRequestDTO deviceRequestDTO) {
         super(deviceRequestDTO);
         this.capacity = deviceRequestDTO.getCapacity();
+        this.setTopic("battery");
     }
 }

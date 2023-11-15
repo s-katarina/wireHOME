@@ -16,8 +16,9 @@ import javax.persistence.Table;
 @Entity
 @Table
 @Inheritance(strategy = InheritanceType.JOINED)
-public class AmbientSensore extends Device{
-    public AmbientSensore(DeviceRequestDTO deviceRequestDTO) {
+public class AmbientSensor extends Device{
+    public AmbientSensor(DeviceRequestDTO deviceRequestDTO) {
         super(deviceRequestDTO);
+        this.setTopic("ambientSensor");
     }
 }

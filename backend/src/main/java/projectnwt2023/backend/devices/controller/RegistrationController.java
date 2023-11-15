@@ -46,7 +46,7 @@ public class RegistrationController {
 
     @PostMapping(value = "/ambientSensor", produces = "application/json", consumes = "application/json")
     public ResponseEntity<DeviceResponseDTO> saveAmbientSensor(@Valid @RequestBody DeviceRequestDTO deviceRequestDTO){
-        Device device = new AmbientSensore(deviceRequestDTO);
+        Device device = new AmbientSensor(deviceRequestDTO);
         return saveDevice(deviceRequestDTO, device);
 
     }
@@ -83,13 +83,13 @@ public class RegistrationController {
 
     @PostMapping(value = "/sprinkler", produces = "application/json", consumes = "application/json")
     public ResponseEntity<DeviceResponseDTO> saveSprinkler(@Valid @RequestBody DeviceRequestDTO deviceRequestDTO){
-        Device device = new Sprinklers(deviceRequestDTO);
+        Device device = new Sprinkler(deviceRequestDTO);
         return saveDevice(deviceRequestDTO, device);
     }
 
     @PostMapping(value = "/washingMachine", produces = "application/json", consumes = "application/json")
     public ResponseEntity<DeviceResponseDTO> saveWashingMachine(@Valid @RequestBody DeviceRequestDTO deviceRequestDTO){
-        Device device = new WashingMashine(deviceRequestDTO);
+        Device device = new WashingMachine(deviceRequestDTO);
         return saveDevice(deviceRequestDTO, device);
     }
 
@@ -101,6 +101,5 @@ public class RegistrationController {
         }
         return new ResponseEntity<>(regimes, HttpStatus.OK);
     }
-
 
 }

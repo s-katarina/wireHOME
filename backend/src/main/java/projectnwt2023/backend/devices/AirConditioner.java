@@ -35,5 +35,6 @@ public class AirConditioner extends Device{
         this.temp = deviceRequestDTO.getMinTemp();
         this.maxTemp = deviceRequestDTO.getMaxTemp();
         this.minTemp = deviceRequestDTO.getMinTemp();
+        this.setTopic("airConditioner");
     }
 }

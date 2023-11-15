@@ -33,6 +33,8 @@ public abstract class Device {
     @ManyToOne
     private Property property;
 
+    private String topic;
+
     public Device(DeviceRequestDTO deviceRequestDTO) {
         this.modelName = deviceRequestDTO.getModelName();
         this.state = State.offline;

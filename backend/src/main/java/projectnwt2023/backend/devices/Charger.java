@@ -24,5 +24,6 @@ public class Charger extends Device{
         this.chargingStrength = deviceRequestDTO.getCapacity();
         this.portNumber = deviceRequestDTO.getPortNumber();
         this.percentage = 100;
+        this.setTopic("charger");
     }
 }

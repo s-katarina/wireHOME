@@ -60,7 +60,7 @@ public class Beans {
                 if (topic == null){
                     System.out.println("null je topic");
                 }
-                else if(topic.equals("myTopic")) {
+                else if(topic.equals("simulation/ambientSensor")) {
                     System.out.println(topic);
                     System.out.println("topic je uspeo");
                 }

@@ -14,15 +14,16 @@ import java.util.Collection;
 @Entity
 @Table
 @Inheritance(strategy = InheritanceType.JOINED)
-public class Sprinklers extends Device{
+public class Sprinkler extends Device{
 //    private ArrayList<RegimeType> availableRegimes;
 
     @OneToMany(fetch = FetchType.LAZY,
             mappedBy = "device")
     private Collection<Regime> programedRegimes;
 
-    public Sprinklers(DeviceRequestDTO deviceRequestDTO) {
+    public Sprinkler(DeviceRequestDTO deviceRequestDTO) {
         super(deviceRequestDTO);
         this.programedRegimes = new ArrayList<>();
+        this.setTopic("sprinkler");
     }
 }

@@ -14,7 +14,7 @@ import java.util.Collection;
 @Entity
 @Table
 @Inheritance(strategy = InheritanceType.JOINED)
-public class WashingMashine extends Device{
+public class WashingMachine extends Device{
 
     private ArrayList<RegimeType> availableRegimes;
 
@@ -22,9 +22,10 @@ public class WashingMashine extends Device{
             mappedBy = "device")
     private Collection<Regime> programedRegimes;
 
-    public WashingMashine(DeviceRequestDTO deviceRequestDTO) {
+    public WashingMachine(DeviceRequestDTO deviceRequestDTO) {
         super(deviceRequestDTO);
         this.availableRegimes = new ArrayList<>();
         this.programedRegimes = new ArrayList<>();
+        this.setTopic("washingMachine");
     }
 }
