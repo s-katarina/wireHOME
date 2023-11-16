@@ -20,6 +20,8 @@ public class AppUserDTO {
     private String email;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String password;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private Boolean active;
 
     public AppUserDTO(AppUser appUser) {
         this.setId(appUser.getId());
@@ -27,6 +29,7 @@ public class AppUserDTO {
         this.setLastName(appUser.getLastName());
         this.setPassword(null);
         this.setEmail(appUser.getEmail());
+        this.setActive(appUser.getActive());
     }
 
 }

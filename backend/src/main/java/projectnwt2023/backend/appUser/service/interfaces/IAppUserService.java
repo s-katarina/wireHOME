@@ -1,7 +1,9 @@
 package projectnwt2023.backend.appUser.service.interfaces;
 
 import projectnwt2023.backend.appUser.AppUser;
+import projectnwt2023.backend.appUser.Role;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface IAppUserService {
@@ -11,5 +13,7 @@ public interface IAppUserService {
     Optional<AppUser> findByToken(Long token);
     AppUser saveAppUser(AppUser appUser);
     AppUser activateUser(AppUser appUser);
+    List<AppUser> findAllByRole(Role role);
+    AppUser generateSuperAdmin();
 
 }

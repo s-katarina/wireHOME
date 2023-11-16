@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import projectnwt2023.backend.appUser.AppUser;
+import projectnwt2023.backend.appUser.Role;
 import projectnwt2023.backend.appUser.repository.AppUserRepository;
 
 import java.util.Optional;
@@ -21,7 +22,8 @@ public class AuthService implements UserDetailsService {
         Optional<AppUser> ret = appUserRepository.findByEmail(username);
         System.out.println(ret);
 
-        if (ret.isPresent() && ret.get().getActive())
+        if (ret.isPresent() && ret.get().getActive() ||
+            ret.isPresent() && ret.get().getRole().equals(Role.SUPER_ADMIN))
             return org.springframework.security.core.userdetails.User
                     .withUsername(username)
                     .password(ret.get().getPassword())
