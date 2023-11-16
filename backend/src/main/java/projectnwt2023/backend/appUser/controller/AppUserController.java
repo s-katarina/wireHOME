@@ -12,8 +12,10 @@ import projectnwt2023.backend.appUser.dto.AppUserDTO;
 import projectnwt2023.backend.appUser.service.interfaces.IAppUserService;
 import projectnwt2023.backend.exceptions.EntityAlreadyExistsException;
 import projectnwt2023.backend.exceptions.EntityNotFoundException;
+import projectnwt2023.backend.mail.MailService;
 
 import javax.validation.Valid;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Random;
@@ -26,9 +28,11 @@ public class AppUserController {
 
     @Autowired
     private IAppUserService appUserService;
+    @Autowired
+    private MailService mailService;
 
     @PostMapping(produces = "application/json", consumes = "application/json")
-    public ResponseEntity<AppUserDTO> registerUser(@Valid @RequestBody AppUserDTO appUserDTO) {
+    public ResponseEntity<AppUserDTO> registerUser(@Valid @RequestBody AppUserDTO appUserDTO) throws IOException {
 
         if (appUserService.findByEmail(appUserDTO.getEmail()).isPresent())
             throw new EntityAlreadyExistsException(AppUser.class);
@@ -46,7 +50,7 @@ public class AppUserController {
 
         AppUser saved = appUserService.saveAppUser(appUser);
 
-        // posalji mejl
+        mailService.sendTextEmailMilos("mikicamiki.bat@gmail.com", "Activate account", "Follow link to activate account: " + "http://localhost:8080/api/user/activate/" + token);
 
         return new ResponseEntity<>(new AppUserDTO(saved), HttpStatus.OK);
     }
@@ -61,6 +65,28 @@ public class AppUserController {
 
         AppUser appUser = appUserOptional.get();
         appUser.setActive(true);
+
+        AppUser saved = appUserService.saveAppUser(appUser);
+
+        return new ResponseEntity<>(new AppUserDTO(saved), HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/admin", produces = "application/json", consumes = "application/json")
+    public ResponseEntity<AppUserDTO> registerAdmin(@Valid @RequestBody AppUserDTO appUserDTO) {
+
+        if (appUserService.findByEmail(appUserDTO.getEmail()).isPresent())
+            throw new EntityAlreadyExistsException(AppUser.class);
+
+        Random r = new Random();
+        Long token = r.nextLong();
+
+        String password = new BCryptPasswordEncoder().encode(appUserDTO.getPassword());
+
+        AppUser appUser = new AppUser(appUserDTO);
+        appUser.setRole(Role.ADMIN);
+        appUser.setActive(true);
+        appUser.setToken(token);
+        appUser.setPassword(password);
 
         AppUser saved = appUserService.saveAppUser(appUser);
 
