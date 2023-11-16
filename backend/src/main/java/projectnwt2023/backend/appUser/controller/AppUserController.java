@@ -2,6 +2,7 @@ package projectnwt2023.backend.appUser.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,11 +22,14 @@ import projectnwt2023.backend.appUser.service.interfaces.IAppUserService;
 import projectnwt2023.backend.auth.JwtTokenUtil;
 import projectnwt2023.backend.exceptions.EntityAlreadyExistsException;
 import projectnwt2023.backend.exceptions.EntityNotFoundException;
+import projectnwt2023.backend.helper.Constants;
 import projectnwt2023.backend.mail.MailService;
 
 import javax.validation.Valid;
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
@@ -80,6 +84,34 @@ public class AppUserController {
         appUser.setActive(true);
 
         AppUser saved = appUserService.saveAppUser(appUser);
+
+        return new ResponseEntity<>(new AppUserDTO(saved), HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/superadmin/changePassword")
+    @PreAuthorize(value = "hasRole('SUPER_ADMIN')")
+    public ResponseEntity<AppUserDTO> registerAdmin(@RequestBody String password) {
+
+        List<AppUser> superAdmins = appUserService.findAllByRole(Role.SUPER_ADMIN);
+
+        if (superAdmins.size() == 0)
+            throw new EntityNotFoundException(AppUser.class);
+
+        AppUser superAdmin = superAdmins.get(0);
+
+        String newPassword = new BCryptPasswordEncoder().encode(password);
+
+        superAdmin.setPassword(newPassword);
+        superAdmin.setActive(true);
+
+        AppUser saved = appUserService.saveAppUser(superAdmin);
+
+        File superAdminFile = new File(Constants.superAdminPath);
+        if (superAdminFile.delete()) {
+            System.out.println("Deleted the file: " + superAdminFile.getName());
+        } else {
+            System.out.println("Failed to delete the file.");
+        }
 
         return new ResponseEntity<>(new AppUserDTO(saved), HttpStatus.OK);
     }

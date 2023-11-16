@@ -7,6 +7,7 @@ import projectnwt2023.backend.appUser.AppUser;
 import projectnwt2023.backend.appUser.Role;
 import projectnwt2023.backend.appUser.repository.AppUserRepository;
 import projectnwt2023.backend.appUser.service.interfaces.IAppUserService;
+import projectnwt2023.backend.helper.Constants;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -83,7 +84,7 @@ public class AppUserService implements IAppUserService {
         superAdmin.setToken(token);
         superAdmin.setActive(false);
 
-        try (PrintWriter out = new PrintWriter("./src/main/resources/superadmin.txt")) {
+        try (PrintWriter out = new PrintWriter(Constants.superAdminPath)) {
             out.println(plainPassword);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
