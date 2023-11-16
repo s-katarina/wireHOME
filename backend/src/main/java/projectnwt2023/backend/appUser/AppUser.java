@@ -27,6 +27,7 @@ public class AppUser {
     private Role role;
     private Long token;
     private Boolean active;
+    private String profileImage;
 
     public AppUser(AppUserDTO appUserDTO) {
         this.setName(appUserDTO.getName());

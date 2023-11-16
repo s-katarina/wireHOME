@@ -64,6 +64,7 @@ public class AppUserController {
         appUser.setActive(false);
         appUser.setToken(token);
         appUser.setPassword(password);
+        appUser.setProfileImage(null);
 
         AppUser saved = appUserService.saveAppUser(appUser);
 
@@ -133,6 +134,7 @@ public class AppUserController {
         appUser.setActive(true);
         appUser.setToken(token);
         appUser.setPassword(password);
+        appUser.setProfileImage(null);
 
         AppUser saved = appUserService.saveAppUser(appUser);
 
@@ -173,6 +175,37 @@ public class AppUserController {
             throw new EntityNotFoundException(AppUser.class);
 
         return new ResponseEntity<>(new AppUserDTO(appUserOptional.get()), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/{id}/profileImage")
+    public ResponseEntity<String> getUserProfileImage(@PathVariable Long id) {
+
+        Optional<AppUser> appUserOptional = appUserService.findById(id);
+
+        if (!appUserOptional.isPresent())
+            throw new EntityNotFoundException(AppUser.class);
+
+        String profileImageBase64 = appUserService.getBase64ProfileImageForUser(appUserOptional.get());
+
+        return new ResponseEntity<>(profileImageBase64, HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/{id}/profileImage")
+    public ResponseEntity<AppUserDTO> saveUserProfileImage(@PathVariable Long id, @RequestBody String profileImageBase64) {
+
+        Optional<AppUser> appUserOptional = appUserService.findById(id);
+
+        if (!appUserOptional.isPresent())
+            throw new EntityNotFoundException(AppUser.class);
+
+        AppUser appUser = appUserOptional.get();
+
+        appUser.setProfileImage(String.valueOf(appUser.getId()) + ".png");
+        appUserService.saveAppUser(appUser);
+
+        appUserService.writeProfileImageForUserFromBase64(profileImageBase64, appUser);
+
+        return new ResponseEntity<>(new AppUserDTO(appUser), HttpStatus.OK);
     }
 
 }

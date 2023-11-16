@@ -1,5 +1,6 @@
 package projectnwt2023.backend.appUser.service.impl;
 
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -9,8 +10,11 @@ import projectnwt2023.backend.appUser.repository.AppUserRepository;
 import projectnwt2023.backend.appUser.service.interfaces.IAppUserService;
 import projectnwt2023.backend.helper.Constants;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -91,5 +95,28 @@ public class AppUserService implements IAppUserService {
         }
 
         return appUserRepository.save(superAdmin);
+    }
+
+    @Override
+    public String getBase64ProfileImageForUser(AppUser appUser) {
+        try {
+            byte[] fileContent = FileUtils.readFileToByteArray(new File(Constants.profileImageFolderPath + "/" + appUser.getProfileImage()));
+            String encodedString = Base64.getEncoder().encodeToString(fileContent);
+
+            return encodedString;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Boolean writeProfileImageForUserFromBase64(String base64, AppUser appUser) {
+        try {
+            byte[] decodedBytes = Base64.getDecoder().decode(base64);
+            FileUtils.writeByteArrayToFile(new File(Constants.profileImageFolderPath + "/" + appUser.getProfileImage()), decodedBytes);
+            return true;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
