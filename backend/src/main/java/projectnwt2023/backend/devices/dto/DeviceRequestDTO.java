@@ -15,6 +15,7 @@ import java.util.ArrayList;
 @AllArgsConstructor
 public class DeviceRequestDTO {
 
+    @NotBlank
     private String modelName;
 
     private boolean usesElectricity;

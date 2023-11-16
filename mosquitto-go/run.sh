@@ -1,2 +1,3 @@
 #!/bin/bash
-docker run --name gomqtt --rm --network testnet gomqtt
+go run ./ambientSensor.go
+# cmd /k

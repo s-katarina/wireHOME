@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import projectnwt2023.backend.devices.*;
 import projectnwt2023.backend.devices.dto.DeviceRequestDTO;
 import projectnwt2023.backend.devices.dto.DeviceResponseDTO;
-import projectnwt2023.backend.devices.service.interfaces.IRegistrationService;
+import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
 import projectnwt2023.backend.property.Property;
 import projectnwt2023.backend.property.service.interfaces.IPropertyService;
 
@@ -22,7 +22,7 @@ import java.util.ArrayList;
 public class RegistrationController {
 
     @Autowired
-    IRegistrationService registrationService;
+    IDeviceService registrationService;
 
     @Autowired
     IPropertyService propertyService;

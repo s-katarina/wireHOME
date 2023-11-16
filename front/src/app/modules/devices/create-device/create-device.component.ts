@@ -18,6 +18,8 @@ export class CreateDeviceComponent implements OnInit {
   batterySection:boolean = false
   pannelSection:boolean = false
   chargerSection:boolean = false
+
+  dictionary: {[deviceType:string]: Function } = {}
 //////////////REFAKTORISI SVAKI UREDJAJ U SVOJU COMPONENTU STO NISI RAZMISLILA
 ////////BILO BI 5 PUTA BOLJE I 5 PUTA VISE KOMPONENTI ALI NEMA VEZE
   firstFormGroup = this._formBuilder.group({

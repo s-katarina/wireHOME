@@ -14,7 +14,7 @@ public class DeviceResponseDTO {
 
     private int id;
 
-    private String state;
+    private boolean state;
 
     private String modelName;
 
@@ -26,9 +26,9 @@ public class DeviceResponseDTO {
 
     public DeviceResponseDTO(Device device) {
         this.id = Math.toIntExact(device.getId());
-        this.state = String.valueOf(device.getState());
+        this.state = device.getState() == State.online;
         this.modelName = device.getModelName();
-        this.usesElectricity = device.getState() == State.online;
+        this.usesElectricity = device.isUsesElectricity();
         this.consumptionAmount = device.getConsumptionAmount();
         this.propertyId = Math.toIntExact(device.getProperty().getId());
 

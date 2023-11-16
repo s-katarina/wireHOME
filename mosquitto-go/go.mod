@@ -1,5 +1,4 @@
-module github.com/mbranko/testmqtt
-
+module tim10/mqtt
 go 1.21.4
 
 require github.com/eclipse/paho.mqtt.golang v1.4.3

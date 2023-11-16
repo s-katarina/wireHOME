@@ -65,6 +65,8 @@ mat-radio-button{
     font-family: 'Sora-semibold';
     height: 5em;
     font-size: 1.1em;
+    background-color: #A3C0C6;
+    color: #fff;
 }
 
 ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
@@ -75,4 +77,7 @@ mat-radio-button{
 ::ng-deep .mat-form-field.mat-focused .mat-form-field-label {
     color: black !important ;
 }
+
+
+
   
