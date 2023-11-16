@@ -3,13 +3,22 @@ package projectnwt2023.backend.appUser.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import projectnwt2023.backend.appUser.AppUser;
 import projectnwt2023.backend.appUser.Role;
 import projectnwt2023.backend.appUser.dto.AppUserDTO;
+import projectnwt2023.backend.appUser.dto.LoginDTO;
+import projectnwt2023.backend.appUser.dto.TokenResponseDTO;
 import projectnwt2023.backend.appUser.service.interfaces.IAppUserService;
+import projectnwt2023.backend.auth.JwtTokenUtil;
 import projectnwt2023.backend.exceptions.EntityAlreadyExistsException;
 import projectnwt2023.backend.exceptions.EntityNotFoundException;
 import projectnwt2023.backend.mail.MailService;
@@ -30,6 +39,10 @@ public class AppUserController {
     private IAppUserService appUserService;
     @Autowired
     private MailService mailService;
+    @Autowired
+    private AuthenticationManager authenticationManager;
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
 
     @PostMapping(produces = "application/json", consumes = "application/json")
     public ResponseEntity<AppUserDTO> registerUser(@Valid @RequestBody AppUserDTO appUserDTO) throws IOException {
@@ -72,6 +85,7 @@ public class AppUserController {
     }
 
     @PostMapping(value = "/admin", produces = "application/json", consumes = "application/json")
+    @PreAuthorize(value = "hasRole('SUPER_ADMIN')")
     public ResponseEntity<AppUserDTO> registerAdmin(@Valid @RequestBody AppUserDTO appUserDTO) {
 
         if (appUserService.findByEmail(appUserDTO.getEmail()).isPresent())
@@ -91,6 +105,42 @@ public class AppUserController {
         AppUser saved = appUserService.saveAppUser(appUser);
 
         return new ResponseEntity<>(new AppUserDTO(saved), HttpStatus.OK);
+    }
+
+    @PostMapping(value = "/login", consumes = "application/json", produces = "application/json")
+    public ResponseEntity<TokenResponseDTO> login(@Valid @RequestBody LoginDTO loginDTO){
+
+        UsernamePasswordAuthenticationToken authReq = new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword());
+
+        Authentication auth = authenticationManager.authenticate(authReq);
+
+        SecurityContext sc = SecurityContextHolder.getContext();
+        sc.setAuthentication(auth);
+
+        String role = sc.getAuthentication().getAuthorities().toString();
+        Optional<AppUser> appUserOptional = appUserService.findByEmail(loginDTO.getEmail());
+
+        String token = jwtTokenUtil.generateToken(
+                loginDTO.getEmail(),
+                Role.valueOf(role.substring(role.indexOf("_") + 1, role.length() - 1)),
+                appUserOptional.get().getId());
+
+        return new ResponseEntity<>(
+                new TokenResponseDTO(token),
+                HttpStatus.OK
+        );
+
+    }
+
+    @GetMapping(value = "/{id}", produces = "application/json")
+    public ResponseEntity<AppUserDTO> getUserByEmail(@PathVariable Long id) {
+
+        Optional<AppUser> appUserOptional = appUserService.findById(id);
+
+        if (!appUserOptional.isPresent())
+            throw new EntityNotFoundException(AppUser.class);
+
+        return new ResponseEntity<>(new AppUserDTO(appUserOptional.get()), HttpStatus.OK);
     }
 
 }
