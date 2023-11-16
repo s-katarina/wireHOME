@@ -4,9 +4,11 @@ import { LandingComponent } from '../modules/layout/landing/landing.component';
 import { CreatePropertyComponent } from '../modules/property/create-property/create-property.component';
 import { PropertyOverviewComponent } from '../modules/property/property-overview/property-overview.component';
 import { PropertyRequestsComponent } from '../modules/property/property-requests/property-requests.component';
+import { SinglePropertyComponent } from '../modules/property/single-property/single-property.component';
 
 const routes: Routes = [
   { path: 'properties', component: PropertyOverviewComponent },
+  { path: 'property', component: SinglePropertyComponent },
   { path: 'property-requests', component: PropertyRequestsComponent },
   { path: 'create-property', component: CreatePropertyComponent },
   { path: '**', component: LandingComponent }
