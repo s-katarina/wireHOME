@@ -1,6 +1,7 @@
 .page {
     padding-bottom: 20vh;
     margin: 5%;
+    padding-top: 10vh;
 }
 
 ::ng-deep mat-card {

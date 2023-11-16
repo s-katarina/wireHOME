@@ -108,6 +108,7 @@ export class CreatePropertyComponent implements OnInit, AfterViewInit {
         this.isStepEditable = false;
         this.firstFormGroup.reset();
         this.secondFormGroup.reset();
+        this.deleteImage();
       }, (err: any) => {
         console.log("Img", err)
         this.success = true
@@ -226,7 +227,7 @@ export class CreatePropertyComponent implements OnInit, AfterViewInit {
 
   deleteImage(): void {
     this.imgURL = null
-    // this.imgString = ''
+    this.img = null
   }
 
 
