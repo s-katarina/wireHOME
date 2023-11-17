@@ -43,6 +43,10 @@ export class AuthService {
     });
   }
 
+  superadminChangePassword(password: string): Observable<AppUserDTO> {
+    return this.http.post<AppUserDTO>(environment.apiHost + "user/superadmin/changePassword", password);
+  }
+
   getRole(): any {
     if (this.isLoggedIn()) {
       const accessToken: any = localStorage.getItem('user');
@@ -69,6 +73,16 @@ export class AuthService {
       const helper = new JwtHelperService();
       const id = helper.decodeToken(accessToken).id;
       return id;
+    }
+    return null;
+  }
+
+  getActive(): any {
+    if (this.isLoggedIn()) {
+      const accessToken: any = localStorage.getItem('user');
+      const helper = new JwtHelperService();
+      const active = helper.decodeToken(accessToken).active;
+      return active;
     }
     return null;
   }

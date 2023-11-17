@@ -47,10 +47,11 @@ public class JwtTokenUtil {
     }
 
     // generate token for user
-    public String generateToken(String username, Role role, Long id) {
+    public String generateToken(String username, Role role, Long id, Boolean active) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("role", role);
         claims.put("id", id);
+        claims.put("active", active);
         return doGenerateToken(claims, username);
     }
 

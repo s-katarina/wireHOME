@@ -91,7 +91,7 @@ public class AppUserController {
 
     @PostMapping(value = "/superadmin/changePassword")
     @PreAuthorize(value = "hasRole('SUPER_ADMIN')")
-    public ResponseEntity<AppUserDTO> registerAdmin(@RequestBody String password) {
+    public ResponseEntity<AppUserDTO> changeSuperadminPassword(@RequestBody String password) {
 
         List<AppUser> superAdmins = appUserService.findAllByRole(Role.SUPER_ADMIN);
 
@@ -157,7 +157,8 @@ public class AppUserController {
         String token = jwtTokenUtil.generateToken(
                 loginDTO.getEmail(),
                 Role.valueOf(role.substring(role.indexOf("_") + 1, role.length() - 1)),
-                appUserOptional.get().getId());
+                appUserOptional.get().getId(),
+                appUserOptional.get().getActive());
 
         return new ResponseEntity<>(
                 new TokenResponseDTO(token),
