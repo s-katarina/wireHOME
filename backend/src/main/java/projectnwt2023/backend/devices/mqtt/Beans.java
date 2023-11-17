@@ -1,6 +1,7 @@
 package projectnwt2023.backend.devices.mqtt;
 
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.integration.annotation.ServiceActivator;
@@ -19,13 +20,19 @@ import org.springframework.messaging.MessagingException;
 
 @Configuration
 public class Beans {
+    @Value("${mosquitto.username}")
+    private String username;
+
+    @Value("${mosquitto.password}")
+    private String mosquttoPassword;
+
     public MqttPahoClientFactory mqttPahoClientFactory() {
         DefaultMqttPahoClientFactory factory = new DefaultMqttPahoClientFactory();
         MqttConnectOptions options = new MqttConnectOptions();
 
         options.setServerURIs(new String[]{"tcp://localhost:1883"});
-        options.setUserName("admin");
-        String password = "1234";
+        options.setUserName(username);
+        String password = mosquttoPassword;
         options.setPassword(password.toCharArray());
         options.setCleanSession(true);
 
