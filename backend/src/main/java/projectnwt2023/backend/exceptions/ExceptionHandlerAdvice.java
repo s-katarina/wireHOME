@@ -30,6 +30,11 @@ public class ExceptionHandlerAdvice {
         return new ResponseEntity<>(ex.message, ex.httpStatus);
     }
 
+    @ExceptionHandler(EntityAlreadyExistsException.class)
+    protected ResponseEntity<String> handleEntityAlreadyExists(EntityAlreadyExistsException ex) {
+        return new ResponseEntity<>(ex.message, ex.httpStatus);
+    }
+
     @ExceptionHandler(HttpMediaTypeNotAcceptableException.class)
     public ResponseEntity<String> handleMediaTypeNotAcceptable(HttpMediaTypeNotAcceptableException ex) {
         String errorMessage = "Could not find acceptable representation. Please check your Accept headers.";

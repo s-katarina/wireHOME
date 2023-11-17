@@ -82,3 +82,6 @@ bin/
 
 images/
 
+backend/profileImages/
+backend/src/main/resources/superadmin.txt
+

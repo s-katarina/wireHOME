@@ -40,4 +40,26 @@ public class MailService {
             return null;
         }
     }
+
+    public String sendTextEmailMilos(String toEmail, String sub, String text) throws IOException {
+        Email from = new Email(Constants.fromEmail);
+        String subject = sub;
+        Email to = new Email(toEmail);
+        Content content = new Content("text/plain", text);
+        Mail mail = new Mail(from, subject, to, content);
+
+        SendGrid sg = new SendGrid(Constants.sendgridKey);
+        Request request = new Request();
+        try {
+            request.setMethod(Method.POST);
+            request.setEndpoint("mail/send");
+            request.setBody(mail.build());
+            Response response = sg.api(request);
+            logger.info(response.getBody());
+            return response.getBody();
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+            return null;
+        }
+    }
 }

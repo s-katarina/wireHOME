@@ -57,3 +57,21 @@ export interface PendingPropertyRequestDTO {
     floorCount: number | null;
     propertyStatus: string;
 }
+
+export interface LoginDTO {
+    email: string;
+    password: string;
+}
+
+export interface TokenResponseDTO {
+    accessToken: string;
+}
+
+export interface AppUserDTO {
+    id: number | null;
+    name: string;
+    lastName: string;
+    email: string;
+    password: string | null;
+    active: boolean | null;
+}

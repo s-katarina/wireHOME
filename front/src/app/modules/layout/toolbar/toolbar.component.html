@@ -11,13 +11,21 @@
       Account
     </button> -->
     
-    <!-- <button mat-button class="white-text" [routerLink]="['/login']" *ngIf="this.user.email == null">
+    <button mat-button [routerLink]="['/login']" *ngIf="this.user.email == null">
       Log in
-      <mat-icon>favorite</mat-icon>
+      <!-- <mat-icon>favorite</mat-icon> -->
     </button>
-    <button mat-button class="white-text" (click)="logout()" *ngIf="this.user.email != null">
+    <button mat-button [routerLink]="['/register']" *ngIf="this.user.email == null">
+      Register
+      <!-- <mat-icon>favorite</mat-icon> -->
+    </button>
+    <button mat-button [routerLink]="['/register-admin']" *ngIf="this.user.email != null && this.user.role == 'SUPER_ADMIN'">
+      Register admin
+      <!-- <mat-icon>favorite</mat-icon> -->
+    </button>
+    <button mat-button (click)="logout()" *ngIf="this.user.email != null">
       Log out
-      <mat-icon>favorite</mat-icon>
-    </button> -->
+      <!-- <mat-icon>favorite</mat-icon> -->
+    </button>
   </mat-toolbar>
   

@@ -34,6 +34,9 @@ public class WebSecurityConfiguration {
             .csrf().disable()
             .authorizeRequests()
             .antMatchers("/**").permitAll()
+            .antMatchers(HttpMethod.POST, "/api/user").permitAll()
+            .antMatchers("/api/user/login").permitAll()
+            .antMatchers(HttpMethod.GET, "/api/user/activate/**").permitAll()
             .anyRequest().authenticated()
             .and()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -42,12 +45,12 @@ public class WebSecurityConfiguration {
 
         http.exceptionHandling()
             .accessDeniedHandler((request, response, accessDeniedException) -> {
-                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                response.getOutputStream().println("Access denied.");
-            })
-            .authenticationEntryPoint((request, response, authException) -> {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getOutputStream().println("Unauthorized.");
+            })
+            .authenticationEntryPoint((request, response, authException) -> {
+                response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                response.getOutputStream().println("Not authenticated.");
             });
 
         return http.build();
@@ -64,5 +67,16 @@ public class WebSecurityConfiguration {
         source.registerCorsConfiguration("/**", configuration);
 
         return source;
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
+        return encoder;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 }

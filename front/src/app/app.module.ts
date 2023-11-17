@@ -11,11 +11,15 @@ import { MaterialModule } from './infrastructure/material/material.module';
 import { AppLayoutModule } from './modules/layout/layout.module';
 import { PropertyModule } from './modules/property/property.module';
 import { CreateDeviceComponent } from './modules/devices/create-device/create-device.component';
+import { RegisterComponent } from './modules/auth/register/register.component';
+import { LoginComponent } from './modules/auth/login/login.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     CreateDeviceComponent,
+    LoginComponent,
+    RegisterComponent,
   ],
   imports: [
     BrowserModule,

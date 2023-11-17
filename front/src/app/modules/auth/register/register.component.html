@@ -1,0 +1,51 @@
+<div class="app-page">
+
+  <div class="reg-header"> 
+    <div class="app-reg-col " >
+      <div class="app-reg-instruction"> 
+        <h2>Welcome to wireHOME Registration</h2>
+        <p>MAKE A NEW ACCOUNT</p>
+      </div>
+    </div>
+  </div>
+
+  <mat-divider></mat-divider>
+  
+  <form [formGroup]="registerForm" (ngSubmit)="register()" fxLayout="column">
+    <div class="app-reg-col" >
+      <div class="app-form-sectioning"> 
+        <p>Personal information</p>
+        <mat-divider></mat-divider>
+      </div>
+      <mat-form-field>
+        <mat-label>Name</mat-label>
+          <input matInput type="text" name="name" formControlName="name" />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Last Name</mat-label>
+          <input matInput type="text" name="lastname" formControlName="lastname" />
+        </mat-form-field>
+        <input type="file" accept=".png" id="imageFileInput" (change)="onFileSelected($event)">
+    </div>
+      
+    <div class="app-reg-col">
+      <div class="app-form-sectioning">
+        <p>Account credentials</p>
+        <mat-divider></mat-divider>
+      </div>
+        <mat-form-field>
+          <mat-label>Email</mat-label>
+          <input matInput type="text" name="email" formControlName="email" />
+        </mat-form-field>
+        <mat-form-field>
+          <mat-label>Password</mat-label>
+          <input matInput type="password" name="password" formControlName="password" />
+        </mat-form-field>
+        <p>{{errorMessage}}</p>
+    </div>
+
+    <div fxLayout="row" fxLayoutAlign="space-between end">
+      <button color="primary" type="submit" mat-raised-button>CREATE ACCOUNT</button>
+    </div>
+  </form>
+</div>

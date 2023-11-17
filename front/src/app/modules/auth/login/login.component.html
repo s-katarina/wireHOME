@@ -1,0 +1,22 @@
+<div class="center">
+  <div class="center">
+      <h1>wireHOME</h1>
+      <h5>PROCEED WITH YOUR ACCOUNT</h5>
+      <h3>Log in</h3>
+  </div>
+  <form [formGroup]="loginForm" (ngSubmit)="loginUser()" class="oneElementPerRow">
+      <label>Email</label>
+      <mat-form-field class="oneLine">
+          <mat-label>Email</mat-label>
+          <input matInput type="text" name="username" formControlName="email" />
+      </mat-form-field>
+      <label>Password</label>
+      <mat-form-field class="oneLine">
+          <mat-label>Password</mat-label>
+          <input matInput type="password" name="password" formControlName="password" />
+      </mat-form-field>
+      <p>{{errorMessage}}</p>
+      <button type="submit" mat-raised-button>Log in</button>
+  </form>
+ <!-- <a routerLink="/register-account" routerLinkActive="active">DON'T HAVE AN ACCOUNT? REGISTER NOW.</a> -->
+</div>
