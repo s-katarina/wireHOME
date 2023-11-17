@@ -54,10 +54,10 @@ export interface TokenResponseDTO {
 }
 
 export interface AppUserDTO {
-    id: number;
+    id: number | null;
     name: string;
     lastName: string;
     email: string;
-    password: string;
-    active: boolean;
+    password: string | null;
+    active: boolean | null;
 }

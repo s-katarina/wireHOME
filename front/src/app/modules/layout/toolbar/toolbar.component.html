@@ -19,7 +19,11 @@
       Register
       <!-- <mat-icon>favorite</mat-icon> -->
     </button>
-    <button mat-button class="white-text" (click)="logout()" *ngIf="this.user.email != null">
+    <button mat-button [routerLink]="['/register-admin']" *ngIf="this.user.email != null && this.user.role == 'SUPER_ADMIN'">
+      Register admin
+      <!-- <mat-icon>favorite</mat-icon> -->
+    </button>
+    <button mat-button (click)="logout()" *ngIf="this.user.email != null">
       Log out
       <!-- <mat-icon>favorite</mat-icon> -->
     </button>

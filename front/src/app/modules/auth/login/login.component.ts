@@ -34,6 +34,9 @@ export class LoginComponent implements OnInit {
         localStorage.setItem('user', JSON.stringify(res.accessToken))
         this.authService.setUser()
         this.errorMessage = ""
+        console.log(this.authService.getId())
+        console.log(this.authService.getEmail())
+        console.log(this.authService.getRole())
       },
       error: err => {
         console.error('Observable emitted an error: ' + err)

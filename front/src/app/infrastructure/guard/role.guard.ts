@@ -22,7 +22,8 @@ export class RoleGuard implements CanActivate {
       }
       const helper = new JwtHelperService();
       const role = helper.decodeToken(accessToken).role
-
+      console.log(roles)
+      console.log(role)
       if (roles.includes(role))
         return true
       else {

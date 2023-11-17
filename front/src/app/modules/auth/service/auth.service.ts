@@ -29,6 +29,20 @@ export class AuthService {
     return this.http.post<AppUserDTO>(environment.apiHost + "user", appUserDTO);
   }
 
+  registerAdmin(appUserDTO: AppUserDTO): Observable<AppUserDTO> {
+    return this.http.post<AppUserDTO>(environment.apiHost + "user/admin", appUserDTO);
+  }
+
+  uploadProfileImage(base64: string, userId: number): Observable<AppUserDTO> {
+    return this.http.post<AppUserDTO>(environment.apiHost + "user/" + userId + "/profileImage", base64);
+  }
+
+  getProfileImage(userId: number): Observable<string> {
+    return this.http.get(environment.apiHost + "user/" + userId + "/profileImage", {
+      responseType: 'text'
+    });
+  }
+
   getRole(): any {
     if (this.isLoggedIn()) {
       const accessToken: any = localStorage.getItem('user');

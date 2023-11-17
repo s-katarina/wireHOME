@@ -7,6 +7,7 @@ import { PropertyRequestsComponent } from '../modules/property/property-requests
 import { LoginComponent } from '../modules/auth/login/login.component';
 import { UnregisteredGuard } from './guard/unregistered.guard';
 import { RegisterComponent } from '../modules/auth/register/register.component';
+import { RoleGuard } from './guard/role.guard';
 
 const routes: Routes = [
   { path: 'properties', component: PropertyOverviewComponent },
@@ -14,6 +15,7 @@ const routes: Routes = [
   { path: 'create-property', component: CreatePropertyComponent },
   { path: 'login', component: LoginComponent, canActivate: [UnregisteredGuard] },
   { path: 'register', component: RegisterComponent, canActivate: [UnregisteredGuard] },
+  { path: 'register-admin', component: RegisterComponent },
   { path: '**', component: LandingComponent }
 ];
 
