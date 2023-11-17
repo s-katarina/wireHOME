@@ -24,7 +24,7 @@
                 <form [formGroup]="firstFormGroup" class="form-type">
                     <ng-template matStepLabel>Property type</ng-template>
                     <button mat-raised-button class="upload-image" (click)="openFileInput()"><mat-icon>image</mat-icon> Upload image</button>
-                    <input type="file" #fileInput style="display: none" (change)="onFileSelected($event)" required>
+                    <input type="file" #fileInput style="display: none" (change)="onFileSelected($event)" >
                     <div class="image-container">
                         <button mat-icon-button class="delete-button" (click)="deleteImage()"  *ngIf="imgURL">
                             <mat-icon>delete</mat-icon>
