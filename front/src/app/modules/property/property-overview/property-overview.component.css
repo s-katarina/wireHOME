@@ -84,6 +84,7 @@ h2 {
 
 h3 {
     font-family: 'Sora-semibold', Roboto, "Helvetica Neue", sans-serif !important; 
+    margin-top: 10px;
 } 
 
 p {
@@ -113,6 +114,21 @@ p {
     border-radius: 20px !important;
 }
 
+.property-card:hover ::ng-deep mat-card-actions button {
+    background-color: rgba(0, 0, 0, 0.399);
+    transition: background-color 1.3s ease; 
+}
+
 .property-card:hover ::ng-deep mat-card-content {
     margin-bottom: 0 !important;
+}
+
+button {
+    color: white;
+}
+
+a {
+    cursor: pointer;
+    text-decoration: none;
+    color: black;
 }

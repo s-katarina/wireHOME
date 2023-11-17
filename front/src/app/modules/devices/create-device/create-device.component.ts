@@ -11,7 +11,7 @@ export class CreateDeviceComponent implements OnInit {
   selectedValue: string = 'autonomn'
   selectedType:string = ''
   selectedRegimes:string[] = []
-  regimes:string[] = ["llalal", "sdfsdfdxf", "llalal", "sdfsdfdxf","llalal", "sdfsdfdxf","llalal", "sdfsdfdxf","llalal", "sdfsdfdxf"]
+  regimes:string[] = []
   commonSection:boolean = false
   regimeSection:boolean = false
   klimaSection:boolean = false

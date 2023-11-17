@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { PropertyServiceService } from '../service/property-service.service';
 import { PropertyResponseDTO } from 'src/app/model/model';
 import { ImageServiceService } from '../../service/image-service.service';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-property-overview',
