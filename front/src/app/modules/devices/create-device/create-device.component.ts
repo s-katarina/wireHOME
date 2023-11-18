@@ -38,8 +38,8 @@ export class CreateDeviceComponent implements OnInit {
   });
 
   airConditionerFormGroup = this._formBuilder.group({
-    maxTemp: [0, [Validators.required, Validators.max(50), Validators.min(0)]],
-    minTemp: [0, [Validators.required, Validators.max(50), Validators.min(0)]],
+    maxTemp: [0, [Validators.required, Validators.max(60), Validators.min(0)]],
+    minTemp: [0, [Validators.required, Validators.max(60), Validators.min(0)]],
   });
 
   panelFormGroup = this._formBuilder.group({
@@ -53,7 +53,7 @@ export class CreateDeviceComponent implements OnInit {
 
   chargerFormGroup = this._formBuilder.group({
     pluginNum: [0, [Validators.required, Validators.max(100), Validators.min(0)]],
-    capacity: [0, [Validators.required, Validators.max(10000), Validators.min(0)]],
+    capacity: [0, [Validators.required, Validators.max(1000000), Validators.min(0)]],
   });
 
   @ViewChild('fileInput') fileInput: ElementRef<HTMLInputElement> | undefined;

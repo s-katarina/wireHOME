@@ -20,7 +20,7 @@ public class DeviceRequestDTO {
     private boolean usesElectricity;
 
     @NotNull
-    @Max(value = 10000, message = "Field consumptionAmount must be less than or equal to 10000")
+    @Max(value = 1000000, message = "Field consumptionAmount must be less than or equal to 10000")
     @Min(value = 0, message = "Field consumptionAmount must be 0 or greater")
     private double consumptionAmount;
 
@@ -29,16 +29,28 @@ public class DeviceRequestDTO {
 
     private ArrayList<String> regimes;
 
+    @Max(value = 60, message = "Field minTemp must be less than or equal to 10000")
+    @Min(value = 0, message = "Field minTemp must be 0 or greater")
     private int minTemp;
 
+    @Max(value = 60, message = "Field maxTemp must be less than or equal to 10000")
+    @Min(value = 0, message = "Field maxTemp must be 0 or greater")
     private int maxTemp;
 
+    @Max(value = 10000, message = "Field panelSize must be less than or equal to 10000")
+    @Min(value = 0, message = "Field panelSize must be 0 or greater")
     private double panelSize;
 
+    @Max(value = 100, message = "Field efficiency must be less than or equal to 10000")
+    @Min(value = 0, message = "Field efficiency must be 0 or greater")
     private double efficiency;
 
+    @Max(value = 1000000, message = "Field capacity must be less than or equal to 10000")
+    @Min(value = 0, message = "Field capacity must be 0 or greater")
     private double capacity;
 
+    @Max(value = 100, message = "Field portNumber must be less than or equal to 10000")
+    @Min(value = 0, message = "Field portNumber must be 0 or greater")
     private int portNumber;
 
 

@@ -88,15 +88,15 @@
     <mat-form-field class="half-flex">
         <mat-label>Minimal temperature</mat-label>
         <input matInput placeholder="Minimal temperature" formControlName="minTemp"  required type="number">
-        <mat-error *ngIf="airConditionerFormGroup.get('minTemp')!.hasError('max')">Electical consuption must be less than or equal to 100000 watts</mat-error>
-        <mat-error *ngIf="airConditionerFormGroup.get('minTemp')!.hasError('min')">Electical consuption must be greater than 0 watts.</mat-error>
+        <mat-error *ngIf="airConditionerFormGroup.get('minTemp')!.hasError('max')">Electical consuption must be less than or equal to 60 celsius.</mat-error>
+        <mat-error *ngIf="airConditionerFormGroup.get('minTemp')!.hasError('min')">Electical consuption must be greater than 0 celsius.</mat-error>
       </mat-form-field>
         </div>
         <div class="half-flex">
       <mat-form-field class="half-flex">
         <mat-label>Maximal temperature</mat-label>
         <input matInput placeholder="Maximal temperature" formControlName="maxTemp"  required type="number">
-        <mat-error *ngIf="airConditionerFormGroup.get('maxTemp')!.hasError('max')">Electical consuption must be less than or equal to 52 celsius</mat-error>
+        <mat-error *ngIf="airConditionerFormGroup.get('maxTemp')!.hasError('max')">Electical consuption must be less than or equal to 60 celsius</mat-error>
         <mat-error *ngIf="airConditionerFormGroup.get('maxTemp')!.hasError('min')">Electical consuption must be greater than 0 celsius.</mat-error>
       </mat-form-field>
     </div>
@@ -119,8 +119,8 @@
       <mat-form-field class="half-flex">
         <mat-label>Panel efficiency</mat-label>
         <input matInput placeholder="Panel efficiency" formControlName="efficiency"  required type="number">
-        <mat-error *ngIf="panelFormGroup.get('efficiency')!.hasError('max')">Electical consuption must be less than or equal to 52 celsius</mat-error>
-        <mat-error *ngIf="panelFormGroup.get('efficiency')!.hasError('min')">Electical consuption must be greater than 0 celsius.</mat-error>
+        <mat-error *ngIf="panelFormGroup.get('efficiency')!.hasError('max')">Electical consuption must be less than or equal to 100%.</mat-error>
+        <mat-error *ngIf="panelFormGroup.get('efficiency')!.hasError('min')">Electical consuption must be greater than 0%.</mat-error>
       </mat-form-field>
     </div>
     </form>
