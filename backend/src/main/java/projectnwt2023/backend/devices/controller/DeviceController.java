@@ -6,12 +6,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import projectnwt2023.backend.devices.Device;
+import projectnwt2023.backend.devices.RegimeAirConditioner;
+import projectnwt2023.backend.devices.RegimeType;
+import projectnwt2023.backend.devices.RegimeWashingMachine;
 import projectnwt2023.backend.devices.dto.DeviceResponseDTO;
 import projectnwt2023.backend.devices.mqtt.Gateway;
 import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
 import projectnwt2023.backend.property.Property;
 import projectnwt2023.backend.property.dto.PropertyResponseDTO;
 import projectnwt2023.backend.property.service.interfaces.IPropertyService;
+
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/api/device")
@@ -59,7 +64,31 @@ public class DeviceController {
         }
     }
 
+    @GetMapping(value = "/regimes", produces = "application/json")
+    public ResponseEntity<ArrayList<String>> getRegimes(){
+        ArrayList<String> regimes = new ArrayList<>();
+        for (RegimeType regime:RegimeType.values()) {
+            regimes.add(String.valueOf(regime));
+        }
+        return new ResponseEntity<>(regimes, HttpStatus.OK);
+    }
 
+    @GetMapping(value = "/regimesAirConditioner", produces = "application/json")
+    public ResponseEntity<ArrayList<String>> getRegimesAirConditioner(){
+        ArrayList<String> regimes = new ArrayList<>();
+        for (RegimeAirConditioner regime:RegimeAirConditioner.values()) {
+            regimes.add(String.valueOf(regime));
+        }
+        return new ResponseEntity<>(regimes, HttpStatus.OK);
+    }
 
+    @GetMapping(value = "/regimesWashingMachine", produces = "application/json")
+    public ResponseEntity<ArrayList<String>> getRegimesWashingMachine(){
+        ArrayList<String> regimes = new ArrayList<>();
+        for (RegimeWashingMachine regime:RegimeWashingMachine.values()) {
+            regimes.add(String.valueOf(regime));
+        }
+        return new ResponseEntity<>(regimes, HttpStatus.OK);
+    }
 
 }

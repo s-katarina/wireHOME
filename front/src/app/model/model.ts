@@ -21,7 +21,7 @@ export interface DeviceRequestDTO {
     modelName: string;
     usesElectricity: boolean;
     consumptionAmount: number;
-    propertyId: number;
+    propertyId: string;
     regimes: string[];
     minTemp: number;
     maxTemp: number;

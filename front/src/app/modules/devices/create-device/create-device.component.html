@@ -23,8 +23,13 @@
 
 <div *ngIf="commonSection">
     <div class="main_container">
-        <button mat-raised-button class="upload-image half-flex"><mat-icon>image</mat-icon> Upload image</button>
-        <div class="half-flex">
+      <div class="half-flex">
+        <button mat-raised-button class="upload-image half-flex" (click)="openFileInput()"><mat-icon>image</mat-icon>Upload image</button>
+        <span>{{imageName}}</span>
+        <input type="file" #fileInput style="display: none" (change)="onFileSelected($event)" >
+        
+      </div>  
+      <div class="half-flex">
             <form [formGroup]="modelFormGroup" class="form-type">
     
             <mat-form-field class="half-flex">
@@ -39,7 +44,7 @@
     <p>Charging typt</p>
     <div class="main_container">
         <div class="half-flex">
-            <mat-button-toggle-group class="half-flex" [(ngModel)]="selectedValue" (change)="updateFieldState()">
+            <mat-button-toggle-group class="tooggle half-flex" [(ngModel)]="selectedValue" (change)="updateFieldState()">
                 <mat-button-toggle value="autonomn">Autonom Charging</mat-button-toggle>
                 <mat-button-toggle value="house">House Charging</mat-button-toggle>
               </mat-button-toggle-group>
@@ -59,16 +64,25 @@
     </div>
 </div>
 
-<div *ngIf="regimeSection">
-<p>mogao bi neki search</p>
+<div *ngIf="airCondRegimeSection">
+<!-- <p>mogao bi neki search</p> -->
 <form class="flex-container">
-    <div *ngFor="let regime of regimes" class="item">
+    <div *ngFor="let regime of airConditionerRegimes" class="item">
        <input (change)="onCheckboxChange($event)" value="{{regime}}" type="checkbox"> {{regime}}
     </div>
  </form>
 </div>
 
- <div *ngIf="klimaSection">
+<div *ngIf="washingMashRegimeSection">
+  <!-- <p>mogao bi neki search</p> -->
+  <form class="flex-container">
+      <div *ngFor="let regime of washingMachineRegimes" class="item">
+         <input (change)="onCheckboxChange($event)" value="{{regime}}" type="checkbox"> {{regime}}
+      </div>
+   </form>
+  </div>
+
+ <div *ngIf="airCondRegimeSection">
     <form [formGroup]="airConditionerFormGroup" class="main_container">
     <div class="half-flex">
     <mat-form-field class="half-flex">

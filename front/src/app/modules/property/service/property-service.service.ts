@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { CityDTO, PendingPropertyRequestDTO, PropertyRequestDTO, PropertyResponseDTO } from 'src/app/model/model';
 import { environment } from 'src/environments/environment';
 
@@ -10,6 +10,13 @@ import { environment } from 'src/environments/environment';
 export class PropertyServiceService {
 
   constructor(private readonly http: HttpClient) { }
+
+  private selectedProperty = new BehaviorSubject<string>("");
+  selectedPropertyId$ = this.selectedProperty.asObservable();
+
+  setSelectedPropertyId(PropertyId: string) {
+    this.selectedProperty.next(PropertyId);
+  }
 
   getCities() : Observable<CityDTO[]> {
     return this.http.get<CityDTO[]>(environment.apiHost + 'property/city')

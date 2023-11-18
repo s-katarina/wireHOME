@@ -15,8 +15,16 @@ public class ImageService {
     @Value("${upload.directory}")
     private String uploadDirectory;
 
+
     public void savePropertyImage(MultipartFile file, String customFileName) throws IOException {
         String fileName = "property-" + customFileName + ".jpg";
+        Path filePath = Paths.get(uploadDirectory, fileName);
+        System.out.println(filePath);
+        Files.write(filePath, file.getBytes());
+    }
+
+    public void saveDeviceImage(MultipartFile file, String customFileName) throws IOException {
+        String fileName = "device-" + customFileName + ".jpg";
         Path filePath = Paths.get(uploadDirectory, fileName);
         System.out.println(filePath);
         Files.write(filePath, file.getBytes());

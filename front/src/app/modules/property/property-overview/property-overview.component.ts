@@ -72,5 +72,8 @@ export class PropertyOverviewComponent implements OnInit {
     return this.hoveredPropertyId === propertyId;
   }
 
+  selectProperty(propertyId: string) {
+    this.propertyService.setSelectedPropertyId(propertyId);
+  }
 
 }

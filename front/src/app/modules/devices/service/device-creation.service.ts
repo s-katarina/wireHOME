@@ -15,6 +15,14 @@ export class DeviceCreationService {
     return this.http.get<string[]>(environment.apiHost + 'device/regimes')
   }
 
+  getAirConditionerRegimes() : Observable<string[]> {
+    return this.http.get<string[]>(environment.apiHost + 'device/regimesAirConditioner')
+  }
+
+  getWashingMachineRegimes() : Observable<string[]> {
+    return this.http.get<string[]>(environment.apiHost + 'device/regimesWashingMachine')
+  }
+
   createAmbientalSensor (device: DeviceRequestDTO): Observable<any> {
     const options: any = {
       responseType: 'text'

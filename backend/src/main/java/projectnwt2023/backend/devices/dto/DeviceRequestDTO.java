@@ -1,12 +1,11 @@
 package projectnwt2023.backend.devices.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Pattern;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 
 @Getter
@@ -20,8 +19,12 @@ public class DeviceRequestDTO {
 
     private boolean usesElectricity;
 
+    @NotNull
+    @Max(value = 10000, message = "Field consumptionAmount must be less than or equal to 10000")
+    @Min(value = 0, message = "Field consumptionAmount must be 0 or greater")
     private double consumptionAmount;
 
+    @NotNull
     private int propertyId;
 
     private ArrayList<String> regimes;

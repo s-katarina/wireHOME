@@ -35,6 +35,8 @@ public abstract class Device {
 
     private String topic;
 
+    private String imagePath;
+
     public Device(DeviceRequestDTO deviceRequestDTO) {
         this.modelName = deviceRequestDTO.getModelName();
         this.state = State.offline;
