@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { PendingPropertyRequestDTO } from 'src/app/model/model';
+import { PropertyDTO } from 'src/app/model/model';
 import { PropertyServiceService } from '../service/property-service.service';
 import Swal from 'sweetalert2';
 
@@ -13,14 +13,14 @@ export class PropertyRequestsComponent implements OnInit {
 
   constructor(private readonly propertyService: PropertyServiceService) { }
 
-  requests : PendingPropertyRequestDTO[] = []
+  requests : PropertyDTO[] = []
 
   private deleted$ = new BehaviorSubject<any>({});
   selectedValue$ = this.deleted$.asObservable();
 
   showRejectionPopup: boolean = false;
   rejectionReason: string = '';
-  propertyForRejection: PendingPropertyRequestDTO | null = null;
+  propertyForRejection: PropertyDTO | null = null;
 
   setValue(test: any) {
     this.deleted$.next(test);
@@ -32,7 +32,7 @@ export class PropertyRequestsComponent implements OnInit {
     })
   }
 
-  onAcceptClick(request: PendingPropertyRequestDTO) {
+  onAcceptClick(request: PropertyDTO) {
     this.propertyService.acceptPending(request.id).subscribe((res: any) => {
       this.setValue("deleted")
         this.deleted$.subscribe((value) => {
@@ -48,7 +48,7 @@ export class PropertyRequestsComponent implements OnInit {
   }
 
 
-  openRejectionPopup(request: PendingPropertyRequestDTO) {
+  openRejectionPopup(request: PropertyDTO) {
     this.showRejectionPopup = true;
     this.propertyForRejection = request;
   }

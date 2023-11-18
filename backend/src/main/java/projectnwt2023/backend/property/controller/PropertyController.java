@@ -44,11 +44,7 @@ public class PropertyController {
     @PreAuthorize(value = "hasRole('AUTH_USER')")
     ResponseEntity<ApiResponse<PropertyResponseDTO>> addProperty(@Valid @RequestBody PropertyRequestDTO dto){
 
-        // Extract user who sent request
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
-                .getPrincipal();
-        String username = userDetails.getUsername();
-        System.out.println(username);
+        String username = this.extractUsername();
         Property p = propertyService.add(dto, username);
 
         ApiResponse<PropertyResponseDTO> response = new ApiResponse<>(200, new PropertyResponseDTO((p)));
@@ -68,22 +64,10 @@ public class PropertyController {
     }
 
     @GetMapping(value = "", produces = "application/json")
-    ResponseEntity<List<PropertyResponseDTO>> getProperties(){
-
-        List<Property> properties = propertyService.getProperties(0L);
-        List<PropertyResponseDTO> dtos = new ArrayList<>();
-        for (Property p : properties) {
-            dtos.add(new PropertyResponseDTO(p));
-        }
-
-        return new ResponseEntity<>(dtos, HttpStatus.OK);
-    }
-
-    @GetMapping(value = "/all", produces = "application/json")
+    @PreAuthorize(value = "hasRole('AUTH_USER')")
     ResponseEntity<List<PropertyResponseDTO>> getPropertiesForUser(){
 
-        Long userId = 1L;
-        List<Property> properties = propertyService.getPropertiesPendingOrAcceptedForUser(userId);
+        List<Property> properties = propertyService.getPropertiesPendingOrAcceptedForUser(this.extractUsername());
         List<PropertyResponseDTO> dtos = new ArrayList<>();
         for (Property p : properties) {
             dtos.add(new PropertyResponseDTO(p));
@@ -92,33 +76,39 @@ public class PropertyController {
         return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
-
     @GetMapping(value = "/pending", produces = "application/json")
-//    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
-    ResponseEntity<List<PendingPropertyResponseDTO>> getPendingProperties(){
+    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
+    ResponseEntity<List<PropertyResponseDTO>> getPendingProperties(){
 
         Page<Property> properties = propertyService.getPropertiesByStatus(PropertyStatus.PENDING, Pageable.unpaged());
-        List<PendingPropertyResponseDTO> dtos = new ArrayList<>();
+        List<PropertyResponseDTO> dtos = new ArrayList<>();
         for (Property p : properties.getContent()) {
-            dtos.add(new PendingPropertyResponseDTO(p));
+            dtos.add(new PropertyResponseDTO(p));
         }
 
         return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
     @PutMapping(value = "/pending/accept/{propertyId}", produces = "application/json")
-//    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
+    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     ResponseEntity<PropertyResponseDTO> acceptPending(@PathVariable Integer propertyId){
 
         return new ResponseEntity<>(new PropertyResponseDTO(propertyService.acceptProperty(propertyId.longValue())), HttpStatus.OK);
     }
 
     @PutMapping(value = "/pending/reject/{propertyId}", produces = "application/json")
-//    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
+    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     ResponseEntity<PropertyResponseDTO> rejectPending(@PathVariable Integer propertyId,
                                                       @RequestBody PropertyRejectionRequestDTO rejectionRequest){
 
         return new ResponseEntity<>(new PropertyResponseDTO(propertyService.rejectProperty(propertyId.longValue(), rejectionRequest.getRejectionReason())), HttpStatus.OK);
+    }
+
+    private String extractUsername() {
+        // Extract user who sent request
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        return userDetails.getUsername();
     }
 
 }

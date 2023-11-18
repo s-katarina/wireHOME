@@ -30,9 +30,9 @@ mat-expansion-panel {
 }
 
 mat-button-toggle {
-    height: 50vh;
+    height: 30vh;
     line-height: 1;
-    width: 50vh;
+    width: 30vh;
     display: flex;
     justify-content: center;
     margin: 0;
@@ -41,14 +41,14 @@ mat-button-toggle {
 
 mat-button-toggle-group {
     border: 0 !important;
-    height: 50vh;
+    height: 30vh;
     width: 100%;
 } 
 
 mat-expansion-panel-header {
-    height: 60vh; 
+    height: 40vh; 
     padding-bottom: 2em;
-    min-height: 60vh;
+    min-height: 40vh;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -73,13 +73,13 @@ mat-expansion-panel-header {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 100%;
+    width: 20vw;
     font-family: 'Sora-semibold', Roboto, "Helvetica Neue", sans-serif !important; 
     margin-bottom: 3vh;
 }
 
 ::ng-deep .mat-step-text-label {
-    font-size: 1.4em !important; 
+    font-size: 1.1em !important; 
   }
 
 ::ng-deep .mat-step-header .mat-step-icon-selected,
@@ -182,4 +182,8 @@ button.upload-image {
     border: none;
     border-radius: 3px;
     cursor: pointer;
+}
+
+::ng-deep mat-icon {
+    margin: 0 !important;
 }

@@ -17,8 +17,7 @@ public interface IPropertyService {
 
     List<City> getCities();
 
-    List<Property> getProperties(Long userId);
-    List<Property> getPropertiesPendingOrAcceptedForUser(Long userId);
+    List<Property> getPropertiesPendingOrAcceptedForUser(String username);
     Page<Property> getPropertiesByStatus(PropertyStatus status, Pageable page);
 
     Property acceptProperty(Long id);

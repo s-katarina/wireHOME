@@ -72,17 +72,17 @@ public class PropertyService implements IPropertyService {
     }
 
     @Override
-    public List<Property> getProperties(Long userId) {
-        return propertyRepository.findAll();
-    }
+    public List<Property> getPropertiesPendingOrAcceptedForUser(String username) {
 
-    @Override
-    public List<Property> getPropertiesPendingOrAcceptedForUser(Long userId) {
-        ArrayList<PropertyStatus> statuses = new ArrayList<>();
+        Optional<AppUser> user = appUserService.findByEmail(username);
+        if (!user.isPresent()) {
+            throw new EntityNotFoundException(AppUser.class);
+        }
+
+        List<PropertyStatus> statuses = new ArrayList<>();
         statuses.add(PropertyStatus.PENDING);
         statuses.add(PropertyStatus.ACCEPTED);
-//        return propertyRepository.findByPropertyOwnerIdAndPropertyStatusIn(userId, statuses);
-        return propertyRepository.findAll();
+        return propertyRepository.findByPropertyOwner_IdAndPropertyStatusIn(user.get().getId(), statuses);
     }
 
     @Override
@@ -141,9 +141,9 @@ public class PropertyService implements IPropertyService {
             String content = String.format("We regret to inform you that after careful consideration, " +
                             "your registration request for %s property at %s, %s " +
                             "has been declined for the following reason:\n%s" +
-                            "We apologize for the inconvenience and hope you consider trying again in the future after" +
-                            "revising your request." +
-                            "\n Best regards,\nAdmin",
+                            "\nWe apologize for the inconvenience and hope you consider trying again in the future " +
+                            "after revising your request." +
+                            "\nBest regards,\nAdmin",
                     p.getPropertyType().toString().toLowerCase(),
                     p.getAddress(),
                     p.getCity().getName(),

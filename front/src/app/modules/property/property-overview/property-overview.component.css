@@ -12,7 +12,7 @@
     border-radius: 20px !important;
     box-shadow: 0 4px 8px rgba(0, 0.1, 0.1, 0.1) !important;
     position: relative !important;
-    overflow: hidden !important; /* Ensure the image doesn't overflow the card */
+    overflow: hidden !important;
 }
 
 .grid { 
@@ -49,7 +49,7 @@ mat-card-actions {
 }
 
 ::ng-deep .mat-card-header-text {  
-    margin: 0px 0px 0px 0px !important;
+    margin: 0 !important;
 }
 
 
@@ -87,11 +87,11 @@ h3 {
     margin-top: 10px;
 } 
 
-p {
+::ng-deep mat-body p {
     font-family: 'Heebo-medium', Roboto, "Helvetica Neue", sans-serif !important; 
 } 
 
-::ng-deep mat-icon{
+::ng-deep mat-icon.type-area{
     margin-left: 2vh;
     margin-right: 0.7em;
     font-size: 1.5em !important;
