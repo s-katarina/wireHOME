@@ -11,6 +11,6 @@ import java.util.List;
 public interface PropertyRepository extends JpaRepository<Property, Long> {
 
     Page<Property> findByPropertyStatus(PropertyStatus status, Pageable pageable);
-//    List<Property> findByPropertyOwner_IdAndPropertyStatusIn(Long id, List<PropertyStatus> statuses);
+    List<Property> findByPropertyOwner_IdAndPropertyStatusIn(Long id, List<PropertyStatus> statuses);
 
 }

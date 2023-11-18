@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { PropertyServiceService } from '../service/property-service.service';
-import { PropertyResponseDTO } from 'src/app/model/model';
+import { PropertyDTO } from 'src/app/model/model';
 import { ImageServiceService } from '../../service/image-service.service';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../../auth/service/auth.service';
 
 @Component({
   selector: 'app-property-overview',
@@ -12,14 +13,14 @@ import { RouterLink } from '@angular/router';
 export class PropertyOverviewComponent implements OnInit {
 
   constructor(private readonly propertyService: PropertyServiceService,
-              public readonly imageService: ImageServiceService
+              public readonly imageService: ImageServiceService,
+              public readonly authService: AuthService
     ) 
     {
     }
     
-  properties : PropertyResponseDTO[] = []
+  properties : PropertyDTO[] = []
   hoveredPropertyId: string | null = null;
-
 
   ngOnInit(): void {
     this.propertyService.getProperties().subscribe((res: any) => {

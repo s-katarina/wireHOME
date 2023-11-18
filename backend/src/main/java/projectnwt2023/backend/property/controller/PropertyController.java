@@ -6,6 +6,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import projectnwt2023.backend.helper.ApiResponse;
@@ -38,9 +41,11 @@ public class PropertyController {
     }
 
     @PostMapping(consumes = "application/json", produces = "application/json")
+    @PreAuthorize(value = "hasRole('AUTH_USER')")
     ResponseEntity<ApiResponse<PropertyResponseDTO>> addProperty(@Valid @RequestBody PropertyRequestDTO dto){
 
-        Property p = propertyService.add(dto);
+        String username = this.extractUsername();
+        Property p = propertyService.add(dto, username);
 
         ApiResponse<PropertyResponseDTO> response = new ApiResponse<>(200, new PropertyResponseDTO((p)));
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -59,22 +64,10 @@ public class PropertyController {
     }
 
     @GetMapping(value = "", produces = "application/json")
-    ResponseEntity<List<PropertyResponseDTO>> getProperties(){
-
-        List<Property> properties = propertyService.getProperties(0L);
-        List<PropertyResponseDTO> dtos = new ArrayList<>();
-        for (Property p : properties) {
-            dtos.add(new PropertyResponseDTO(p));
-        }
-
-        return new ResponseEntity<>(dtos, HttpStatus.OK);
-    }
-
-    @GetMapping(value = "/all", produces = "application/json")
+    @PreAuthorize(value = "hasRole('AUTH_USER')")
     ResponseEntity<List<PropertyResponseDTO>> getPropertiesForUser(){
 
-        Long userId = 1L;
-        List<Property> properties = propertyService.getPropertiesPendingOrAcceptedForUser(userId);
+        List<Property> properties = propertyService.getPropertiesPendingOrAcceptedForUser(this.extractUsername());
         List<PropertyResponseDTO> dtos = new ArrayList<>();
         for (Property p : properties) {
             dtos.add(new PropertyResponseDTO(p));
@@ -83,35 +76,39 @@ public class PropertyController {
         return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
-
     @GetMapping(value = "/pending", produces = "application/json")
-    ResponseEntity<List<PendingPropertyResponseDTO>> getPendingProperties(){
+    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
+    ResponseEntity<List<PropertyResponseDTO>> getPendingProperties(){
 
         Page<Property> properties = propertyService.getPropertiesByStatus(PropertyStatus.PENDING, Pageable.unpaged());
-        List<PendingPropertyResponseDTO> dtos = new ArrayList<>();
+        List<PropertyResponseDTO> dtos = new ArrayList<>();
         for (Property p : properties.getContent()) {
-            dtos.add(new PendingPropertyResponseDTO(p));
+            dtos.add(new PropertyResponseDTO(p));
         }
 
         return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
-    @PutMapping(value = "/accept-pending/{propertyId}", produces = "application/json")
+
+    @PutMapping(value = "/pending/accept/{propertyId}", produces = "application/json")
+    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     ResponseEntity<PropertyResponseDTO> acceptPending(@PathVariable Integer propertyId){
 
-        return new ResponseEntity<>(new PropertyResponseDTO(propertyService.changePropertyStatus(propertyId.longValue(), PropertyStatus.ACCEPTED)), HttpStatus.OK);
+        return new ResponseEntity<>(new PropertyResponseDTO(propertyService.acceptProperty(propertyId.longValue())), HttpStatus.OK);
     }
 
-    @PutMapping(value = "/reject-pending/{propertyId}", produces = "application/json")
+    @PutMapping(value = "/pending/reject/{propertyId}", produces = "application/json")
+    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     ResponseEntity<PropertyResponseDTO> rejectPending(@PathVariable Integer propertyId,
                                                       @RequestBody PropertyRejectionRequestDTO rejectionRequest){
 
         return new ResponseEntity<>(new PropertyResponseDTO(propertyService.rejectProperty(propertyId.longValue(), rejectionRequest.getRejectionReason())), HttpStatus.OK);
     }
 
-    @PutMapping(value = "/mail")
-    ResponseEntity<ApiResponse<String>> testMail(){
-
-        return new ResponseEntity<>(new ApiResponse<String>(200, propertyService.sendMail()), HttpStatus.OK);
+    private String extractUsername() {
+        // Extract user who sent request
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        return userDetails.getUsername();
     }
 
 }

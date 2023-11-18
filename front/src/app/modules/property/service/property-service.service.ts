@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { CityDTO, PendingPropertyRequestDTO, PropertyRequestDTO, PropertyResponseDTO } from 'src/app/model/model';
+import { CityDTO, PropertyDTO, PropertyRequestDTO } from 'src/app/model/model';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -35,19 +35,19 @@ export class PropertyServiceService {
     }, options)
   }
 
-  getProperties(): Observable<PropertyResponseDTO[]> {
-    return this.http.get<PropertyResponseDTO[]>(environment.apiHost + 'property')
+  getProperties(): Observable<PropertyDTO[]> {
+    return this.http.get<PropertyDTO[]>(environment.apiHost + 'property')
   }
 
-  getPendingProperties(): Observable<PendingPropertyRequestDTO[]> {
-    return this.http.get<PendingPropertyRequestDTO[]>(environment.apiHost + 'property/pending')
+  getPendingProperties(): Observable<PropertyDTO[]> {
+    return this.http.get<PropertyDTO[]>(environment.apiHost + 'property/pending')
   }
 
   acceptPending(id: string): Observable<any> {
     const options: any = {
       responseType: 'text'
     }
-    return this.http.put<PendingPropertyRequestDTO>(environment.apiHost + `property/accept-pending/${id}`, {}, options)
+    return this.http.put<PropertyDTO>(environment.apiHost + `property/pending/accept/${id}`, {}, options)
   }
 
   rejectPending(id: string, rejectionReason: string): Observable<any> {
@@ -56,7 +56,7 @@ export class PropertyServiceService {
       'Content-Type': 'application/json'
     });
     const requestBody = {rejectionReason: rejectionReason}
-    return this.http.put<PendingPropertyRequestDTO>(environment.apiHost + `property/reject-pending/${id}`, requestBody, {headers})
+    return this.http.put<PropertyDTO>(environment.apiHost + `property/pending/reject/${id}`, requestBody, {headers})
   }
 
 }

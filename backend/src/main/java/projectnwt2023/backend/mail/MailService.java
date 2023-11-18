@@ -19,11 +19,10 @@ import java.io.IOException;
 public class MailService {
     private static final Logger logger = LoggerFactory.getLogger(MailService.class);
 
-    public String sendTextEmail() throws IOException {
-        Email from = new Email("");
-        String subject = "The subject";
-        Email to = new Email("");
-        Content content = new Content("text/plain", "This is a test email");
+    public String sendTextEmail(String emailTo, String subject, String textContent) throws IOException {
+        Email from = new Email(Constants.fromEmail);
+        Email to = new Email(emailTo);
+        Content content = new Content("text/plain", textContent);
         Mail mail = new Mail(from, subject, to, content);
 
         SendGrid sg = new SendGrid(Constants.sendgridKey);
@@ -40,6 +39,8 @@ public class MailService {
             return null;
         }
     }
+
+
 
     public String sendTextEmailMilos(String toEmail, String sub, String text) throws IOException {
         Email from = new Email(Constants.fromEmail);
