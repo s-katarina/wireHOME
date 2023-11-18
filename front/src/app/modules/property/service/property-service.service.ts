@@ -40,7 +40,7 @@ export class PropertyServiceService {
     const options: any = {
       responseType: 'text'
     }
-    return this.http.put<PendingPropertyRequestDTO>(environment.apiHost + `property/accept-pending/${id}`, {}, options)
+    return this.http.put<PendingPropertyRequestDTO>(environment.apiHost + `property/pending/accept/${id}`, {}, options)
   }
 
   rejectPending(id: string, rejectionReason: string): Observable<any> {
@@ -49,7 +49,7 @@ export class PropertyServiceService {
       'Content-Type': 'application/json'
     });
     const requestBody = {rejectionReason: rejectionReason}
-    return this.http.put<PendingPropertyRequestDTO>(environment.apiHost + `property/reject-pending/${id}`, requestBody, {headers})
+    return this.http.put<PendingPropertyRequestDTO>(environment.apiHost + `property/pending/reject/${id}`, requestBody, {headers})
   }
 
 }

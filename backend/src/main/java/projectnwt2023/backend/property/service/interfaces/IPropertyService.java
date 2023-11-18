@@ -13,7 +13,7 @@ public interface IPropertyService {
 
     Property getById(Long id);
 
-    Property add(PropertyRequestDTO property);
+    Property add(PropertyRequestDTO property, String username);
 
     List<City> getCities();
 
@@ -21,10 +21,11 @@ public interface IPropertyService {
     List<Property> getPropertiesPendingOrAcceptedForUser(Long userId);
     Page<Property> getPropertiesByStatus(PropertyStatus status, Pageable page);
 
-    Property changePropertyStatus(Long id, PropertyStatus status);
+    Property acceptProperty(Long id);
 
     Property rejectProperty(Long id, String reason);
 
-    String sendMail();
+    String sendMailApproved(Property property);
+    String sendMailRejected(Property property, String reason);
 
 }

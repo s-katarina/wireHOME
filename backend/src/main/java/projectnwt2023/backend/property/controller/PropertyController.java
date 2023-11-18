@@ -6,6 +6,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import projectnwt2023.backend.helper.ApiResponse;
@@ -38,9 +41,15 @@ public class PropertyController {
     }
 
     @PostMapping(consumes = "application/json", produces = "application/json")
+    @PreAuthorize(value = "hasRole('AUTH_USER')")
     ResponseEntity<ApiResponse<PropertyResponseDTO>> addProperty(@Valid @RequestBody PropertyRequestDTO dto){
 
-        Property p = propertyService.add(dto);
+        // Extract user who sent request
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        String username = userDetails.getUsername();
+        System.out.println(username);
+        Property p = propertyService.add(dto, username);
 
         ApiResponse<PropertyResponseDTO> response = new ApiResponse<>(200, new PropertyResponseDTO((p)));
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -85,6 +94,7 @@ public class PropertyController {
 
 
     @GetMapping(value = "/pending", produces = "application/json")
+//    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     ResponseEntity<List<PendingPropertyResponseDTO>> getPendingProperties(){
 
         Page<Property> properties = propertyService.getPropertiesByStatus(PropertyStatus.PENDING, Pageable.unpaged());
@@ -95,23 +105,20 @@ public class PropertyController {
 
         return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
-    @PutMapping(value = "/accept-pending/{propertyId}", produces = "application/json")
+
+    @PutMapping(value = "/pending/accept/{propertyId}", produces = "application/json")
+//    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     ResponseEntity<PropertyResponseDTO> acceptPending(@PathVariable Integer propertyId){
 
-        return new ResponseEntity<>(new PropertyResponseDTO(propertyService.changePropertyStatus(propertyId.longValue(), PropertyStatus.ACCEPTED)), HttpStatus.OK);
+        return new ResponseEntity<>(new PropertyResponseDTO(propertyService.acceptProperty(propertyId.longValue())), HttpStatus.OK);
     }
 
-    @PutMapping(value = "/reject-pending/{propertyId}", produces = "application/json")
+    @PutMapping(value = "/pending/reject/{propertyId}", produces = "application/json")
+//    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     ResponseEntity<PropertyResponseDTO> rejectPending(@PathVariable Integer propertyId,
                                                       @RequestBody PropertyRejectionRequestDTO rejectionRequest){
 
         return new ResponseEntity<>(new PropertyResponseDTO(propertyService.rejectProperty(propertyId.longValue(), rejectionRequest.getRejectionReason())), HttpStatus.OK);
-    }
-
-    @PutMapping(value = "/mail")
-    ResponseEntity<ApiResponse<String>> testMail(){
-
-        return new ResponseEntity<>(new ApiResponse<String>(200, propertyService.sendMail()), HttpStatus.OK);
     }
 
 }
