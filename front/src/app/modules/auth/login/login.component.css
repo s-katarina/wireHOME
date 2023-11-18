@@ -3,8 +3,24 @@
 }
 
 h3{
-  margin-top: 40px;
+  margin-top: 60px;
+  font-family: 'Sora-semibold', Roboto, "Helvetica Neue", sans-serif !important; 
+  font-size: 1.5em;
 }
+
+h2 {
+  margin-top: 10vh;
+  font-size: 3em;
+  margin-bottom: 5vh;
+  line-height: 1.3em;
+  font-family: 'Sora-semibold', Roboto, "Helvetica Neue", sans-serif !important; 
+}
+
+p {
+  font-size: 1.4em;
+  margin-bottom: 0vh !important;
+  letter-spacing: 0.3em;
+  }
 
 label{
   display: block;
@@ -29,14 +45,22 @@ button {
   cursor: pointer;
 }
 
-/* Add a background color to the submit button on mouse-over */
 button:hover {
-  background-color: #6A7A9E;
+  background-color: #A3C0C6;
 }
 
 a {
   color: #070707;
 }
+
+::ng-deep .mat-form-field.mat-focused .mat-form-field-label {
+  color: #6A7A9E !important ;
+}
+
+::ng-deep .mat-form-field.mat-focused .mat-form-field-outline {
+  color: #6A7A9E !important;
+}
+
 
 @media (min-width: 850px) {
   label{
