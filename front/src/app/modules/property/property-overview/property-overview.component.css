@@ -112,6 +112,7 @@ h3 {
     opacity: 1;
     visibility: visible !important;
     border-radius: 20px !important;
+    cursor: pointer;
 }
 
 .property-card:hover ::ng-deep mat-card-actions button {

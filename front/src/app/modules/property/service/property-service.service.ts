@@ -1,6 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { CityDTO, PropertyRequestDTO, PropertyDTO } from 'src/app/model/model';
 import { environment } from 'src/environments/environment';
 
@@ -8,6 +8,13 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class PropertyServiceService {
+
+  private propertySource = new BehaviorSubject<PropertyDTO | undefined>(undefined);
+  currentProperty = this.propertySource.asObservable();
+
+  setProperty(property: PropertyDTO | undefined) {
+    this.propertySource.next(property);
+  }
 
   constructor(private readonly http: HttpClient) { }
 

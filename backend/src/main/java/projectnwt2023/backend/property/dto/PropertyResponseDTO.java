@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import projectnwt2023.backend.appUser.dto.AppUserDTO;
+import projectnwt2023.backend.helper.Constants;
 import projectnwt2023.backend.property.Property;
 
 @Getter
@@ -37,6 +38,7 @@ public class PropertyResponseDTO {
         this.address = property.getAddress();
         this.city = new CityDTO(property.getCity());
         this.propertyOwner = new AppUserDTO((property.getPropertyOwner()));
+        this.imagePath = Constants.imgPathForFrontend + property.getImagePath();
         this.area = property.getArea();
         this.floorCount = property.getFloorCount();
         this.propertyStatus = property.getPropertyStatus().toString();

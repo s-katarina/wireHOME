@@ -71,6 +71,10 @@ div.col-center > * {
   margin: 0vh!important;
 }
 
+.welcome {
+  padding-top: 25%;
+}
+
 
 .instruction > *{
   text-align: center;

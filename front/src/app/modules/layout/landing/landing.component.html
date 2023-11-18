@@ -1,6 +1,6 @@
 <div class="page, page-bottom"> 
     <div class="col-left" >
-      <div class="instruction"> 
+      <div class="instruction welcome"> 
         <h2>Welcome to wireHOME</h2>
         <p>Unlock the future of convenience</p>
         
@@ -8,7 +8,6 @@
     </div>
     <div class="col-right" >
       <img src="assets/images/r-architecture-2gDwlIim3Uw-unsplash.jpg"/>
-      <!-- <img [src]="imagePath" alt="nemamamam"> -->
     </div>
 
     <div class="col-center subheader">
@@ -40,9 +39,14 @@
       </div>
       <div class="col-right col-right-padding" >
         <h2>Ready to Transform Your Home?</h2>
-        <p class="regular"> Register now to embark on your smart home journey. </p>
-        <p class="regular">Join our community of tech enthusiasts and experience the future of living today! Don’t miss out on the ultimate smart home experience.</p>
-        <button mat-button  mat-raised-button>REGISTER</button>
-  
+        <div *ngIf="authService.getEmail() == null">
+          <p class="regular"> Register now to embark on your smart home journey. </p>
+          <p class="regular">Join our community of tech enthusiasts and experience the future of living today! Don’t miss out on the ultimate smart home experience.</p>
+          <button mat-button  mat-raised-button>REGISTER</button>
+        </div>
+        <div *ngIf="authService.getEmail() != null">
+          <button mat-button mat-raised-button [routerLink]="['/properties']">Make property</button>
+        </div>
+         
     </div>
 </div>

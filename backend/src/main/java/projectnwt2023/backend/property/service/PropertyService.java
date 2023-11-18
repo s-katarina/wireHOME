@@ -8,6 +8,7 @@ import projectnwt2023.backend.appUser.AppUser;
 import projectnwt2023.backend.appUser.service.interfaces.IAppUserService;
 import projectnwt2023.backend.exceptions.EntityNotFoundException;
 import projectnwt2023.backend.exceptions.UserForbiddenOperationException;
+import projectnwt2023.backend.helper.Constants;
 import projectnwt2023.backend.mail.MailService;
 import projectnwt2023.backend.property.City;
 import projectnwt2023.backend.property.Property;
@@ -63,7 +64,9 @@ public class PropertyService implements IPropertyService {
 
         Property p = new Property(PropertyType.valueOf(dto.getPropertyType()), dto.getAddress(), city.get(),
                 user.get(), dto.getArea(), dto.getFloorCount(), PropertyStatus.PENDING);
-        return propertyRepository.save(p);
+        Property saved = propertyRepository.save(p);
+        saved.setImagePath((String.format("property-%s.jpg", p.getId())));
+        return saved;
     }
 
     @Override

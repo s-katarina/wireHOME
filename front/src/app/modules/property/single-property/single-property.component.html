@@ -1,11 +1,11 @@
 <div class="page">
     <div class="content">
-        <img src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?q=80&w=1171&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="Background Image">
+        <img [src]="property!.imagePath" alt="Background Image">
         <div class="scroll-container overlay">
             <button mat-button>ADD DEVICE <mat-icon>open_in_new</mat-icon></button>
             <div class="title-container">
-                <div class="title">HOME</div>
-                <h3>High st. 178a New York, USA</h3>
+                <div class="title">{{property!.propertyType}}</div>
+                <h3>{{property!.address}} {{property!.city.name}}, {{property!.city.country.name}}</h3>
             </div>
             <div class="sections">
                 <div class="section">

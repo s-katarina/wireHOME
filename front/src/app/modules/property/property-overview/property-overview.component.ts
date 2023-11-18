@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { PropertyServiceService } from '../service/property-service.service';
 import { PropertyDTO } from 'src/app/model/model';
 import { ImageServiceService } from '../../service/image-service.service';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../auth/service/auth.service';
 
 @Component({
@@ -14,7 +14,9 @@ export class PropertyOverviewComponent implements OnInit {
 
   constructor(private readonly propertyService: PropertyServiceService,
               public readonly imageService: ImageServiceService,
-              public readonly authService: AuthService
+              public readonly authService: AuthService,
+              private router: Router,
+              private route: ActivatedRoute
     ) 
     {
     }
@@ -26,6 +28,7 @@ export class PropertyOverviewComponent implements OnInit {
     this.propertyService.getProperties().subscribe((res: any) => {
       this.properties = res
       this.loadAllImages()
+      console.log(res)
     })
   }
 
@@ -73,5 +76,12 @@ export class PropertyOverviewComponent implements OnInit {
     return this.hoveredPropertyId === propertyId;
   }
 
+  navigateToSingleProperty() {
+    const p = this.properties.find(property => property.id === this.hoveredPropertyId);
+    if (p?.propertyStatus != 'PENDING') {
+      this.propertyService.setProperty(p);
+      this.router.navigate(['/property']);
+    }
+  }
 
 }

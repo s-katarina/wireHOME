@@ -9,7 +9,7 @@ import { LoginDTO, TokenResponseDTO } from 'src/app/model/model';
 })
 export class LandingComponent implements OnInit {
 
-  constructor(private authService: AuthService) { }
+  constructor(public readonly authService: AuthService) { }
 
   // imagePath: string = ''
 
