@@ -20,6 +20,14 @@ export class ImageServiceService {
     return this.http.post<any>(`${environment.apiHost}images/property/upload`, formData);
   }
 
+  uploadDeviceImage(file: File, name:string): Observable<any> {
+    const formData: FormData = new FormData();
+    formData.append('file', file);
+    formData.append('customFileName', name);
+    console.log(name)
+    return this.http.post<any>(`${environment.apiHost}images/device/upload`, formData);
+  }
+
   getPropertyImage(propertyId: string): Observable<Blob> {
     // return this.http.get(`${environment.imgHost}images/property-${propertyId}.jpg`, { responseType: 'blob' });
     return this.http.get(`http://localhost/images/property-1.jpg`, { responseType: 'blob' });

@@ -28,7 +28,6 @@ export class PropertyOverviewComponent implements OnInit {
     this.propertyService.getProperties().subscribe((res: any) => {
       this.properties = res
       this.loadAllImages()
-      console.log(res)
     })
   }
 
@@ -82,6 +81,10 @@ export class PropertyOverviewComponent implements OnInit {
       this.propertyService.setProperty(p);
       this.router.navigate(['/property']);
     }
+  }
+
+  selectProperty(propertyId: string) {
+    this.propertyService.setSelectedPropertyId(propertyId);
   }
 
 }

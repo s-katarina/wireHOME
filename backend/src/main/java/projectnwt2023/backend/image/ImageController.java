@@ -30,4 +30,15 @@ public class ImageController {
             return new ResponseEntity<>(new ApiResponse<>(400, new MessageDTO("Image upload fail.")), HttpStatus.BAD_REQUEST);
         }
     }
+
+    @PostMapping(value="/device/upload", consumes = { "multipart/form-data" })
+    public ResponseEntity<ApiResponse<MessageDTO>> uploadDeviceImage(@RequestParam("file") MultipartFile file,
+                                                                       @RequestParam("customFileName") String customFileName) {
+        try {
+            imageService.saveDeviceImage(file, customFileName);
+            return new ResponseEntity<>(new ApiResponse<>(200, new MessageDTO("Image upload success.")), HttpStatus.OK);
+        } catch (IOException e) {
+            return new ResponseEntity<>(new ApiResponse<>(400, new MessageDTO("Image upload fail.")), HttpStatus.BAD_REQUEST);
+        }
+    }
 }

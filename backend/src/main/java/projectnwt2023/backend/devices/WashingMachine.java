@@ -16,7 +16,7 @@ import java.util.Collection;
 @Inheritance(strategy = InheritanceType.JOINED)
 public class WashingMachine extends Device{
 
-    private ArrayList<RegimeType> availableRegimes;
+    private ArrayList<RegimeWashingMachine> availableRegimes;
 
     @OneToMany(fetch = FetchType.LAZY,
             mappedBy = "device")
@@ -24,7 +24,11 @@ public class WashingMachine extends Device{
 
     public WashingMachine(DeviceRequestDTO deviceRequestDTO) {
         super(deviceRequestDTO);
-        this.availableRegimes = new ArrayList<>();
+        ArrayList<RegimeWashingMachine> types = new ArrayList<>();
+        for (String type:deviceRequestDTO.getRegimes()) {
+            types.add(RegimeWashingMachine.valueOf(type));
+        }
+        this.availableRegimes = types;
         this.programedRegimes = new ArrayList<>();
         this.setTopic("washingMachine");
     }

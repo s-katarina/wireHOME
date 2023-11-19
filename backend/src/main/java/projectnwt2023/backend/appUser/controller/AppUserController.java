@@ -68,7 +68,7 @@ public class AppUserController {
 
         AppUser saved = appUserService.saveAppUser(appUser);
 
-        mailService.sendTextEmailMilos(saved.getEmail(), "Activate account", "Follow link to activate account: " + "http://localhost:8080/api/user/activate/" + token);
+        mailService.sendTextEmailMilos(saved.getEmail(), "Activate account", "Follow link to activate account: " + "http://localhost:8081/api/user/activate/" + token);
 
         return new ResponseEntity<>(new AppUserDTO(saved), HttpStatus.OK);
     }

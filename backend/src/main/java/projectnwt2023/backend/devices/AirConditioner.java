@@ -16,7 +16,7 @@ import java.util.Collection;
 @Inheritance(strategy = InheritanceType.JOINED)
 public class AirConditioner extends Device{
 
-    private ArrayList<RegimeType> availableRegimes;
+    private ArrayList<RegimeAirConditioner> availableRegimes;
 
     @OneToMany(fetch = FetchType.LAZY,
     mappedBy = "device")
@@ -30,7 +30,11 @@ public class AirConditioner extends Device{
 
     public AirConditioner(DeviceRequestDTO deviceRequestDTO) {
         super(deviceRequestDTO);
-        this.availableRegimes = new ArrayList<>();
+        ArrayList<RegimeAirConditioner> types = new ArrayList<>();
+        for (String type:deviceRequestDTO.getRegimes()) {
+            types.add(RegimeAirConditioner.valueOf(type));
+        }
+        this.availableRegimes = types;
         this.programedRegimes = new ArrayList<>();
         this.temp = deviceRequestDTO.getMinTemp();
         this.maxTemp = deviceRequestDTO.getMaxTemp();

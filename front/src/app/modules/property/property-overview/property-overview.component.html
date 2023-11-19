@@ -31,7 +31,10 @@
                 <!-- <app-property-img [propertyId]="property.id" class="hover-image" *ngIf="isPropertyHovered(property.id)"></app-property-img> -->
 
                 <mat-card-actions align="end">
-                    <button *ngIf="property.propertyStatus!='PENDING'" mat-button [routerLink]="['/create-device']">ADD DEVICE</button>
+                    <button  mat-button 
+                    *ngIf="property.propertyStatus!='PENDING'"
+                    (click)="selectProperty(property.id)" 
+                    [routerLink]="['/create-device']">ADD DEVICE</button>
                 </mat-card-actions>
             </mat-card>
         </div>
