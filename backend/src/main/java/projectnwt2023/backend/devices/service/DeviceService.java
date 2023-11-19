@@ -17,7 +17,9 @@ public class DeviceService implements IDeviceService {
 
     @Override
     public Device save(Device device) {
-        return deviceRepository.save(device);
+        Device saved = deviceRepository.save(device);
+        saved.setImagePath((String.format("device-%s.jpg", saved.getId())));
+        return deviceRepository.save(saved);
     }
 
     @Override

@@ -154,6 +154,10 @@ export class CreateDeviceComponent implements OnInit {
     if(!device.usesElectricity){
       device.consumptionAmount = 0
     }
+    if(this.img===null){
+      this.fireSwalToast(false, "Oops. Image couldn't be saved.")
+      return
+    }
 
     if(this.selectedType==="ambientSensore"){
       this.deviceService.createAmbientalSensor(device).subscribe((res: any) => {
