@@ -28,24 +28,6 @@ export class ImageServiceService {
     return this.http.post<any>(`${environment.apiHost}images/device/upload`, formData);
   }
 
-  getPropertyImage(propertyId: string): Observable<Blob> {
-    // return this.http.get(`${environment.imgHost}images/property-${propertyId}.jpg`, { responseType: 'blob' });
-    return this.http.get(`http://localhost/images/property-1.jpg`, { responseType: 'blob' });
-  }
-
-  isImageLoaded(propertyId: string): boolean {
-    return this.imageCache.has(propertyId);
-  }
-
-  getCachedImage(propertyId: string): any {
-    return this.imageCache.get(propertyId);
-  }
-
-  cacheImage(propertyId: string, image: any): void {
-    this.imageCache.set(propertyId, image);
-  }
-
-
 }
 
 

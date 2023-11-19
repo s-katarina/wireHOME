@@ -14,6 +14,7 @@ import java.util.Collection;
 @Entity
 @Table
 @Inheritance(strategy = InheritanceType.JOINED)
+@NoArgsConstructor
 public class Lamp extends Device{
     //i ovo se automatski pali gasi mozda i tu ide lista rezima
 //    private ArrayList<RegimeType> availableRegimes;

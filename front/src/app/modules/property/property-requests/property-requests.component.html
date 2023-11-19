@@ -14,7 +14,7 @@
                         <mat-card-subtitle>City: {{request.city.name}}, {{request.city.country.name}}</mat-card-subtitle>
                     </div>
                     <div class="image-container">
-                        <img [src]="'/images/property-' + request.id + '.jpg'"/>
+                        <img [src]="request.imagePath"/>
                     </div>
                 </mat-card-header>
                 <mat-divider></mat-divider>

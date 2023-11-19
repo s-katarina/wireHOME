@@ -66,6 +66,7 @@ public class PropertyService implements IPropertyService {
                 user.get(), dto.getArea(), dto.getFloorCount(), PropertyStatus.PENDING);
         Property saved = propertyRepository.save(p);
         saved.setImagePath((String.format("property-%s.jpg", p.getId())));
+        saved = propertyRepository.save(p);
         return saved;
     }
 
