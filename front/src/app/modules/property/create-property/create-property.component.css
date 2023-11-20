@@ -7,6 +7,13 @@
     padding-top: 10vh;
 }
 
+h1 {
+    font-size: 2.5em;
+    line-height: 1.3em;
+    font-family: 'Sora-semibold', Roboto, "Helvetica Neue", sans-serif !important; 
+    cursor: default;
+} 
+
 ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
     color: rgb(57, 57, 57) !important;
 }
@@ -165,7 +172,6 @@ button.upload-image {
 
 .uploaded-img {
     width: 300px;
-    margin-bottom: 30px;
 }
 
 .image-container {
