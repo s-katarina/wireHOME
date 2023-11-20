@@ -11,7 +11,7 @@ public class EntityNotFoundException extends RuntimeException {
     public EntityNotFoundException(Class<?> c) {
         super();
         this.message = c.getSimpleName().concat(" not found");
-        this.httpStatus = HttpStatus.NOT_FOUND;
+        this.httpStatus = HttpStatus.BAD_REQUEST;
     }
 
 }

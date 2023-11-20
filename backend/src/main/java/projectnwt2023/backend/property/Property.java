@@ -1,6 +1,7 @@
 package projectnwt2023.backend.property;
 
 import lombok.*;
+import projectnwt2023.backend.appUser.AppUser;
 
 import javax.persistence.*;
 
@@ -19,13 +20,15 @@ public class Property {
 
     private PropertyType propertyType;
 
-    private String Address;
+    private String address;
 
     @ManyToOne
     @JoinColumn(name = "city_id")
     private City city;
 
-//    private Account propertyOwner;
+    @ManyToOne
+    @JoinColumn(name = "property_owner_id")
+    private AppUser propertyOwner;
 
     private String imagePath;
 
@@ -35,11 +38,12 @@ public class Property {
 
     private PropertyStatus propertyStatus;
 
-    public Property(PropertyType propertyType, String address, City city, double area, int floorCount,
+    public Property(PropertyType propertyType, String address, City city, AppUser propertyOwner,double area, int floorCount,
                     PropertyStatus propertyStatus) {
         this.propertyType = propertyType;
-        this.Address = address;
+        this.address = address;
         this.city = city;
+        this.propertyOwner = propertyOwner;
         this.area = area;
         this.floorCount = floorCount;
         this.propertyStatus = propertyStatus;

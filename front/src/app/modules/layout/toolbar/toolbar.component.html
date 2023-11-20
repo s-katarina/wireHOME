@@ -1,0 +1,37 @@
+<mat-toolbar class="rounded-toolbar">
+    <a class="bigger-text logo"
+    [routerLink]="'/'">
+      wireHOME
+    </a>
+  
+    <span class="example-spacer"></span>
+
+    <!-- <button mat-button class="white-text" routerLink="">
+      <mat-icon>account_circle</mat-icon>
+      Account
+    </button> -->
+    
+    <button mat-button [routerLink]="['/login']" *ngIf="this.user.email == null">
+      Log in
+      <!-- <mat-icon>favorite</mat-icon> -->
+    </button>
+    <button mat-button [routerLink]="['/register']" *ngIf="this.user.email == null">
+      Register
+      <!-- <mat-icon>favorite</mat-icon> -->
+    </button>
+    <button mat-button [routerLink]="['/register-admin']" *ngIf="this.user.email != null && this.user.role == 'SUPER_ADMIN'">
+      Register admin
+      <!-- <mat-icon>favorite</mat-icon> -->
+    </button>
+    <button mat-button [routerLink]="['/properties']" *ngIf="this.user.email != null  && this.user.role == 'AUTH_USER'">
+      Properties
+    </button>
+    <button mat-button [routerLink]="['/property-requests']" *ngIf="this.user.email != null && (this.user.role == 'SUPER_ADMIN' || this.user.role == 'ADMIN')">
+      Property requests
+    </button>
+    <button mat-button (click)="logout()" *ngIf="this.user.email != null">
+      Log out
+      <!-- <mat-icon>favorite</mat-icon> -->
+    </button>
+  </mat-toolbar>
+  

@@ -1,0 +1,105 @@
+.main_container{
+    padding-bottom: 7vh;
+    margin: 1%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+p {
+    text-align: center;
+    font-size: 1.5em;
+    padding-bottom: 2vh;
+}
+
+.device_type{
+    padding-left: 2vh;
+    padding-top: 2vh;
+    margin: 3vh;
+    border-radius: 20px;
+    background-color: #e1dede8f;
+    width: 27%;
+    justify-content: center;
+}
+
+h1{
+    font-size: xx-large;
+    text-align: center;
+    padding-bottom: 2vh;
+    padding-top: 2vh;
+}
+
+mat-radio-button{
+    padding-bottom: 2vh;
+    width: 100%;
+}
+
+.half-flex{
+    text-align: center;
+    width: 60%;
+    justify-content: center;
+}
+
+.checkbox {
+    width: 20%;
+}
+
+.flex-container {
+    display: flex;
+    flex-wrap: wrap; /* Allow items to wrap to the next line */
+    justify-content: center;
+    padding-bottom: 6vh;
+  }
+  
+.item {
+    width: 200px; /* Set the fixed width for each item */
+    height: 30px; /* Set the height if needed */
+    margin: 10px; /* Add margin between items if needed */
+    /* border: 1px solid #ddd; Add border for better visibility */
+  }
+
+  button.upload-image {
+    font-family: 'Sora-semibold';
+    width: 300px;
+    /* width: 40%; */
+    /* margin-right: 20%; */
+    height: 4em;
+    font-size: 1.1em;
+    /* margin: 30px; */
+    /* padding: 20px; */
+}
+
+.tooggle{
+    /* height: 5em; */
+    font-size: 1.1em;
+    width: max-content;
+}
+
+.reg-btn {
+    width: 50%;
+    background-color: #070707;
+    color: white;
+    padding: 8px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  /* Add a background color to the submit button on mouse-over */
+  .reg-btn:hover {
+    background-color: #6A7A9E;
+  }
+
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+    color: rgb(57, 57, 57) !important;
+}
+
+/* mat-label focused style */
+::ng-deep .mat-form-field.mat-focused .mat-form-field-label {
+    color: black !important ;
+}
+
+
+
+  

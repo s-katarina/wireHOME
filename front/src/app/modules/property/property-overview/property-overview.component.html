@@ -1,0 +1,42 @@
+<div class="page">
+    <h2>Properties page</h2>
+    <mat-divider></mat-divider>
+    <h3><a [routerLink]="['/create-property']"><mat-icon>library_add</mat-icon>Add new</a></h3>
+    <div class="grid">
+        <div *ngFor="let property of properties">
+            <mat-card class="property-card"  (mouseenter)="showImage(property.id)" (mouseleave)="hideImage()">
+                <mat-card-header class="locations">
+                    <div class="title">
+                        <mat-card-title>{{property.propertyType}}</mat-card-title>
+                        <mat-card-subtitle *ngIf="property.propertyStatus === 'PENDING'"
+                            matTooltip="Waiting for admin approval"
+                            [matTooltipPosition]='"above"'>PENDING</mat-card-subtitle>
+                    </div>
+                    <div class="locations">
+                        <mat-card-subtitle>Address: {{property.address}}</mat-card-subtitle>
+                        <mat-card-subtitle>City: {{property.city.name}}, {{property.city.country.name}}</mat-card-subtitle>
+                    </div>
+                </mat-card-header>
+                <mat-divider></mat-divider>
+                <mat-card-content>
+                    <h3>Details</h3>
+                    <p *ngIf="property.propertyOwner.email != authService.getEmail()">Owned by: {{property.propertyOwner.name}} {{property.propertyOwner.lastName}}</p>
+                    <p><mat-icon class="type-area">location_city</mat-icon>Floor count: {{property.floorCount}}</p>
+                    <p><mat-icon class="type-area">photo_size_select_small</mat-icon>Area: {{property.area}}</p>
+                </mat-card-content>
+                <!-- <app-property-img [propertyId]="property.id" class="hover-image" *ngIf="isHovered"></app-property-img> -->
+                <img [src]="property.imagePath" class="hover-image" (error)="handleImageError($event)"
+                (click)="navigateToSingleProperty()"/>
+                <!-- <img [src]="getImageSrc(property.id)" class="hover-image" *ngIf="isPropertyHovered(property.id)" (error)="handleImageError($event)"/> -->
+                <!-- <app-property-img [propertyId]="property.id" class="hover-image" *ngIf="isPropertyHovered(property.id)"></app-property-img> -->
+
+                <mat-card-actions align="end">
+                    <button  mat-button 
+                    *ngIf="property.propertyStatus!='PENDING'"
+                    (click)="selectProperty(property.id)" 
+                    [routerLink]="['/create-device']">ADD DEVICE</button>
+                </mat-card-actions>
+            </mat-card>
+        </div>
+    </div>
+</div>

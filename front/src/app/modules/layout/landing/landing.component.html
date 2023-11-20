@@ -1,0 +1,52 @@
+<div class="page, page-bottom"> 
+    <div class="col-left" >
+      <div class="instruction welcome"> 
+        <h2>Welcome to wireHOME</h2>
+        <p>Unlock the future of convenience</p>
+        
+      </div>
+    </div>
+    <div class="col-right" >
+      <img src="assets/images/r-architecture-2gDwlIim3Uw-unsplash.jpg"/>
+    </div>
+
+    <div class="col-center subheader">
+        
+        <p>Imagine a home where everything is connected, automated, and tailored to your lifestyle. From intelligent lighting that adapts to your mood, to climate control that ensures your comfort at all times, our Smart Home Application is designed to make your life easier and more enjoyable.</p>
+
+    </div>
+
+    <div class="img-bg">
+        <div class="col-half">
+                <p class="li-title">Seamless Control</p>
+                <p>Gain effortless control of your home devices from anywhere, at any time.</p>
+                <p class="li-title">Energy efficency</p>
+                <p>Monitor and optimize your energy usage. Save money and contribute to a greener planet by making informed decisions about your energy consumption.</p>
+                <p class="li-title">Enhanced Security</p>
+                <p>Keep your home and loved ones safe with our advanced security features. Receive instant alerts and monitor activities in and around your home, giving you peace of mind.</p>
+                <p class="li-title">Future-Proof Technology</p>
+                <p>Stay ahead with our cutting-edge technology. Experience the latest innovations in smart home automation as we continually update and expand our offerings.</p>
+            </div>
+        <div class="col-half">
+                       </div>
+    </div>
+    
+
+    <div class="col-left" >
+        <div class="instruction"> 
+          <img src="assets/images/shubham-dhage-NPJF9xPoCHk-unsplash.jpg"/>
+        </div>
+      </div>
+      <div class="col-right col-right-padding" >
+        <h2>Ready to Transform Your Home?</h2>
+        <div *ngIf="authService.getEmail() == null">
+          <p class="regular"> Register now to embark on your smart home journey. </p>
+          <p class="regular">Join our community of tech enthusiasts and experience the future of living today! Don’t miss out on the ultimate smart home experience.</p>
+          <button mat-button  mat-raised-button>REGISTER</button>
+        </div>
+        <div *ngIf="authService.getEmail() != null">
+          <button mat-button mat-raised-button [routerLink]="['/properties']">Make property</button>
+        </div>
+         
+    </div>
+</div>

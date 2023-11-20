@@ -1,6 +1,5 @@
 package projectnwt2023.backend.exceptions;
 
-import lombok.AllArgsConstructor;
 import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +12,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import java.io.IOException;
 
 @RestControllerAdvice
 public class ExceptionHandlerAdvice {
@@ -27,6 +27,11 @@ public class ExceptionHandlerAdvice {
     @ExceptionHandler(EntityNotFoundException.class)
     protected ResponseEntity<String> handleEntityNotFound(EntityNotFoundException ex) {
         System.out.println("HANDLING");
+        return new ResponseEntity<>(ex.message, ex.httpStatus);
+    }
+
+    @ExceptionHandler(EntityAlreadyExistsException.class)
+    protected ResponseEntity<String> handleEntityAlreadyExists(EntityAlreadyExistsException ex) {
         return new ResponseEntity<>(ex.message, ex.httpStatus);
     }
 
@@ -68,5 +73,13 @@ public class ExceptionHandlerAdvice {
         return new ResponseEntity<>("Wrong type. Field (" + fieldName + ") format is not valid!\n", HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(UserForbiddenOperationException.class)
+    protected ResponseEntity<String> handleUserForbiddenException(UserForbiddenOperationException ex) {
+        return new ResponseEntity<>(ex.message, ex.httpStatus);
+    }
 
+    @ExceptionHandler(IOException.class)
+    protected ResponseEntity<String> handleIOException(IOException ex) {
+        return new ResponseEntity<>("Error - io", HttpStatus.BAD_REQUEST);
+    }
 }

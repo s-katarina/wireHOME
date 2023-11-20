@@ -79,3 +79,9 @@ backend/src/main/java/com/IBTim4/CertificatesApp/helper/TwilloConstants.java
 .jpb/
 
 bin/
+
+images/
+
+backend/profileImages/
+backend/src/main/resources/superadmin.txt
+

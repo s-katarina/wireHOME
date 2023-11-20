@@ -1,0 +1,174 @@
+<h1>Register device</h1>
+
+    <mat-radio-group (change)="updateDeviceType()" [(ngModel)]="selectedType" class="main_container">
+    <div class="device_type">
+        <h2>Indore devices</h2>
+        <mat-radio-button value="ambientSensore" >Ambient senzor</mat-radio-button>
+        <mat-radio-button value="airConditioner" >Air conditioner</mat-radio-button>
+        <mat-radio-button value="washingMashine" >Washing mashine</mat-radio-button>
+    </div>
+    <div class="device_type">
+        <h2>Outdore devices</h2>
+        <mat-radio-button value="lamp" >Lamp</mat-radio-button>
+        <mat-radio-button value="gate" >Gate</mat-radio-button>
+        <mat-radio-button value="sprinklers" >Sprinklers</mat-radio-button>
+    </div>
+    <div class="device_type">
+        <h2>Large electroenergy devices</h2>
+        <mat-radio-button value="solarPanel" >Solar panel</mat-radio-button>
+        <mat-radio-button value="houseBatery" >House batery</mat-radio-button>
+        <mat-radio-button value="charger" >Charger</mat-radio-button>
+    </div>
+</mat-radio-group>
+
+<div *ngIf="commonSection">
+    <div class="main_container">
+      <div class="half-flex">
+        <button mat-raised-button class="upload-image half-flex" (click)="openFileInput()"><mat-icon>image</mat-icon>Upload image</button>
+        <span>{{imageName}}</span>
+        <input type="file" #fileInput style="display: none" (change)="onFileSelected($event)" >
+        
+      </div>  
+      <div class="half-flex">
+            <form [formGroup]="modelFormGroup" class="form-type">
+    
+            <mat-form-field class="half-flex">
+                <mat-label>Model name</mat-label>
+                <!-- [disabled]="isFieldDisabled" -->
+                <input matInput placeholder="Model name" formControlName="name"  required type="text">
+              </mat-form-field>
+        </form>
+    </div>
+          
+    </div>
+    <p>Charging type</p>
+    <div class="main_container">
+        <div class="half-flex">
+            <mat-button-toggle-group class="tooggle half-flex" [(ngModel)]="selectedValue" (change)="updateFieldState()">
+                <mat-button-toggle value="autonomn">Autonom Charging</mat-button-toggle>
+                <mat-button-toggle value="house">House Charging</mat-button-toggle>
+              </mat-button-toggle-group>
+        </div>
+        <div class="half-flex">
+            <form [formGroup]="firstFormGroup" class="form-type" >
+            <mat-form-field class="half-flex">
+                <mat-label>Electical consuption</mat-label>
+                <!-- [disabled]="isFieldDisabled" -->
+                <input matInput placeholder="Electical consuption" formControlName="consuption"  required type="number">
+                <mat-error *ngIf="firstFormGroup.get('consuption')!.hasError('max')">Electical consuption must be less than or equal to 100000 watts</mat-error>
+                <mat-error *ngIf="firstFormGroup.get('consuption')!.hasError('min')">Electical consuption must be greater than 0 watts.</mat-error>
+              </mat-form-field>
+            </form>
+        </div>
+          
+    </div>
+</div>
+
+<div *ngIf="airCondRegimeSection">
+<!-- <p>mogao bi neki search</p> -->
+<p>Regime selection</p>
+<form class="flex-container">
+    <div *ngFor="let regime of airConditionerRegimes" class="item">
+       <input (change)="onCheckboxChange($event)" value="{{regime}}" type="checkbox"> {{regime}}
+    </div>
+ </form>
+</div>
+
+<div *ngIf="washingMashRegimeSection">
+  <!-- <p>mogao bi neki search</p> -->
+<p>Regime selection</p>
+
+  <form class="flex-container">
+      <div *ngFor="let regime of washingMachineRegimes" class="item">
+         <input (change)="onCheckboxChange($event)" value="{{regime}}" type="checkbox"> {{regime}}
+      </div>
+   </form>
+  </div>
+
+ <div *ngIf="airCondRegimeSection">
+<p>Temperature setting</p>
+
+    <form [formGroup]="airConditionerFormGroup" class="main_container">
+    <div class="half-flex">
+    <mat-form-field class="half-flex">
+        <mat-label>Minimal temperature</mat-label>
+        <input matInput placeholder="Minimal temperature" formControlName="minTemp"  required type="number">
+        <mat-error *ngIf="airConditionerFormGroup.get('minTemp')!.hasError('max')">Electical consuption must be less than or equal to 60 celsius.</mat-error>
+        <mat-error *ngIf="airConditionerFormGroup.get('minTemp')!.hasError('min')">Electical consuption must be greater than 0 celsius.</mat-error>
+      </mat-form-field>
+        </div>
+        <div class="half-flex">
+      <mat-form-field class="half-flex">
+        <mat-label>Maximal temperature</mat-label>
+        <input matInput placeholder="Maximal temperature" formControlName="maxTemp"  required type="number">
+        <mat-error *ngIf="airConditionerFormGroup.get('maxTemp')!.hasError('max')">Electical consuption must be less than or equal to 60 celsius</mat-error>
+        <mat-error *ngIf="airConditionerFormGroup.get('maxTemp')!.hasError('min')">Electical consuption must be greater than 0 celsius.</mat-error>
+      </mat-form-field>
+    </div>
+    </form>
+ </div>
+
+ 
+
+ <div *ngIf="pannelSection">
+<p>Solar panel configuration</p>
+
+    <form [formGroup]="panelFormGroup" class="main_container">
+        <div class="half-flex">
+    <mat-form-field class="half-flex">
+        <mat-label>Panel surface</mat-label>
+        <input matInput placeholder="Panel surface" formControlName="surface"  required type="number">
+        <mat-error *ngIf="panelFormGroup.get('surface')!.hasError('max')">Panel surface must be less than or equal to 100000 m^2</mat-error>
+        <mat-error *ngIf="panelFormGroup.get('surface')!.hasError('min')">Panel surface must be greater than 0 m^2.</mat-error>
+      </mat-form-field>
+    </div>
+      <div class="half-flex">
+      <mat-form-field class="half-flex">
+        <mat-label>Panel efficiency</mat-label>
+        <input matInput placeholder="Panel efficiency" formControlName="efficiency"  required type="number">
+        <mat-error *ngIf="panelFormGroup.get('efficiency')!.hasError('max')">Electical consuption must be less than or equal to 100%.</mat-error>
+        <mat-error *ngIf="panelFormGroup.get('efficiency')!.hasError('min')">Electical consuption must be greater than 0%.</mat-error>
+      </mat-form-field>
+    </div>
+    </form>
+ </div>
+
+ <div *ngIf="batterySection">
+<p>Batery capasity</p>
+
+    <form [formGroup]="bateryFormGroup" class="main_container">
+    <mat-form-field class="half-flex">
+        <mat-label>Electical capacity</mat-label>
+        <input matInput placeholder="Electical capacity" formControlName="capacity"  required type="number">
+        <mat-error *ngIf="bateryFormGroup.get('capacity')!.hasError('max')">Electical consuption must be less than or equal to 100000 watts</mat-error>
+        <mat-error *ngIf="bateryFormGroup.get('capacity')!.hasError('min')">Electical consuption must be greater than 0 watts.</mat-error>
+      </mat-form-field>
+    </form>
+ </div>
+
+ <div *ngIf="chargerSection">
+<p>Charger configuration</p>
+
+    <form [formGroup]="chargerFormGroup" class="main_container">
+    <div class="half-flex">
+    <mat-form-field class="half-flex">
+        <mat-label>Charging strenght</mat-label>
+        <input matInput placeholder="Charging strenght" formControlName="capacity"  required type="number">
+        <mat-error *ngIf="chargerFormGroup.get('capacity')!.hasError('max')">Electical consuption must be less than or equal to 100000 watts</mat-error>
+        <mat-error *ngIf="chargerFormGroup.get('capacity')!.hasError('min')">Electical consuption must be greater than 0 watts.</mat-error>
+      </mat-form-field>
+    </div>
+    <div class="half-flex">
+      <mat-form-field class="half-flex">
+        <mat-label>Plug number</mat-label>
+        <input matInput placeholder="Plug number" formControlName="pluginNum"  required type="number">
+        <mat-error *ngIf="chargerFormGroup.get('pluginNum')!.hasError('max')">Electical consuption must be less than or equal to 52 celsius</mat-error>
+        <mat-error *ngIf="chargerFormGroup.get('pluginNum')!.hasError('min')">Electical consuption must be greater than 0 celsius.</mat-error>
+      </mat-form-field>
+    </div>
+    </form>
+ </div>
+
+ <div class="main_container">
+    <button mat-raised-button *ngIf="commonSection" class="reg-btn" (click)="register()">Register device</button>
+ </div>
