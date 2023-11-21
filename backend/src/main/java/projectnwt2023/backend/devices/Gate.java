@@ -22,7 +22,7 @@ public class Gate extends Device{
     public Gate(DeviceRequestDTO deviceRequestDTO) {
         super(deviceRequestDTO);
         this.isPublic = true;
-        this.setTopic("gate");
+//        this.setTopic("gate");
 
     }
     //mogao bi u bazi eventualno da ima i spisak vozila ali necemo to sebi raditi

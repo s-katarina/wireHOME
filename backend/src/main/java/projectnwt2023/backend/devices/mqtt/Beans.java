@@ -69,7 +69,6 @@ public class Beans {
                 }
                 else if(topic.equals("simulation/ambientSensor")) {
                     System.out.println(topic);
-                    System.out.println("topic je uspeo");
                 }
                 System.out.println(message.getPayload());
             }

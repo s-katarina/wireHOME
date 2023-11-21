@@ -42,7 +42,7 @@ public class DeviceController {
     ResponseEntity<?> turnOn(@PathVariable Integer deviceId){
         Device device = deviceService.getById(deviceId.longValue());
         try {
-            mqttGateway.sendToMqtt("ON", device.getTopic() + deviceId);
+            mqttGateway.sendToMqtt("ON", String.valueOf(deviceId));
             return ResponseEntity.ok("Success");
         } catch (Exception e){
             System.out.println("greeeska");
@@ -55,7 +55,7 @@ public class DeviceController {
     ResponseEntity<?> turnOff(@PathVariable Integer deviceId){
         Device device = deviceService.getById(deviceId.longValue());
         try {
-            mqttGateway.sendToMqtt("OFF", device.getTopic() + deviceId);
+            mqttGateway.sendToMqtt("OFF", String.valueOf(deviceId));
             return ResponseEntity.ok("Success");
         } catch (Exception e){
             System.out.println("greeeska");

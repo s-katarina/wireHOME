@@ -19,6 +19,6 @@ import javax.persistence.Table;
 public class AmbientSensor extends Device{
     public AmbientSensor(DeviceRequestDTO deviceRequestDTO) {
         super(deviceRequestDTO);
-        this.setTopic("ambientSensor");
+//        this.setTopic("ambientSensor");
     }
 }

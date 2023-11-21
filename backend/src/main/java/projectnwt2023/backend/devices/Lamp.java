@@ -26,6 +26,6 @@ public class Lamp extends Device{
     public Lamp(DeviceRequestDTO deviceRequestDTO) {
         super(deviceRequestDTO);
         this.programedRegimes = new ArrayList<>();
-        this.setTopic("lamp");
+//        this.setTopic("lamp");
     }
 }

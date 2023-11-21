@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"strconv"
-
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 
 	// "log"
@@ -91,8 +89,8 @@ func RunAmbientSensore() {
         panic(token.Error())
     }
 
-    sub(client, ambientSensore.Id)
-    ambientSensore.SendHeartBeat(client, topicForBase)
+    ambientSensore.Sub(client)
+    ambientSensore.SendHeartBeat(client)
 
     client.Disconnect(500)
 }
@@ -108,9 +106,9 @@ func RunAmbientSensore() {
 //     }
 // }
 
-func sub(client mqtt.Client, id int) {
-    topic := "ambientSensor" + strconv.Itoa(id)
-    token := client.Subscribe(topic, 1, nil)
-    token.Wait()
-  fmt.Printf("Subscribed to topic: %s", topic)
-}
+// func sub(client mqtt.Client, id int) {
+//     topic := strconv.Itoa(id)
+//     token := client.Subscribe(topic, 1, nil)
+//     token.Wait()
+//   fmt.Printf("Subscribed to topic: %s", topic)
+// }
