@@ -6,6 +6,10 @@
     overflow: hidden;
 }
 
+.x-btn{
+    width: 4vw;
+}
+
 .content {
     position: relative;
     overflow: hidden; 
@@ -86,6 +90,16 @@ h3 {
     border-radius: 20px;
     background-color: rgb(255, 255, 255);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.423);
+}
+.card .img-card {
+    margin-left: 1vw;
+    width: 11vw;
+    height: 7vw;
+    border-radius: 20px;
+}
+
+p{
+    margin-left: 1vw;
 }
 
 .mat-divider {

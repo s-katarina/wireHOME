@@ -7,6 +7,8 @@ import projectnwt2023.backend.devices.repository.DeviceRepository;
 import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
 import projectnwt2023.backend.exceptions.EntityNotFoundException;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
 
 @Service
@@ -18,7 +20,7 @@ public class DeviceService implements IDeviceService {
     @Override
     public Device save(Device device) {
         Device saved = deviceRepository.save(device);
-        saved.setImagePath((String.format("device-%s.jpg", saved.getId())));
+        saved.setImagePath((String.format("images/device-%s.jpg", saved.getId())));
         return deviceRepository.save(saved);
     }
 
@@ -30,5 +32,23 @@ public class DeviceService implements IDeviceService {
             throw new EntityNotFoundException(Device.class);
 
         return device.get();
+    }
+
+    @Override
+    public ArrayList<Device> getAppliancesByProperty(Long propertyId) {
+        ArrayList<String> types = new ArrayList<>(Arrays.asList("airConditioner", "ambientSensor", "washingMachine"));
+        return deviceRepository.findByTopicInAndPropertyId(types, propertyId);
+    }
+
+    @Override
+    public ArrayList<Device> getOutdoorDevicesByProperty(Long propertyId) {
+        ArrayList<String> types = new ArrayList<>(Arrays.asList("gate", "lamp", "sprinkler"));
+        return deviceRepository.findByTopicInAndPropertyId(types, propertyId);
+    }
+
+    @Override
+    public ArrayList<Device> getElectricalDevicesByProperty(Long propertyId) {
+        ArrayList<String> types = new ArrayList<>(Arrays.asList("battery", "charger", "solarPanel"));
+        return deviceRepository.findByTopicInAndPropertyId(types, propertyId);
     }
 }

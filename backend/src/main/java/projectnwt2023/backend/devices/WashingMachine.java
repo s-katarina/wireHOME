@@ -30,6 +30,6 @@ public class WashingMachine extends Device{
         }
         this.availableRegimes = types;
         this.programedRegimes = new ArrayList<>();
-//        this.setTopic("washingMachine");
+        this.setTopic("washingMachine");
     }
 }

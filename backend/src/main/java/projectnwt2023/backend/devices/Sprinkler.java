@@ -24,6 +24,6 @@ public class Sprinkler extends Device{
     public Sprinkler(DeviceRequestDTO deviceRequestDTO) {
         super(deviceRequestDTO);
         this.programedRegimes = new ArrayList<>();
-//        this.setTopic("sprinkler");
+        this.setTopic("sprinkler");
     }
 }

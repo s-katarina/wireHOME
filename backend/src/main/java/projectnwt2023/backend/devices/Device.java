@@ -33,7 +33,7 @@ public abstract class Device {
     @ManyToOne
     private Property property;
 
-//    private String topic;
+    private String topic;
 
     private String imagePath;
 

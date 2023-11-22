@@ -9,12 +9,9 @@ import projectnwt2023.backend.devices.Device;
 import projectnwt2023.backend.devices.RegimeAirConditioner;
 import projectnwt2023.backend.devices.RegimeType;
 import projectnwt2023.backend.devices.RegimeWashingMachine;
-import projectnwt2023.backend.devices.dto.DeviceResponseDTO;
+import projectnwt2023.backend.devices.dto.DeviceDTO;
 import projectnwt2023.backend.devices.mqtt.Gateway;
 import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
-import projectnwt2023.backend.property.Property;
-import projectnwt2023.backend.property.dto.PropertyResponseDTO;
-import projectnwt2023.backend.property.service.interfaces.IPropertyService;
 
 import java.util.ArrayList;
 
@@ -31,11 +28,11 @@ public class DeviceController {
     Gateway mqttGateway;
 
     @GetMapping(value = "/{deviceId}", produces = "application/json")
-    ResponseEntity<DeviceResponseDTO> getProperty(@PathVariable Integer deviceId){
+    ResponseEntity<DeviceDTO> getProperty(@PathVariable Integer deviceId){
 
         Device device = deviceService.getById(deviceId.longValue());
         System.out.println(deviceId);
-        return new ResponseEntity<>(new DeviceResponseDTO(device), HttpStatus.OK);
+        return new ResponseEntity<>(new DeviceDTO(device), HttpStatus.OK);
     }
 
     @PostMapping(value = "/on/{deviceId}", produces = "application/json")
@@ -89,6 +86,36 @@ public class DeviceController {
             regimes.add(String.valueOf(regime));
         }
         return new ResponseEntity<>(regimes, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/appliances/{propertyId}", produces = "application/json")
+    public ResponseEntity<ArrayList<DeviceDTO>> getAppliances(@PathVariable Integer propertyId){
+        ArrayList<Device> devices = deviceService.getAppliancesByProperty(Long.valueOf(propertyId));
+        ArrayList<DeviceDTO> devicedtos = new ArrayList<>();
+        for (Device device: devices) {
+            devicedtos.add(new DeviceDTO(device));
+        }
+        return new ResponseEntity<>(devicedtos, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/outdoor/{propertyId}", produces = "application/json")
+    public ResponseEntity<ArrayList<DeviceDTO>> getOutdoor(@PathVariable Integer propertyId){
+        ArrayList<Device> devices = deviceService.getOutdoorDevicesByProperty(Long.valueOf(propertyId));
+        ArrayList<DeviceDTO> devicedtos = new ArrayList<>();
+        for (Device device: devices) {
+            devicedtos.add(new DeviceDTO(device));
+        }
+        return new ResponseEntity<>(devicedtos, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/energyDevices/{propertyId}", produces = "application/json")
+    public ResponseEntity<ArrayList<DeviceDTO>> getEnergyDevices(@PathVariable Integer propertyId){
+        ArrayList<Device> devices = deviceService.getElectricalDevicesByProperty(Long.valueOf(propertyId));
+        ArrayList<DeviceDTO> devicedtos = new ArrayList<>();
+        for (Device device: devices) {
+            devicedtos.add(new DeviceDTO(device));
+        }
+        return new ResponseEntity<>(devicedtos, HttpStatus.OK);
     }
 
 }

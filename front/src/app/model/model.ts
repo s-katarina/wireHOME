@@ -31,6 +31,17 @@ export interface DeviceRequestDTO {
     portNumber: number;
 }
 
+export interface DeviceDTO{
+    id: string;
+    state: boolean;
+    modelName: string;
+    usesElectricity: boolean;
+    imagePath: string;
+    deviceType: string;
+    consumptionAmount: number;
+    propertyId: number;
+}
+
 export interface PropertyDTO {
     id: string;
     propertyType: string;
@@ -42,6 +53,7 @@ export interface PropertyDTO {
     floorCount: number | null;
     propertyStatus: string;
 }
+
 
 
 export interface LoginDTO {

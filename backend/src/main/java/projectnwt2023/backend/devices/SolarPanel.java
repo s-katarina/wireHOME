@@ -24,6 +24,6 @@ public class SolarPanel extends Device{
         super(deviceRequestDTO);
         this.surfaceSize = deviceRequestDTO.getPanelSize();
         this.efficiency = deviceRequestDTO.getEfficiency();
-//        this.setTopic("solarPanel");
+        this.setTopic("solarPanel");
     }
 }

@@ -8,7 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import projectnwt2023.backend.devices.*;
 import projectnwt2023.backend.devices.dto.DeviceRequestDTO;
-import projectnwt2023.backend.devices.dto.DeviceResponseDTO;
+import projectnwt2023.backend.devices.dto.DeviceDTO;
 import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
 import projectnwt2023.backend.helper.ApiResponse;
 import projectnwt2023.backend.property.Property;
@@ -29,25 +29,25 @@ public class RegistrationController {
     IPropertyService propertyService;
 
 
-    private ResponseEntity<ApiResponse<DeviceResponseDTO>> saveDevice(DeviceRequestDTO deviceRequestDTO, Device device) {
+    private ResponseEntity<ApiResponse<DeviceDTO>> saveDevice(DeviceRequestDTO deviceRequestDTO, Device device) {
         Property property = propertyService.getById((long) deviceRequestDTO.getPropertyId());
 
         device.setProperty(property);
         registrationService.save(device);
 
-        ApiResponse<DeviceResponseDTO> response = new ApiResponse<>(200, new DeviceResponseDTO(device));
+        ApiResponse<DeviceDTO> response = new ApiResponse<>(200, new DeviceDTO(device));
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @PostMapping(value = "/airConditioner", produces = "application/json", consumes = "application/json")
     @PreAuthorize(value = "hasRole('AUTH_USER')")
-    public ResponseEntity<ApiResponse<DeviceResponseDTO>> saveAirConditioner(@Valid @RequestBody DeviceRequestDTO deviceRequestDTO){
+    public ResponseEntity<ApiResponse<DeviceDTO>> saveAirConditioner(@Valid @RequestBody DeviceRequestDTO deviceRequestDTO){
         Device device = new AirConditioner(deviceRequestDTO);
         return saveDevice(deviceRequestDTO, device);
     }
 
     @PostMapping(value = "/ambientSensor", produces = "application/json", consumes = "application/json")
     @PreAuthorize(value = "hasRole('AUTH_USER')")
-    public ResponseEntity<ApiResponse<DeviceResponseDTO>> saveAmbientSensor(@Valid @RequestBody DeviceRequestDTO deviceRequestDTO){
+    public ResponseEntity<ApiResponse<DeviceDTO>> saveAmbientSensor(@Valid @RequestBody DeviceRequestDTO deviceRequestDTO){
         Device device = new AmbientSensor(deviceRequestDTO);
         return saveDevice(deviceRequestDTO, device);
 
@@ -55,49 +55,49 @@ public class RegistrationController {
 
     @PostMapping(value = "/battery", produces = "application/json", consumes = "application/json")
     @PreAuthorize(value = "hasRole('AUTH_USER')")
-    public ResponseEntity<ApiResponse<DeviceResponseDTO>> saveBattery(@Valid @RequestBody DeviceRequestDTO deviceRequestDTO){
+    public ResponseEntity<ApiResponse<DeviceDTO>> saveBattery(@Valid @RequestBody DeviceRequestDTO deviceRequestDTO){
         Device device = new Battery(deviceRequestDTO);
         return saveDevice(deviceRequestDTO, device);
     }
 
     @PostMapping(value = "/charger", produces = "application/json", consumes = "application/json")
     @PreAuthorize(value = "hasRole('AUTH_USER')")
-    public ResponseEntity<ApiResponse<DeviceResponseDTO>> saveCharger(@Valid @RequestBody DeviceRequestDTO deviceRequestDTO){
+    public ResponseEntity<ApiResponse<DeviceDTO>> saveCharger(@Valid @RequestBody DeviceRequestDTO deviceRequestDTO){
         Device device = new Charger(deviceRequestDTO);
         return saveDevice(deviceRequestDTO, device);
     }
 
     @PostMapping(value = "/gate", produces = "application/json", consumes = "application/json")
     @PreAuthorize(value = "hasRole('AUTH_USER')")
-    public ResponseEntity<ApiResponse<DeviceResponseDTO>> saveGate(@Valid @RequestBody DeviceRequestDTO deviceRequestDTO){
+    public ResponseEntity<ApiResponse<DeviceDTO>> saveGate(@Valid @RequestBody DeviceRequestDTO deviceRequestDTO){
         Device device = new Gate(deviceRequestDTO);
         return saveDevice(deviceRequestDTO, device);
     }
 
     @PostMapping(value = "/lamp", produces = "application/json", consumes = "application/json")
     @PreAuthorize(value = "hasRole('AUTH_USER')")
-    public ResponseEntity<ApiResponse<DeviceResponseDTO>> saveLamp(@Valid @RequestBody DeviceRequestDTO deviceRequestDTO){
+    public ResponseEntity<ApiResponse<DeviceDTO>> saveLamp(@Valid @RequestBody DeviceRequestDTO deviceRequestDTO){
         Device device = new Lamp(deviceRequestDTO);
         return saveDevice(deviceRequestDTO, device);
     }
 
     @PostMapping(value = "/solarPanel", produces = "application/json", consumes = "application/json")
     @PreAuthorize(value = "hasRole('AUTH_USER')")
-    public ResponseEntity<ApiResponse<DeviceResponseDTO>> saveSolarPanel(@Valid @RequestBody DeviceRequestDTO deviceRequestDTO){
+    public ResponseEntity<ApiResponse<DeviceDTO>> saveSolarPanel(@Valid @RequestBody DeviceRequestDTO deviceRequestDTO){
         Device device = new SolarPanel(deviceRequestDTO);
         return saveDevice(deviceRequestDTO, device);
     }
 
     @PostMapping(value = "/sprinkler", produces = "application/json", consumes = "application/json")
     @PreAuthorize(value = "hasRole('AUTH_USER')")
-    public ResponseEntity<ApiResponse<DeviceResponseDTO>> saveSprinkler(@Valid @RequestBody DeviceRequestDTO deviceRequestDTO){
+    public ResponseEntity<ApiResponse<DeviceDTO>> saveSprinkler(@Valid @RequestBody DeviceRequestDTO deviceRequestDTO){
         Device device = new Sprinkler(deviceRequestDTO);
         return saveDevice(deviceRequestDTO, device);
     }
 
     @PostMapping(value = "/washingMachine", produces = "application/json", consumes = "application/json")
     @PreAuthorize(value = "hasRole('AUTH_USER')")
-    public ResponseEntity<ApiResponse<DeviceResponseDTO>> saveWashingMachine(@Valid @RequestBody DeviceRequestDTO deviceRequestDTO){
+    public ResponseEntity<ApiResponse<DeviceDTO>> saveWashingMachine(@Valid @RequestBody DeviceRequestDTO deviceRequestDTO){
         Device device = new WashingMachine(deviceRequestDTO);
         return saveDevice(deviceRequestDTO, device);
     }
