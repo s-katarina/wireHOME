@@ -11,6 +11,34 @@ export class DeviceCreationService {
 
   constructor(private readonly http: HttpClient) { }
 
+  createDevice(device: DeviceRequestDTO, deviceType: string, machineRegimes: string[] = [], airConditionerRegimes: string[] = [], capacity=0) {
+    switch(deviceType) {
+      case 'ambientSensore':
+        return this.createAmbientalSensor(device);
+      case 'airConditioner':
+        device.regimes = airConditionerRegimes;
+        return this.createAirConditioner(device);
+      case 'washingMashine':
+        device.regimes = machineRegimes;
+        return this.createWashingMachine(device);
+      case 'lamp':
+        return this.createLamp(device);
+      case 'gate':
+        return this.createGate(device);
+      case 'sprinklers':
+        return this.createSprinkler(device);
+      case 'solarPanel':
+        return this.createSolarPanel(device);
+      case 'houseBatery':
+        device.capacity = capacity;
+        return this.createBattery(device);
+      case 'charger':
+        return this.createCharger(device);
+      default:
+        return this.createAmbientalSensor(device);
+    }
+  }
+
   getRegimes() : Observable<string[]> {
     return this.http.get<string[]>(environment.apiHost + 'device/regimes')
   }
