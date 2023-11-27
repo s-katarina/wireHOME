@@ -71,6 +71,7 @@ public class Beans {
                     System.out.println(topic);
                     System.out.println("topic je uspeo");
                 }
+                System.out.println(topic);
                 System.out.println(message.getPayload());
             }
         };
