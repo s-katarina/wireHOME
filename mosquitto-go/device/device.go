@@ -10,7 +10,7 @@ import (
 )
 
 type CommonBehavior interface {
-	SendHeartBeat(client mqtt.Client, topic string)
+	SendHeartBeat(client mqtt.Client)
 	TurnOn(client mqtt.Client, topic string)
 	TurnOff(client mqtt.Client, topic string)
 }
@@ -32,9 +32,9 @@ type MessageDTO struct {
 }
 
 func (device BaseDevice) SendHeartBeat(client mqtt.Client) {
-	if (!device.State){
-		return
-	}
+	// if (!device.State){
+	// 	return
+	// }
     for {
 		currentTime:= time.Now()
 		myObj := MessageDTO{
@@ -53,7 +53,7 @@ func (device BaseDevice) SendHeartBeat(client mqtt.Client) {
         // text := fmt.Sprintf("Heartbeat %v", currentTime)
         token := client.Publish("heartbeat", 0, false, jsonData)
         token.Wait()
-        time.Sleep(time.Second * 25)
+        time.Sleep(time.Second * 15)
     }
 }
 

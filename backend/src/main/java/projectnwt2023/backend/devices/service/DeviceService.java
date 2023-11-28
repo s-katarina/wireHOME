@@ -3,6 +3,7 @@ package projectnwt2023.backend.devices.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import projectnwt2023.backend.devices.Device;
+import projectnwt2023.backend.devices.State;
 import projectnwt2023.backend.devices.repository.DeviceRepository;
 import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
 import projectnwt2023.backend.exceptions.EntityNotFoundException;
@@ -32,6 +33,13 @@ public class DeviceService implements IDeviceService {
             throw new EntityNotFoundException(Device.class);
 
         return device.get();
+    }
+
+    @Override
+    public Device changeDeviceState(Long id, State state) {
+        Device device = getById(id);
+        device.setState(state);
+        return deviceRepository.save(device);
     }
 
     @Override

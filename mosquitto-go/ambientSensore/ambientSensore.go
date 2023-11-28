@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"time"
+
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 
 	// "log"
@@ -17,13 +19,13 @@ type AmbientSensore struct {
 
 var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
 	if (string(msg.Payload()) == "ON"){
-		changed := ambientSensore.TurnOn(client, topicForBase)
+		changed := ambientSensore.TurnOn(client, "ON")
 		if (changed){
 			ambientSensore.State = true
 		}
 	}
 	if (string(msg.Payload()) == "OFF"){
-		changed := ambientSensore.TurnOff(client, topicForBase)
+		changed := ambientSensore.TurnOff(client, "OFF")
 		if (changed){
 			ambientSensore.State = false
 		}
@@ -84,6 +86,20 @@ func RunAmbientSensore() {
     opts.SetDefaultPublishHandler(messagePubHandler)
     opts.OnConnect = connectHandler
     opts.OnConnectionLost = connectLostHandler
+
+	myObj := device.MessageDTO{
+		DeviceId:   ambientSensore.Id,
+		UsedFor: "Kill",
+		TimeStamp: time.Now(),
+	}
+
+	// Convert the object to JSON
+	jsonData, err := json.Marshal(myObj)
+	if err != nil {
+		// log.Fatal(err)
+		fmt.Println("jbg")
+	}
+	opts.SetWill("KILLED", string(jsonData), 1, false)
     client := mqtt.NewClient(opts)
     if token := client.Connect(); token.Wait() && token.Error() != nil {
         panic(token.Error())
@@ -91,7 +107,7 @@ func RunAmbientSensore() {
 
     ambientSensore.Sub(client)
     ambientSensore.SendHeartBeat(client)
-
+	// publish(client)
     client.Disconnect(500)
 }
 

@@ -1,6 +1,9 @@
 package projectnwt2023.backend.devices.mqtt;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,9 +20,15 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.MessagingException;
+import projectnwt2023.backend.devices.State;
+import projectnwt2023.backend.devices.dto.PayloadDTO;
+import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
 
 @Configuration
 public class Beans {
+    @Autowired
+    IDeviceService deviceService;
+
     @Value("${mosquitto.username}")
     private String username;
 
@@ -64,15 +73,36 @@ public class Beans {
             @Override
             public void handleMessage(Message<?> message) throws MessagingException {
                 String topic = (String) message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC);
+                PayloadDTO payloadDTO = getPayload(message);
+//                System.out.println(payloadDTO);
                 if (topic == null){
                     System.out.println("null je topic");
                 }
-                else if(topic.equals("simulation/ambientSensor")) {
-                    System.out.println(topic);
+                else if(topic.equals("KILLED")) {
+                    System.out.println("lost connection " + payloadDTO.getDeviceId());
+                    deviceService.changeDeviceState((long) payloadDTO.getDeviceId(), State.offline);
                 }
-                System.out.println(message.getPayload());
+                else if(topic.equals("ON")) {
+                    deviceService.changeDeviceState((long) payloadDTO.getDeviceId(), State.online);
+                }
+                else if(topic.equals("OFF")) {
+                    deviceService.changeDeviceState((long) payloadDTO.getDeviceId(), State.offline);
+                }
+//                System.out.println(message.getPayload());
             }
         };
+    }
+
+    private static PayloadDTO getPayload(Message<?> message) {
+        Object payload = message.getPayload();
+        String jsonPayload = (String) payload;
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.readValue(jsonPayload, PayloadDTO.class);
+        } catch (JsonProcessingException e) {
+            return new PayloadDTO();
+        }
     }
 
     @Bean
