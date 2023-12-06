@@ -2,7 +2,11 @@
     <div class="content">
         <img [src]="property!.imagePath" alt="Background Image">
         <div class="scroll-container overlay">
-            <button mat-button>ADD DEVICE <mat-icon>open_in_new</mat-icon></button>
+            <div>
+                <button class="x-btn" [routerLink]="['/properties']" mat-button><mat-icon>close</mat-icon></button>
+                <button (click)="selectProperty(property!.id)" 
+                [routerLink]="['/create-device']" mat-button>ADD DEVICE <mat-icon>open_in_new</mat-icon></button>
+            </div>
             <div class="title-container">
                 <div class="title">{{property!.propertyType}}</div>
                 <h3>{{property!.address}} {{property!.city.name}}, {{property!.city.country.name}}</h3>
@@ -12,18 +16,27 @@
                     <h3>Appliances</h3>
                     <mat-divider></mat-divider>
                     <div class="card-container">
-                        <div class="card"><p>Washing machine</p></div>
-                        <div class="card"></div>
-                        <div class="card"></div>
+                        <div *ngFor="let device of appliances">
+                            <div class="card">
+                                <p>{{device.deviceType}}</p>
+                                <img class="img-card" [src]="device.imagePath" alt="{{device.modelName}}">
+
+                            </div>
+                        </div>
                     </div>
+                    
                 </div>
         
                 <div class="section">
                     <h3>Outdoor</h3>
                     <mat-divider></mat-divider>
                     <div class="card-container">
-                        <div class="card"></div>
-                        <div class="card"></div>
+                        <div *ngFor="let device of outdoor">
+                            <div class="card">
+                                <p>{{device.deviceType}}</p>
+                                <img class="img-card" [src]="device.imagePath" alt="{{device.modelName}}">
+                            </div>
+                        </div>
                     </div>
                 </div>
         
@@ -31,11 +44,12 @@
                     <h3>Energy devices</h3>
                     <mat-divider></mat-divider>
                     <div class="card-container">
-                        <div class="card"></div>
-                        <div class="card"></div>
-                        <div class="card"></div>
-                        <div class="card"></div>
-                        <div class="card"></div>
+                        <div *ngFor="let device of energyDevices">
+                            <div class="card">
+                                <p>{{device.deviceType}}</p>
+                                <img class="img-card" [src]="device.imagePath" alt="{{device.modelName}}">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

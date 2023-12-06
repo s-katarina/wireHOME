@@ -21,7 +21,7 @@ const routes: Routes = [
   { path: 'register', component: RegisterComponent, canActivate: [UnregisteredGuard] },
   { path: 'property-requests', component: PropertyRequestsComponent, canActivate: [TokenGuard, RoleGuard ], data: {roles: ["SUPER_ADMIN", "ADMIN"]}  },
   { path: 'register-admin', component: RegisterComponent, canActivate: [TokenGuard, RoleGuard ], data: {roles: ["SUPER_ADMIN"]} },
-  { path: '**', component: CreateDeviceComponent }
+  { path: '**', component: LandingComponent }
 ];
 
 @NgModule({

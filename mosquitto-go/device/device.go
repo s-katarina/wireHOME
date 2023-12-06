@@ -1,14 +1,16 @@
 package device
 
 import (
-    "fmt"
-    mqtt "github.com/eclipse/paho.mqtt.golang"
-    "time"
 	"encoding/json"
+	"fmt"
+	"strconv"
+	"time"
+
+	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
 
 type CommonBehavior interface {
-	SendHeartBeat(client mqtt.Client, topic string)
+	SendHeartBeat(client mqtt.Client)
 	TurnOn(client mqtt.Client, topic string)
 	TurnOff(client mqtt.Client, topic string)
 }
@@ -29,7 +31,10 @@ type MessageDTO struct {
 	TimeStamp time.Time	`json:"timeStamp"`
 }
 
-func (device BaseDevice) SendHeartBeat(client mqtt.Client, topic string) {
+func (device BaseDevice) SendHeartBeat(client mqtt.Client) {
+	// if (!device.State){
+	// 	return
+	// }
     for {
 		currentTime:= time.Now()
 		myObj := MessageDTO{
@@ -46,9 +51,9 @@ func (device BaseDevice) SendHeartBeat(client mqtt.Client, topic string) {
 		}
 	
         // text := fmt.Sprintf("Heartbeat %v", currentTime)
-        token := client.Publish(topic, 0, false, jsonData)
+        token := client.Publish("heartbeat", 0, false, jsonData)
         token.Wait()
-        time.Sleep(time.Second * 25)
+        time.Sleep(time.Second * 15)
     }
 }
 
@@ -112,6 +117,13 @@ func (device BaseDevice) TurnOff(client mqtt.Client, topic string) bool {
     token := client.Publish(topic, 0, false, jsonData)
     token.Wait()
 	return myObj.UsedFor == "OFF"
+}
+
+func (device BaseDevice)Sub(client mqtt.Client) {
+    topic := strconv.Itoa(device.Id)
+    token := client.Subscribe(topic, 1, nil)
+    token.Wait()
+  fmt.Printf("Subscribed to topic: %s", topic)
 }
 
 func main() {

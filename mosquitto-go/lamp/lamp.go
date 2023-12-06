@@ -30,7 +30,6 @@ type lightSensorValue struct {
 
 func GetLamp(deviceId int) Lamp {
 
-	// apiUrl := fmt.Sprintf("%s/%s/%d", constants.ApiUrl, deviceName, deviceId)
 	apiUrl := fmt.Sprintf("%s/device/%d", constants.ApiUrl, deviceId)
 	fmt.Println(apiUrl)
 

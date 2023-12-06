@@ -13,6 +13,8 @@ import { PropertyModule } from './modules/property/property.module';
 import { CreateDeviceComponent } from './modules/devices/create-device/create-device.component';
 import { RegisterComponent } from './modules/auth/register/register.component';
 import { LoginComponent } from './modules/auth/login/login.component';
+import { TokenExpirationInterceptor } from './infrastructure/interceptor/token-expiration';
+
 
 @NgModule({
   declarations: [
@@ -42,6 +44,11 @@ import { LoginComponent } from './modules/auth/login/login.component';
     {
       provide: HTTP_INTERCEPTORS,
       useClass: Interceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenExpirationInterceptor,
       multi: true
     }
   ],

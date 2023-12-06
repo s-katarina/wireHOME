@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { CityDTO, PropertyDTO, PropertyRequestDTO } from 'src/app/model/model';
+import { CityDTO, DeviceDTO, PropertyDTO, PropertyRequestDTO } from 'src/app/model/model';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -66,4 +66,16 @@ export class PropertyServiceService {
     return this.http.put<PropertyDTO>(environment.apiHost + `property/pending/reject/${id}`, requestBody, {headers})
   }
 
+
+  getApliences(id:string): Observable<DeviceDTO[]> {
+    return this.http.get<DeviceDTO[]>(environment.apiHost + `device/appliances/${id}`)
+  }
+
+  getOutdoor(id:string): Observable<DeviceDTO[]> {
+    return this.http.get<DeviceDTO[]>(environment.apiHost + `device/outdoor/${id}`)
+  }
+
+  getEnergyDevices(id:string): Observable<DeviceDTO[]> {
+    return this.http.get<DeviceDTO[]>(environment.apiHost + `device/energyDevices/${id}`)
+  }
 }
