@@ -4,7 +4,6 @@ import projectnwt2023.backend.devices.Lamp;
 
 public interface ILampService {
 
-    boolean turnOn(Lamp lamp);
-    boolean turnOff(Lamp lamp);
+    Lamp changeBulbState(Long lampId, String requestType);
 
 }

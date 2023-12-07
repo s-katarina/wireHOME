@@ -23,9 +23,12 @@ public class Lamp extends Device{
             mappedBy = "device")
     private Collection<Regime> programedRegimes;
 
+    private boolean bulbState;
+
     public Lamp(DeviceRequestDTO deviceRequestDTO) {
         super(deviceRequestDTO);
         this.programedRegimes = new ArrayList<>();
         this.setTopic("lamp");
+        this.bulbState = false;
     }
 }

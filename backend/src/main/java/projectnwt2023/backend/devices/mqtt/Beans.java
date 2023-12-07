@@ -24,11 +24,17 @@ import projectnwt2023.backend.devices.State;
 import projectnwt2023.backend.devices.dto.PayloadDTO;
 import projectnwt2023.backend.devices.dto.TelemetryPayloadDTO;
 import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
+import projectnwt2023.backend.devices.service.interfaces.ILampService;
+
+import static projectnwt2023.backend.helper.RegexPattern.isStringMatchingPattern;
 
 @Configuration
 public class Beans {
     @Autowired
     IDeviceService deviceService;
+
+    @Autowired
+    ILampService lampService;
 
     @Value("${mosquitto.username}")
     private String username;
@@ -74,8 +80,9 @@ public class Beans {
             @Override
             public void handleMessage(Message<?> message) throws MessagingException {
                 String topic = (String) message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC);
+                System.out.println(message.getPayload());
                 PayloadDTO payloadDTO = getPayload(message);
-//                System.out.println(payloadDTO);
+                System.out.println(payloadDTO);
                 if (topic == null){
                     System.out.println("null je topic");
                 }
@@ -88,12 +95,12 @@ public class Beans {
                 }
                 else if(topic.equals("OFF")) {
                     deviceService.changeDeviceState((long) payloadDTO.getDeviceId(), State.offline);
-                } else if (topic.contains("bulb")) {
-
+                } else if (isStringMatchingPattern(topic, "\\d+/bulb")) {
+                    lampService.changeBulbState((long) payloadDTO.getDeviceId(), payloadDTO.getUsedFor());
                 } else if (topic.contains("light-sensor")) {
                     TelemetryPayloadDTO telemetryPayloadDTO = getTelemetryPayload(message);
                 }
-                System.out.println(message.getPayload());
+//                System.out.println(message.getPayload());
             }
         };
     }

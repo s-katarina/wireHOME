@@ -9,18 +9,59 @@ import (
 	"strconv"
 	"tim10/mqtt/constants"
 	"tim10/mqtt/device"
+	"tim10/mqtt/helper"
 	"time"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
-
 )
 
 
-const deviceName = "lamp"
-
 type Lamp struct {
 	device.BaseDevice
+	bulbState bool
 }
+
+func bulbOn (lamp Lamp) device.MessageDTO {
+    currentTime:= time.Now()
+	if (lamp.bulbState) {
+		return device.MessageDTO{
+			DeviceId:   lamp.Id,
+			UsedFor: "Error",
+			TimeStamp: currentTime,
+		}
+	}
+		lamp.bulbState = true
+		return device.MessageDTO{
+			DeviceId:   lamp.Id,
+			UsedFor: "ON",
+			TimeStamp: currentTime,
+		}
+}
+
+func bulbOff (lamp Lamp) device.MessageDTO{
+    currentTime:= time.Now()
+	if (!lamp.bulbState) {
+		return device.MessageDTO{
+			DeviceId:   lamp.Id,
+			UsedFor: "Error",
+			TimeStamp: currentTime,
+		}
+	}
+		lamp.bulbState = false
+		return device.MessageDTO{
+			DeviceId:   lamp.Id,
+			UsedFor: "OFF",
+			TimeStamp: currentTime,
+		}
+}
+
+func (lamp Lamp) SubToBulbSet (client mqtt.Client) {
+	topic := fmt.Sprintf("%d/%s", lamp.Id, "bulb/set")
+    token := client.Subscribe(topic, 1, nil)
+    token.Wait()
+  	fmt.Printf("Subscribed to topic: %s", topic)
+}
+
 
 type lightSensorValue struct {
 	Id 			string `json:"deviceId"`
@@ -30,7 +71,7 @@ type lightSensorValue struct {
 
 func getLamp(deviceId int) Lamp {
 
-	apiUrl := fmt.Sprintf("%s/device/%d", constants.ApiUrl, deviceId)
+	apiUrl := fmt.Sprintf("%s/lamp/%d", constants.ApiUrl, deviceId)
 	fmt.Println(apiUrl)
 
 	response, err := http.Get(apiUrl)
@@ -67,19 +108,41 @@ func SetLamp(id int) {
 var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
 
 	fmt.Printf("Received message: %s from topic: %s\n", msg.Payload(), msg.Topic())
+	patternBulb := "\\d+/bulb/set" // \\d+ matches one or more digits
 	
 	if (string(msg.Payload()) == "ON"){
-		changed := lamp.TurnOn(client, "ON")
-		if (changed){
-			lamp.State = true
+		if helper.IsTopicMatch(patternBulb, msg.Topic()) {
+			fmt.Println("Topic is for Bulb set")
+			changed := lamp.TurnBulbOn(client, fmt.Sprintf("%d/%s", lamp.Id, "bulb"))
+			// Command can be executed, is sent to backend
+			if (changed) { 
+				lamp.bulbState = true
+			}
+		} else {
+			changed := lamp.TurnOn(client, "ON")
+			if (changed){
+				lamp.State = true
+			}
 		}
 	}
 	if (string(msg.Payload()) == "OFF"){
-		changed := lamp.TurnOff(client, "OFF")
-		if (changed){
-			lamp.State = false
+		if helper.IsTopicMatch(patternBulb, msg.Topic()) {
+			fmt.Println("Topic is for Bulb")
+			changed := lamp.TurnBulbOff(client, fmt.Sprintf("%d/%s", lamp.Id, "bulb"))
+			if (changed) {
+				lamp.bulbState = false
+			}
+		} else {
+			changed := lamp.TurnOff(client, "OFF")
+			if (changed){
+				lamp.State = false
+			}
 		}
 	}
+
+
+	
+
 
 }
 
@@ -119,6 +182,7 @@ func RunLamp() {
     }
 
 	lamp.Sub(client)
+	lamp.SubToBulbSet(client)
 	go pubLightSensorValue(client)
     lamp.SendHeartBeat(client)
 }
@@ -128,8 +192,8 @@ func RunLampTelemetry() {
 }
 
 func pubLightSensorValue(client mqtt.Client) {
-	topic := fmt.Sprint(lamp.Id)
-	fmt.Println("topic for pub " + topic)
+	topic := fmt.Sprintf("%d/%s", lamp.Id, "light-sensor")
+	fmt.Println("Topic for pub " + topic)
     num := 0
     for {
 		if (num % 5 == 0) {
@@ -156,8 +220,35 @@ func pubLightSensorValue(client mqtt.Client) {
 			time.Sleep(time.Second)
 		}
 		num += 1
-		time.Sleep(time.Second)
+		time.Sleep(time.Second*3)
     }
+}
+
+
+
+func (lamp Lamp) TurnBulbOn(client mqtt.Client, topic string) bool{
+	myObj := bulbOn(lamp)
+	
+	jsonData, err := json.Marshal(myObj)
+	if err != nil {
+		fmt.Println("JSON convert error - bulb")
+	}
+	fmt.Println(myObj)
+    token := client.Publish(topic, 0, false, jsonData)
+    token.Wait()
+	return myObj.UsedFor != "Error"
+}
+
+func (lamp Lamp) TurnBulbOff(client mqtt.Client, topic string) bool {
+	myObj := bulbOff(lamp)
+	
+	jsonData, err := json.Marshal(myObj)
+	if err != nil {
+		fmt.Println("JSON convert error - bulb")
+	}
+    token := client.Publish(topic, 0, false, jsonData)
+    token.Wait()
+	return myObj.UsedFor != "Error"
 }
 
 
