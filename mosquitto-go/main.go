@@ -13,8 +13,7 @@ import (
 func main() {
     // ambientSensore.RunAmbientSensore()
 
-    lamp1 := lamp.GetLamp(8)
-    lamp.InitConnections(lamp1)
+    lamp.RunLamp()
 }
 
 

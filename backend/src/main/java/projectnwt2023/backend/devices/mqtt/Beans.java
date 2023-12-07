@@ -22,6 +22,7 @@ import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.MessagingException;
 import projectnwt2023.backend.devices.State;
 import projectnwt2023.backend.devices.dto.PayloadDTO;
+import projectnwt2023.backend.devices.dto.TelemetryPayloadDTO;
 import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
 
 @Configuration
@@ -87,8 +88,12 @@ public class Beans {
                 }
                 else if(topic.equals("OFF")) {
                     deviceService.changeDeviceState((long) payloadDTO.getDeviceId(), State.offline);
+                } else if (topic.contains("bulb")) {
+
+                } else if (topic.contains("light-sensor")) {
+                    TelemetryPayloadDTO telemetryPayloadDTO = getTelemetryPayload(message);
                 }
-//                System.out.println(message.getPayload());
+                System.out.println(message.getPayload());
             }
         };
     }
@@ -102,6 +107,18 @@ public class Beans {
             return objectMapper.readValue(jsonPayload, PayloadDTO.class);
         } catch (JsonProcessingException e) {
             return new PayloadDTO();
+        }
+    }
+
+    private static TelemetryPayloadDTO getTelemetryPayload(Message<?> message) {
+        Object payload = message.getPayload();
+        String jsonPayload = (String) payload;
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.readValue(jsonPayload, TelemetryPayloadDTO.class);
+        } catch (JsonProcessingException e) {
+            return new TelemetryPayloadDTO();
         }
     }
 

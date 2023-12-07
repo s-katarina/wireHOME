@@ -9,7 +9,6 @@ import (
 	"strconv"
 	"tim10/mqtt/constants"
 	"tim10/mqtt/device"
-	"tim10/mqtt/helper"
 	"time"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
@@ -24,11 +23,12 @@ type Lamp struct {
 }
 
 type lightSensorValue struct {
-	TimeStamp   string    `json:"ts"`
-	Val 		string `json:"val"`
+	Id 			string `json:"deviceId"`
+	TimeStamp   string    `json:"timeStamp"`
+	Val 		string `json:"value"`
 }
 
-func GetLamp(deviceId int) Lamp {
+func getLamp(deviceId int) Lamp {
 
 	apiUrl := fmt.Sprintf("%s/device/%d", constants.ApiUrl, deviceId)
 	fmt.Println(apiUrl)
@@ -58,19 +58,27 @@ func GetLamp(deviceId int) Lamp {
 
 }
 
+var lamp Lamp = getLamp(8);
+
+func SetLamp(id int) {
+	lamp = getLamp(id);
+}
+
 var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
 
 	fmt.Printf("Received message: %s from topic: %s\n", msg.Payload(), msg.Topic())
-
-	patternOn := "simulation/lamp/\\d+/on" // \\d+ matches one or more digits
-	patternOff := "simulation/lamp/\\d+/off" 
-
-	if helper.IsTopicMatch(patternOn, msg.Topic()) {
-		fmt.Println("Topic is for On command")
-	} else if helper.IsTopicMatch(patternOff, msg.Topic()) {
-		fmt.Println("Topic is for Off command")
-	} else {
-		fmt.Println("Topic does not match the pattern.")
+	
+	if (string(msg.Payload()) == "ON"){
+		changed := lamp.TurnOn(client, "ON")
+		if (changed){
+			lamp.State = true
+		}
+	}
+	if (string(msg.Payload()) == "OFF"){
+		changed := lamp.TurnOff(client, "OFF")
+		if (changed){
+			lamp.State = false
+		}
 	}
 
 }
@@ -83,7 +91,7 @@ var connectLostHandler mqtt.ConnectionLostHandler = func(client mqtt.Client, err
     fmt.Printf("Connect lost: %v", err)
 }
 
-func InitConnections(lamp Lamp) {
+func RunLamp() {
 
 	opts := mqtt.NewClientOptions()
     opts.AddBroker(fmt.Sprintf("tcp://%s:%d", constants.Broker, constants.Port))
@@ -94,39 +102,41 @@ func InitConnections(lamp Lamp) {
     opts.OnConnect = connectHandler
     opts.OnConnectionLost = connectLostHandler
 
+	myObj := device.MessageDTO{
+		DeviceId:  lamp.Id,
+		UsedFor: "Kill",
+		TimeStamp: time.Now(),
+	}
+	jsonData, err := json.Marshal(myObj)
+	if err != nil {
+		log.Fatal(err)
+	}
+	opts.SetWill("KILLED", string(jsonData), 1, false)
+
     client := mqtt.NewClient(opts)
     if token := client.Connect(); token.Wait() && token.Error() != nil {
         panic(token.Error())
     }
 
-	subToOnCommand(client, lamp.Id)
-	subToOffCommand(client, lamp.Id)
-	pubLightSensorValue(client, lamp.Id)
+	lamp.Sub(client)
+	go pubLightSensorValue(client)
+    lamp.SendHeartBeat(client)
+}
+
+func RunLampTelemetry() {
 
 }
 
-func subToOnCommand(client mqtt.Client, id int) {
-    topic := fmt.Sprintf("simulation/%s/%d/on", deviceName, id)
-    token := client.Subscribe(topic, 1, nil)
-    token.Wait()
-  	fmt.Printf("Subscribed to topic: %s", topic)
-}
-
-func subToOffCommand(client mqtt.Client, id int) {
-    topic := fmt.Sprintf("simulation/%s/%d/off", deviceName, id)
-    token := client.Subscribe(topic, 1, nil)
-    token.Wait()
-  	fmt.Printf("Subscribed to topic: %s", topic)
-}
-
-func pubLightSensorValue(client mqtt.Client, id int) {
-	topic := fmt.Sprintf("simulation/%s/%d/lightSensor", deviceName, id)
+func pubLightSensorValue(client mqtt.Client) {
+	topic := fmt.Sprint(lamp.Id)
+	fmt.Println("topic for pub " + topic)
     num := 0
     for {
 		if (num % 5 == 0) {
 			val := num
 			ts := time.Now().UnixNano()/int64(time.Millisecond)
 			data := lightSensorValue {
+				Id: strconv.Itoa(lamp.Id),
 				Val: strconv.Itoa(val),
 				TimeStamp: strconv.FormatInt(ts, 10),
 			}
