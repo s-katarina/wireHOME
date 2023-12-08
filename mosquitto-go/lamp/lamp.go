@@ -19,9 +19,10 @@ import (
 
 type Lamp struct {
 	device.BaseDevice
-	BulbState bool 			 `json:"bulbState"`
+	BulbState        bool `json:"bulbState"`
+	IsAutomatic      bool `json:"automatic"`
 	lightSensorValue int
-	client mqtt.Client
+	client           mqtt.Client
 }
 
 const lightOnTreshold = 30000
@@ -60,8 +61,49 @@ func bulbOff(lamp Lamp) device.MessageDTO {
 	}
 }
 
+func automaticOn(lamp Lamp) device.MessageDTO {
+	currentTime := time.Now()
+	if lamp.IsAutomatic {
+		return device.MessageDTO{
+			DeviceId:  lamp.Id,
+			UsedFor:   "Error",
+			TimeStamp: currentTime,
+		}
+	}
+	lamp.IsAutomatic = true
+	return device.MessageDTO{
+		DeviceId:  lamp.Id,
+		UsedFor:   "ON",
+		TimeStamp: currentTime,
+	}
+}
+
+func automaticOff(lamp Lamp) device.MessageDTO {
+	currentTime := time.Now()
+	if !lamp.IsAutomatic {
+		return device.MessageDTO{
+			DeviceId:  lamp.Id,
+			UsedFor:   "Error",
+			TimeStamp: currentTime,
+		}
+	}
+	lamp.IsAutomatic = false
+	return device.MessageDTO{
+		DeviceId:  lamp.Id,
+		UsedFor:   "OFF",
+		TimeStamp: currentTime,
+	}
+}
+
 func (lamp Lamp) SubToBulbSet(client mqtt.Client) {
 	topic := fmt.Sprintf("%d/%s", lamp.Id, "bulb/set")
+	token := client.Subscribe(topic, 1, nil)
+	token.Wait()
+	fmt.Printf("Subscribed to topic: %s", topic)
+}
+
+func (lamp Lamp) SubToAutomaticSet(client mqtt.Client) {
+	topic := fmt.Sprintf("%d/%s", lamp.Id, "automatic/set")
 	token := client.Subscribe(topic, 1, nil)
 	token.Wait()
 	fmt.Printf("Subscribed to topic: %s", topic)
@@ -113,31 +155,18 @@ func SetLamp(id int) {
 var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
 
 	fmt.Printf("Received message: %s from topic: %s\n", msg.Payload(), msg.Topic())
-	patternBulb := "\\d+/bulb/set" // \\d+ matches one or more digits
+	patternOn := "\\d+"
+	patternBulb := "\\d+/bulb/set"           // \\d+ matches one or more digits
+	patternAutomatic := "\\d+/automatic/set" // \\d+ matches one or more digits
 
-	if string(msg.Payload()) == "ON" {
-		if helper.IsTopicMatch(patternBulb, msg.Topic()) {
-			fmt.Println("Topic is for Bulb set")
-			changed := lamp.TurnBulbOn(client)
-			// Command can be executed, is sent to backend
-			if changed {
-				lamp.BulbState = true
-			}
-		} else {
+	if helper.IsTopicMatch(patternOn, msg.Topic()) {
+		if string(msg.Payload()) == "ON" {
 			changed := lamp.TurnOn(client, "ON")
 			if changed {
 				lamp.State = true
 			}
 		}
-	}
-	if string(msg.Payload()) == "OFF" {
-		if helper.IsTopicMatch(patternBulb, msg.Topic()) {
-			fmt.Println("Topic is for Bulb")
-			changed := lamp.TurnBulbOff(client)
-			if changed {
-				lamp.BulbState = false
-			}
-		} else {
+		if string(msg.Payload()) == "OFF" {
 			changed := lamp.TurnOff(client, "OFF")
 			if changed {
 				lamp.State = false
@@ -145,6 +174,37 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 		}
 	}
 
+	if helper.IsTopicMatch(patternBulb, msg.Topic()) {
+		fmt.Println("Topic is for Bulb set")
+		if string(msg.Payload()) == "ON" {
+			changed := lamp.TurnBulbOn(client)
+			if changed {
+				lamp.BulbState = true
+			}
+		}
+		if string(msg.Payload()) == "OFF" {
+			changed := lamp.TurnBulbOff(client)
+			if changed {
+				lamp.BulbState = false
+			}
+		}
+	}
+
+	if helper.IsTopicMatch(patternAutomatic, msg.Topic()) {
+		fmt.Println("Topic is for Automatic set")
+		if string(msg.Payload()) == "ON" {
+			changed := lamp.TurnAutomaticOnOff(client, true)
+			if changed {
+				lamp.IsAutomatic = true
+			}
+		}
+		if string(msg.Payload()) == "OFF" {
+			changed := lamp.TurnAutomaticOnOff(client, false)
+			if changed {
+				lamp.IsAutomatic = false
+			}
+		}
+	}
 }
 
 var connectHandler mqtt.OnConnectHandler = func(client mqtt.Client) {
@@ -185,6 +245,7 @@ func RunLamp() {
 
 	lamp.Sub(client)
 	lamp.SubToBulbSet(client)
+	lamp.SubToAutomaticSet(client)
 	go pubLightSensorValue(client)
 	lamp.SendHeartBeat(client)
 }
@@ -203,14 +264,20 @@ func simulateLightSensor() int {
 	}
 
 	lamp.lightSensorValue = intensity
-	fmt.Println(lamp.BulbState)
-	if lamp.lightSensorValue >= lightOnTreshold && lamp.BulbState {
-		lamp.TurnBulbOff(lamp.client)
+	fmt.Println("Bulb state " , lamp.BulbState)
+	fmt.Println("Automatic state " , lamp.IsAutomatic)
+	if lamp.IsAutomatic && lamp.lightSensorValue >= lightOnTreshold && lamp.BulbState {
+		changed := lamp.TurnBulbOff(lamp.client)
+			if changed {
+				lamp.BulbState = false
+			}
 	}
-	if lamp.lightSensorValue < lightOnTreshold && !lamp.BulbState {
-		lamp.TurnBulbOn(lamp.client)
+	if lamp.IsAutomatic && lamp.lightSensorValue < lightOnTreshold && !lamp.BulbState {
+		changed := lamp.TurnBulbOn(lamp.client)
+			if changed {
+				lamp.BulbState = true
+			}
 	}
-
 
 	return intensity
 }
@@ -264,6 +331,25 @@ func (lamp Lamp) TurnBulbOff(client mqtt.Client) bool {
 	if err != nil {
 		fmt.Println("JSON convert error - bulb")
 	}
+	token := client.Publish(topic, 0, false, jsonData)
+	token.Wait()
+	return myObj.UsedFor != "Error"
+}
+
+func (lamp Lamp) TurnAutomaticOnOff(client mqtt.Client, on bool) bool {
+	var myObj device.MessageDTO
+	if on {
+		myObj = automaticOn(lamp)
+	} else {
+		myObj = automaticOff(lamp)
+	}
+	topic := fmt.Sprintf("%d/%s", lamp.Id, "automatic")
+
+	jsonData, err := json.Marshal(myObj)
+	if err != nil {
+		fmt.Println("JSON convert error - automatic")
+	}
+	fmt.Println(myObj)
 	token := client.Publish(topic, 0, false, jsonData)
 	token.Wait()
 	return myObj.UsedFor != "Error"

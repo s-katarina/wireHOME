@@ -101,6 +101,8 @@ public class Beans {
                     deviceService.changeDeviceState((long) payloadDTO.getDeviceId(), State.offline);
                 } else if (isStringMatchingPattern(topic, "\\d+/bulb")) {
                     lampService.changeBulbState((long) payloadDTO.getDeviceId(), payloadDTO.getUsedFor());
+                } else if (isStringMatchingPattern(topic, "\\d+/automatic")) {
+                    lampService.setAutomaticRegime((long) payloadDTO.getDeviceId(), payloadDTO.getUsedFor());
                 } else if (topic.contains("light-sensor")) {
                     TelemetryPayloadDTO telemetryPayloadDTO = getTelemetryPayload(message);
                 } else if (isStringMatchingPattern(topic, "\\d+/regime")) {

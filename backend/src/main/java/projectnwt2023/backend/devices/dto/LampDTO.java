@@ -15,6 +15,7 @@ import projectnwt2023.backend.devices.State;
 public class LampDTO extends DeviceDTO {
 
     private boolean bulbState;
+    private boolean isAutomatic;
 
     public LampDTO(Lamp lamp) {
         this.setId(Math.toIntExact(lamp.getId()));
@@ -26,5 +27,6 @@ public class LampDTO extends DeviceDTO {
         this.setImagePath(lamp.getImagePath());
         this.setDeviceType(lamp.getTopic());
         this.setBulbState(lamp.isBulbState());
+        this.setAutomatic(lamp.isAutomatic());
     }
 }

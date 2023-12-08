@@ -12,6 +12,7 @@ import projectnwt2023.backend.devices.dto.LampDTO;
 import projectnwt2023.backend.devices.mqtt.Gateway;
 import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
 import projectnwt2023.backend.devices.service.interfaces.ILampService;
+import projectnwt2023.backend.property.dto.PropertyResponseDTO;
 
 @RestController
 @RequestMapping("/api/lamp")
@@ -37,9 +38,7 @@ public class LampController {
 
     @PutMapping(value = "/{deviceId}/bulb-on", produces = "application/json")
     ResponseEntity<?> turnBulbOn(@PathVariable Integer deviceId){
-        Device device = deviceService.getById(deviceId.longValue());
         try {
-//            lampService.turnOn((Lamp) device);
             mqttGateway.sendToMqtt("ON", String.valueOf(deviceId)+"/bulb/set");
             return ResponseEntity.ok("Success");
         } catch (Exception e){
@@ -50,9 +49,21 @@ public class LampController {
 
     @PutMapping(value = "/{deviceId}/bulb-off", produces = "application/json")
     ResponseEntity<?> turnBulbOff(@PathVariable Integer deviceId){
-        Device device = deviceService.getById(deviceId.longValue());
         try {
             mqttGateway.sendToMqtt("OFF", String.valueOf(deviceId)+"/bulb/set");
+            return ResponseEntity.ok("Success");
+        } catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.ok("Lamp Bulb Turn off failed");
+        }
+    }
+
+    @PutMapping(value = "/{deviceId}/automatic", produces = "application/json")
+    ResponseEntity<?> setAutomatic(@PathVariable Integer deviceId,
+                                   @RequestParam("val") boolean automatic){
+        try {
+            if (automatic) mqttGateway.sendToMqtt("ON", String.valueOf(deviceId)+"/automatic/set");
+            else mqttGateway.sendToMqtt("OFF", String.valueOf(deviceId)+"/automatic/set");
             return ResponseEntity.ok("Success");
         } catch (Exception e){
             e.printStackTrace();

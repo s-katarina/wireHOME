@@ -39,5 +39,19 @@ public class LampService implements ILampService {
         return deviceRepository.save(lamp);
     }
 
+    @Override
+    public Lamp setAutomaticRegime(Long lampId, String usedFor) {
+        Optional<Device> device = deviceRepository.findById(lampId);
+        if (!device.isPresent()) {
+            throw new EntityNotFoundException(Lamp.class);
+        }
+
+        Lamp lamp = (Lamp) device.get();
+        boolean automatic = usedFor.equals("ON");
+        lamp.setAutomatic(automatic);
+        System.out.println("Changed automatic to " + automatic);
+        return deviceRepository.save(lamp);
+    }
+
 
 }
