@@ -20,7 +20,11 @@ import (
 type Lamp struct {
 	device.BaseDevice
 	bulbState bool
+	lightSensorValue int
+	client mqtt.Client
 }
+
+const lightOnTreshold = 30000
 
 func bulbOn(lamp Lamp) device.MessageDTO {
 	currentTime := time.Now()
@@ -113,7 +117,7 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 	if string(msg.Payload()) == "ON" {
 		if helper.IsTopicMatch(patternBulb, msg.Topic()) {
 			fmt.Println("Topic is for Bulb set")
-			changed := lamp.TurnBulbOn(client, fmt.Sprintf("%d/%s", lamp.Id, "bulb"))
+			changed := lamp.TurnBulbOn(client)
 			// Command can be executed, is sent to backend
 			if changed {
 				lamp.bulbState = true
@@ -128,7 +132,7 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 	if string(msg.Payload()) == "OFF" {
 		if helper.IsTopicMatch(patternBulb, msg.Topic()) {
 			fmt.Println("Topic is for Bulb")
-			changed := lamp.TurnBulbOff(client, fmt.Sprintf("%d/%s", lamp.Id, "bulb"))
+			changed := lamp.TurnBulbOff(client)
 			if changed {
 				lamp.bulbState = false
 			}
@@ -176,6 +180,7 @@ func RunLamp() {
 	if token := client.Connect(); token.Wait() && token.Error() != nil {
 		panic(token.Error())
 	}
+	lamp.client = client
 
 	lamp.Sub(client)
 	lamp.SubToBulbSet(client)
@@ -195,6 +200,16 @@ func simulateLightSensor() int {
 	if intensity < 0 {
 		intensity = int(rand.Int31n(1000))
 	}
+
+	lamp.lightSensorValue = intensity
+	if lamp.lightSensorValue >= lightOnTreshold && lamp.bulbState {
+		lamp.TurnBulbOff(lamp.client)
+	}
+	if lamp.lightSensorValue < lightOnTreshold && !lamp.bulbState {
+		lamp.TurnBulbOn(lamp.client)
+	}
+
+
 	return intensity
 }
 
@@ -225,8 +240,9 @@ func pubLightSensorValue(client mqtt.Client) {
 	}
 }
 
-func (lamp Lamp) TurnBulbOn(client mqtt.Client, topic string) bool {
+func (lamp Lamp) TurnBulbOn(client mqtt.Client) bool {
 	myObj := bulbOn(lamp)
+	topic := fmt.Sprintf("%d/%s", lamp.Id, "bulb")
 
 	jsonData, err := json.Marshal(myObj)
 	if err != nil {
@@ -238,8 +254,9 @@ func (lamp Lamp) TurnBulbOn(client mqtt.Client, topic string) bool {
 	return myObj.UsedFor != "Error"
 }
 
-func (lamp Lamp) TurnBulbOff(client mqtt.Client, topic string) bool {
+func (lamp Lamp) TurnBulbOff(client mqtt.Client) bool {
 	myObj := bulbOff(lamp)
+	topic := fmt.Sprintf("%d/%s", lamp.Id, "bulb")
 
 	jsonData, err := json.Marshal(myObj)
 	if err != nil {
