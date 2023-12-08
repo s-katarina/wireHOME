@@ -19,7 +19,7 @@ import (
 
 type Lamp struct {
 	device.BaseDevice
-	bulbState bool
+	BulbState bool 			 `json:"bulbState"`
 	lightSensorValue int
 	client mqtt.Client
 }
@@ -28,14 +28,14 @@ const lightOnTreshold = 30000
 
 func bulbOn(lamp Lamp) device.MessageDTO {
 	currentTime := time.Now()
-	if lamp.bulbState {
+	if lamp.BulbState {
 		return device.MessageDTO{
 			DeviceId:  lamp.Id,
 			UsedFor:   "Error",
 			TimeStamp: currentTime,
 		}
 	}
-	lamp.bulbState = true
+	lamp.BulbState = true
 	return device.MessageDTO{
 		DeviceId:  lamp.Id,
 		UsedFor:   "ON",
@@ -45,14 +45,14 @@ func bulbOn(lamp Lamp) device.MessageDTO {
 
 func bulbOff(lamp Lamp) device.MessageDTO {
 	currentTime := time.Now()
-	if !lamp.bulbState {
+	if !lamp.BulbState {
 		return device.MessageDTO{
 			DeviceId:  lamp.Id,
 			UsedFor:   "Error",
 			TimeStamp: currentTime,
 		}
 	}
-	lamp.bulbState = false
+	lamp.BulbState = false
 	return device.MessageDTO{
 		DeviceId:  lamp.Id,
 		UsedFor:   "OFF",
@@ -99,6 +99,7 @@ func getLamp(deviceId int) Lamp {
 	}
 
 	fmt.Println("Response for GET Lamp:", string(body))
+	fmt.Println(sensorData)
 	return sensorData
 
 }
@@ -120,7 +121,7 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 			changed := lamp.TurnBulbOn(client)
 			// Command can be executed, is sent to backend
 			if changed {
-				lamp.bulbState = true
+				lamp.BulbState = true
 			}
 		} else {
 			changed := lamp.TurnOn(client, "ON")
@@ -134,7 +135,7 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 			fmt.Println("Topic is for Bulb")
 			changed := lamp.TurnBulbOff(client)
 			if changed {
-				lamp.bulbState = false
+				lamp.BulbState = false
 			}
 		} else {
 			changed := lamp.TurnOff(client, "OFF")
@@ -202,10 +203,11 @@ func simulateLightSensor() int {
 	}
 
 	lamp.lightSensorValue = intensity
-	if lamp.lightSensorValue >= lightOnTreshold && lamp.bulbState {
+	fmt.Println(lamp.BulbState)
+	if lamp.lightSensorValue >= lightOnTreshold && lamp.BulbState {
 		lamp.TurnBulbOff(lamp.client)
 	}
-	if lamp.lightSensorValue < lightOnTreshold && !lamp.bulbState {
+	if lamp.lightSensorValue < lightOnTreshold && !lamp.BulbState {
 		lamp.TurnBulbOn(lamp.client)
 	}
 

@@ -86,7 +86,7 @@ public class Beans {
                 String topic = (String) message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC);
                 System.out.println(message.getPayload());
                 PayloadDTO payloadDTO = getPayload(message);
-                System.out.println(payloadDTO);
+//                System.out.println(payloadDTO);
                 if (topic == null){
                     System.out.println("null je topic");
                 }
