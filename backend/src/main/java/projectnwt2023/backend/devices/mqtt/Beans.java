@@ -24,6 +24,7 @@ import projectnwt2023.backend.devices.State;
 import projectnwt2023.backend.devices.dto.PayloadDTO;
 import projectnwt2023.backend.devices.dto.TelemetryPayloadDTO;
 import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
+import projectnwt2023.backend.devices.service.interfaces.IGateService;
 import projectnwt2023.backend.devices.service.interfaces.ILampService;
 
 import static projectnwt2023.backend.helper.RegexPattern.isStringMatchingPattern;
@@ -35,6 +36,9 @@ public class Beans {
 
     @Autowired
     ILampService lampService;
+
+    @Autowired
+    IGateService gateService;
 
     @Value("${mosquitto.username}")
     private String username;
@@ -99,6 +103,10 @@ public class Beans {
                     lampService.changeBulbState((long) payloadDTO.getDeviceId(), payloadDTO.getUsedFor());
                 } else if (topic.contains("light-sensor")) {
                     TelemetryPayloadDTO telemetryPayloadDTO = getTelemetryPayload(message);
+                } else if (isStringMatchingPattern(topic, "\\d+/regime")) {
+                    gateService.changeGateRegime((long) payloadDTO.getDeviceId(), payloadDTO.getUsedFor());
+                } else if (isStringMatchingPattern(topic, "\\d+/open")) {
+                    gateService.changeGateOpen((long) payloadDTO.getDeviceId(), payloadDTO.getUsedFor());
                 }
 //                System.out.println(message.getPayload());
             }

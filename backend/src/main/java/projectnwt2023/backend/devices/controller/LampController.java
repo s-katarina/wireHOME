@@ -35,7 +35,7 @@ public class LampController {
         return new ResponseEntity<>(new LampDTO(device), HttpStatus.OK);
     }
 
-    @PostMapping(value = "/{deviceId}/bulb-on", produces = "application/json")
+    @PutMapping(value = "/{deviceId}/bulb-on", produces = "application/json")
     ResponseEntity<?> turnBulbOn(@PathVariable Integer deviceId){
         Device device = deviceService.getById(deviceId.longValue());
         try {
@@ -48,7 +48,7 @@ public class LampController {
         }
     }
 
-    @PostMapping(value = "/{deviceId}/bulb-off", produces = "application/json")
+    @PutMapping(value = "/{deviceId}/bulb-off", produces = "application/json")
     ResponseEntity<?> turnBulbOff(@PathVariable Integer deviceId){
         Device device = deviceService.getById(deviceId.longValue());
         try {

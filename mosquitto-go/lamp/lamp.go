@@ -187,9 +187,7 @@ func RunLamp() {
     lamp.SendHeartBeat(client)
 }
 
-func RunLampTelemetry() {
 
-}
 
 func pubLightSensorValue(client mqtt.Client) {
 	topic := fmt.Sprintf("%d/%s", lamp.Id, "light-sensor")
