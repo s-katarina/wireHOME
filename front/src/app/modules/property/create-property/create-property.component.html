@@ -1,0 +1,104 @@
+<div class="page">
+
+    <mat-stepper [linear]="isLinear" #stepper>
+        <mat-step [stepControl]="firstFormGroup" [editable]="isStepEditable">
+            <mat-expansion-panel [disabled]="true" [expanded]="panelOpenCondition" >
+                <mat-expansion-panel-header>
+                    <mat-button-toggle-group class='toggle-buttons' #group="matButtonToggleGroup" name="toggleGroup" value="HOUSE" (change)="onToggleValChange(group.value)">
+                        <mat-button-toggle value="HOUSE"
+                        matTooltip="House"
+                        [matTooltipPosition]='"below"'>
+                            <div class="custom-button" (click)="onToggleValChange('HOUSE')">
+                                <img src="assets/images/house.png" alt="House Image">
+                            </div>
+                        </mat-button-toggle>
+                        <mat-button-toggle value="APARTMENT"
+                        matTooltip="Apartment"
+                        [matTooltipPosition]='"below"'>
+                            <div class="custom-button" (click)="onToggleValChange('APARTMENT')">
+                                <img src="assets/images/apartment.png" alt="Apartment Image">
+                            </div>
+                        </mat-button-toggle>
+                    </mat-button-toggle-group>
+                </mat-expansion-panel-header>
+                <form [formGroup]="firstFormGroup" class="form-type">
+                    <ng-template matStepLabel>Property type</ng-template>
+                    <button mat-raised-button class="upload-image" (click)="openFileInput()"><mat-icon>image</mat-icon> Upload image</button>
+                    <input type="file" #fileInput style="display: none" (change)="onFileSelected($event)" (keydown)="disableEnterKey($event)">
+                    <div class="image-container">
+                        <button mat-icon-button class="delete-button" (click)="deleteImage()"  *ngIf="imgURL">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                        <img *ngIf="imgURL" class="uploaded-img" src="{{imgURL}}" >
+                    </div>
+                    <mat-form-field>
+                      <mat-label>Floor count</mat-label>
+                      <input matInput placeholder="Floor count" formControlName="floorCount"  required type="number" (keydown)="disableEnterKey($event)">
+                      <mat-error *ngIf="firstFormGroup.get('floorCount')!.hasError('max')">Floor count must be less than or equal to 100.</mat-error>
+                      <mat-error *ngIf="firstFormGroup.get('floorCount')!.hasError('min')">Floor count must be greater than 0.</mat-error>
+                    </mat-form-field>
+                    <mat-form-field>
+                        <mat-label>Area (in square meters)</mat-label>
+                        <input matInput placeholder="Area" formControlName="area" required type="number" (keydown)="disableEnterKey($event)">
+                        <mat-error *ngIf="firstFormGroup.get('area')!.hasError('max')">Area must be less than or equal to 10,000.</mat-error>
+                        <mat-error *ngIf="firstFormGroup.get('area')!.hasError('min')">Floor count must be greater than 0.</mat-error>
+                      </mat-form-field>
+                    <div>
+                        <button mat-button matStepperNext>Next</button>
+                    </div>
+                  </form>
+            </mat-expansion-panel>
+        </mat-step>
+        <mat-step [stepControl]="secondFormGroup" label="Address" [editable]="true">
+            <form [formGroup]="secondFormGroup" class="form-type">
+                <div class="map-container">
+                    <app-map></app-map>
+                </div>
+                <mat-form-field>
+              <mat-label>Address</mat-label>
+              <input matInput formControlName="address" placeholder="Ex. 1 Main St, New York, NY"
+                     required
+                     (blur)="onAddressInputChanged()"
+                     (keydown)="disableEnterKey($event)">
+            </mat-form-field>
+            <mat-form-field>
+                <input matInput [matAutocomplete]="auto" [formControl]="selectedCityControl"  
+                placeholder="City" formControlName="city"
+                (input)="onCityInputChanged($event)">
+                <mat-error *ngIf="secondFormGroup.get('city')!.hasError('required')">City selection is required.</mat-error>
+                <mat-autocomplete #auto="matAutocomplete" 
+                    [displayWith]="displayFn"
+                    requireSelection
+                    (optionSelected)="onCitySelectionChange($event)">
+                    <mat-option *ngFor="let choice of filteredChoices | async" [value]="choice">
+                        {{ choice.name }}
+                    </mat-option>
+                </mat-autocomplete>
+            </mat-form-field>
+            <div>
+                <button mat-button matStepperPrevious>Previous</button>
+                <button mat-button matStepperNext (click)="send()">Send request for creating property</button>
+            </div>
+          </form>
+        </mat-step>
+        <mat-step>
+            <div class="center">
+                <div *ngIf="success">
+                    <ng-template matStepLabel>Done</ng-template>
+                    <p>Request for creating property is done!</p>
+                    <p>Check your email sometime soon for confirmation of approval.</p>
+                </div>
+                <div *ngIf="!success">
+                    <ng-template matStepLabel>Oops!</ng-template>
+                    <p>Something went wrong.</p>
+                    <p>Please try again later.</p>
+                </div>
+                <div>
+                    <button mat-button (click)="stepper.reset()" >Add another property</button>
+                </div>
+            </div>
+        </mat-step>
+      </mat-stepper>
+
+    
+</div>

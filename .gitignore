@@ -1,0 +1,87 @@
+# Compiled output
+front/dist
+front/tmp
+front/out-tsc
+front/bazel-out
+
+# Node
+front/node_modules
+npm-debug.log
+yarn-error.log
+
+# IDEs and editors
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# Visual Studio Code
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
+
+# Miscellaneous
+front/.angular/cache
+.sass-cache/
+front/connect.lock
+front/coverage
+front/libpeerconnection.log
+testem.log
+front/typings
+
+# System files
+.DS_Store
+Thumbs.db
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+### NetBeans ###
+## NetBeans ###
+/backend/nbproject/private/
+/backend/nbbuild/
+/backend/dist/
+/backend/nbdist/
+/backend/.nb-gradle/
+build/
+!**/src/main/**/build/
+!**/src/test/**/build/
+backend/src/main/java/com/IBTim4/CertificatesApp/helper/TwilloConstants.java
+
+
+### VS Code ###
+.vscode/
+
+### Lombok ###
+.jpb/
+
+bin/
+
+images/
+
+backend/profileImages/
+backend/src/main/resources/superadmin.txt
+

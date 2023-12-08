@@ -1,0 +1,5 @@
+https://www.emqx.com/en/blog/emqx-vs-mosquitto-2023-mqtt-broker-comparison
+https://hub.docker.com/_/golang
+https://blog.logrocket.com/dockerizing-go-application/
+https://cedalo.com/blog/mosquitto-docker-configuration-ultimate-guide/
+https://hub.docker.com/_/eclipse-mosquitto
