@@ -11,3 +11,5 @@ const Username = "admin"
 const Password = "1234"
 
 const LightSensorReadPeriod = 10
+
+const ProximitySensorReadPeriod = 30

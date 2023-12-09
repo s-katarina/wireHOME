@@ -21,6 +21,7 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.MessagingException;
 import projectnwt2023.backend.devices.State;
+import projectnwt2023.backend.devices.dto.GateEventPayloadDTO;
 import projectnwt2023.backend.devices.dto.PayloadDTO;
 import projectnwt2023.backend.devices.dto.TelemetryPayloadDTO;
 import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
@@ -85,8 +86,8 @@ public class Beans {
             public void handleMessage(Message<?> message) throws MessagingException {
                 String topic = (String) message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC);
                 System.out.println(message.getPayload());
-                PayloadDTO payloadDTO = getPayload(message);
-//                System.out.println(payloadDTO);
+                PayloadDTO payloadDTO = getPayload(message, PayloadDTO.class);
+                System.out.println(payloadDTO);
                 if (topic == null){
                     System.out.println("null je topic");
                 }
@@ -104,38 +105,32 @@ public class Beans {
                 } else if (isStringMatchingPattern(topic, "\\d+/automatic")) {
                     lampService.setAutomaticRegime((long) payloadDTO.getDeviceId(), payloadDTO.getUsedFor());
                 } else if (topic.contains("light-sensor")) {
-                    TelemetryPayloadDTO telemetryPayloadDTO = getTelemetryPayload(message);
+                    TelemetryPayloadDTO telemetryPayloadDTO = getPayload(message, TelemetryPayloadDTO.class);
                 } else if (isStringMatchingPattern(topic, "\\d+/regime")) {
                     gateService.changeGateRegime((long) payloadDTO.getDeviceId(), payloadDTO.getUsedFor());
                 } else if (isStringMatchingPattern(topic, "\\d+/open")) {
-                    gateService.changeGateOpen((long) payloadDTO.getDeviceId(), payloadDTO.getUsedFor());
+                    GateEventPayloadDTO dto = getPayload(message, GateEventPayloadDTO.class);
+                    System.out.println(dto);
+                    gateService.changeGateOpen((long) dto.getDeviceId(), dto.getUsedFor());
                 }
 //                System.out.println(message.getPayload());
             }
         };
     }
 
-    private static PayloadDTO getPayload(Message<?> message) {
+    private static <T> T getPayload(Message<?> message, Class<T> dtoClass) {
         Object payload = message.getPayload();
         String jsonPayload = (String) payload;
 
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            return objectMapper.readValue(jsonPayload, PayloadDTO.class);
+            return objectMapper.readValue(jsonPayload, dtoClass);
         } catch (JsonProcessingException e) {
-            return new PayloadDTO();
-        }
-    }
-
-    private static TelemetryPayloadDTO getTelemetryPayload(Message<?> message) {
-        Object payload = message.getPayload();
-        String jsonPayload = (String) payload;
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        try {
-            return objectMapper.readValue(jsonPayload, TelemetryPayloadDTO.class);
-        } catch (JsonProcessingException e) {
-            return new TelemetryPayloadDTO();
+            try {
+                return dtoClass.getDeclaredConstructor().newInstance();
+            } catch (Exception ex) {
+                throw new RuntimeException("Error creating an instance of " + dtoClass.getSimpleName(), ex);
+            }
         }
     }
 

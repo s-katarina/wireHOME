@@ -25,6 +25,7 @@ type Lamp struct {
 	client           mqtt.Client
 }
 
+// Bulb is ON if light sensor registers less than 30000 lux
 const lightOnTreshold = 30000
 
 func bulbOn(lamp Lamp) device.MessageDTO {
@@ -252,11 +253,11 @@ func RunLamp() {
 
 func simulateLightSensor() int {
 
-	// Daylight hours (06h to 18h)
 	now := time.Now()
 	hour := float64(now.Hour()) + float64(now.Minute())/60.0
-
+	
 	// Use sinus function for simulation of continous change
+	// Daylight hours (06h to 18h) will be taken into account, because sin()>0
 	intensity := int(70000*(math.Sin((hour-6.0)*math.Pi/12)) + rand.Float64()*5000)
 
 	if intensity < 0 {
