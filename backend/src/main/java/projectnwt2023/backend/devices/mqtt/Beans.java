@@ -100,11 +100,8 @@ public class Beans {
                 }
                 else if(topic.equals("OFF")) {
                     deviceService.changeDeviceState((long) payloadDTO.getDeviceId(), State.offline);
-                } else if (isStringMatchingPattern(topic, "\\d+/bulb")) {
-                    lampService.changeBulbState((long) payloadDTO.getDeviceId(), payloadDTO.getUsedFor());
-                } else if (isStringMatchingPattern(topic, "\\d+/automatic")) {
-                    lampService.setAutomaticRegime((long) payloadDTO.getDeviceId(), payloadDTO.getUsedFor());
-                } else if (topic.contains("light-sensor")) {
+                } else if (topic.contains("lamp")) {
+                    lampService.parseRequest(topic, payloadDTO);
                 } else if (isStringMatchingPattern(topic, "\\d+/regime")) {
                     gateService.changeGateRegime((long) payloadDTO.getDeviceId(), payloadDTO.getUsedFor());
                 } else if (isStringMatchingPattern(topic, "\\d+/open")) {

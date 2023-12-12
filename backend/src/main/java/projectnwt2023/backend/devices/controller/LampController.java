@@ -39,7 +39,7 @@ public class LampController {
     @PutMapping(value = "/{deviceId}/bulb-on", produces = "application/json")
     ResponseEntity<?> turnBulbOn(@PathVariable Integer deviceId){
         try {
-            mqttGateway.sendToMqtt("ON", String.valueOf(deviceId)+"/bulb/set");
+            mqttGateway.sendToMqtt("ON", "lamp/" + String.valueOf(deviceId)+"/bulb/set");
             return ResponseEntity.ok("Success");
         } catch (Exception e){
             e.printStackTrace();
@@ -50,7 +50,7 @@ public class LampController {
     @PutMapping(value = "/{deviceId}/bulb-off", produces = "application/json")
     ResponseEntity<?> turnBulbOff(@PathVariable Integer deviceId){
         try {
-            mqttGateway.sendToMqtt("OFF", String.valueOf(deviceId)+"/bulb/set");
+            mqttGateway.sendToMqtt("OFF", "lamp/" +String.valueOf(deviceId)+"/bulb/set");
             return ResponseEntity.ok("Success");
         } catch (Exception e){
             e.printStackTrace();
@@ -59,11 +59,11 @@ public class LampController {
     }
 
     @PutMapping(value = "/{deviceId}/automatic", produces = "application/json")
-    ResponseEntity<?> setAutomatic(@PathVariable Integer deviceId,
+    ResponseEntity<?>setAutomatic(@PathVariable Integer deviceId,
                                    @RequestParam("val") boolean automatic){
         try {
-            if (automatic) mqttGateway.sendToMqtt("ON", String.valueOf(deviceId)+"/automatic/set");
-            else mqttGateway.sendToMqtt("OFF", String.valueOf(deviceId)+"/automatic/set");
+            if (automatic) mqttGateway.sendToMqtt("ON", "lamp/" + String.valueOf(deviceId)+"/automatic/set");
+            else mqttGateway.sendToMqtt("OFF", "lamp/" + String.valueOf(deviceId)+"/automatic/set");
             return ResponseEntity.ok("Success");
         } catch (Exception e){
             e.printStackTrace();

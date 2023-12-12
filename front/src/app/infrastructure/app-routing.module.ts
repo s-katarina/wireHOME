@@ -11,6 +11,7 @@ import { UnregisteredGuard } from './guard/unregistered.guard';
 import { RegisterComponent } from '../modules/auth/register/register.component';
 import { RoleGuard } from './guard/role.guard';
 import { TokenGuard } from './guard/token.guard';
+import { LampComponent } from '../modules/devices/lamp/lamp.component';
 
 const routes: Routes = [
   { path: 'properties', component: PropertyOverviewComponent, canActivate: [TokenGuard, RoleGuard ], data: {roles: ["AUTH_USER"]}  },
@@ -21,7 +22,7 @@ const routes: Routes = [
   { path: 'register', component: RegisterComponent, canActivate: [UnregisteredGuard] },
   { path: 'property-requests', component: PropertyRequestsComponent, canActivate: [TokenGuard, RoleGuard ], data: {roles: ["SUPER_ADMIN", "ADMIN"]}  },
   { path: 'register-admin', component: RegisterComponent, canActivate: [TokenGuard, RoleGuard ], data: {roles: ["SUPER_ADMIN"]} },
-  { path: '**', component: LandingComponent }
+  { path: '**', component: LampComponent }
 ];
 
 @NgModule({
