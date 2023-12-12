@@ -13,6 +13,7 @@ type CommonBehavior interface {
 	SendHeartBeat(client mqtt.Client)
 	TurnOn(client mqtt.Client, topic string)
 	TurnOff(client mqtt.Client, topic string)
+	TakesElectisity(client mqtt.Client)
 }
 
 type BaseDevice struct {
@@ -28,6 +29,12 @@ type BaseDevice struct {
 type MessageDTO struct {
 	DeviceId int	`json:"deviceId"`
 	UsedFor string 	`json:"usedFor"`
+	TimeStamp time.Time	`json:"timeStamp"`
+}
+
+type ElectisityDTO struct {
+	DeviceId int	`json:"deviceId"`
+	ConsumptionAmount float64 	`json:"consumptionAmount"`
 	TimeStamp time.Time	`json:"timeStamp"`
 }
 
@@ -117,6 +124,31 @@ func (device BaseDevice) TurnOff(client mqtt.Client, topic string) bool {
     token := client.Publish(topic, 0, false, jsonData)
     token.Wait()
 	return myObj.UsedFor == "OFF"
+}
+func (device BaseDevice) TakesElectisity(client mqtt.Client) {
+	if (!device.UsesElectricity){
+			return
+		}
+    for {
+		currentTime:= time.Now()
+		myObj := ElectisityDTO{
+			DeviceId:   device.Id,
+			ConsumptionAmount: device.ConsumptionAmount,
+			TimeStamp: currentTime,
+		}
+	
+		// Convert the object to JSON
+		jsonData, err := json.Marshal(myObj)
+		if err != nil {
+			// log.Fatal(err)
+			fmt.Println("jbg")
+		}
+	
+        // text := fmt.Sprintf("Heartbeat %v", currentTime)
+        token := client.Publish("ELECTICITY", 0, false, jsonData)
+        token.Wait()
+        time.Sleep(time.Second * 15)
+    }
 }
 
 func (device BaseDevice)Sub(client mqtt.Client) {

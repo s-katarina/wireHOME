@@ -88,7 +88,7 @@ public class Beans {
                 else if(topic.equals("OFF")) {
                     deviceService.changeDeviceState((long) payloadDTO.getDeviceId(), State.offline);
                 }
-//                System.out.println(message.getPayload());
+                System.out.println(message.getPayload());
             }
         };
     }

@@ -18,6 +18,11 @@ public class City {
 
     private String name;
 
+    private double latitude;
+
+    private double longitude;
+
+
     @ManyToOne
     @JoinColumn(name = "country_id")
     private Country country;

@@ -28,7 +28,7 @@ public class DeviceController {
     Gateway mqttGateway;
 
     @GetMapping(value = "/{deviceId}", produces = "application/json")
-    ResponseEntity<DeviceDTO> getProperty(@PathVariable Integer deviceId){
+    ResponseEntity<DeviceDTO> getDevice(@PathVariable Integer deviceId){
 
         Device device = deviceService.getById(deviceId.longValue());
         System.out.println(deviceId);
