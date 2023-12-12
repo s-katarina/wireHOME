@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import projectnwt2023.backend.devices.Device;
 import projectnwt2023.backend.devices.Lamp;
 import projectnwt2023.backend.devices.State;
+import projectnwt2023.backend.devices.dto.PayloadDTO;
 import projectnwt2023.backend.devices.mqtt.Gateway;
 import projectnwt2023.backend.devices.repository.DeviceRepository;
 import projectnwt2023.backend.devices.service.interfaces.ILampService;
@@ -20,6 +21,11 @@ public class LampService implements ILampService {
 
     @Autowired
     DeviceRepository deviceRepository;
+
+    @Override
+    public void parseRequest(String topic, PayloadDTO payloadDTO) {
+
+    }
 
     @Override
     public Lamp changeBulbState(Long lampId, String usedFor) {

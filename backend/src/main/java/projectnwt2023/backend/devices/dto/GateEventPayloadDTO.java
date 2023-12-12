@@ -7,9 +7,6 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
-public class GateEventPayloadDTO {
-    private int deviceId;
-    private String usedFor;
-    private String timeStamp;
+public class GateEventPayloadDTO extends PayloadDTO {
     private String caller;
 }

@@ -8,7 +8,7 @@ import (
 	"math"
 	"math/rand"
 	"net/http"
-	"strconv"
+	// "strconv"
 	"tim10/mqtt/constants"
 	"tim10/mqtt/device"
 	"tim10/mqtt/helper"
@@ -287,17 +287,19 @@ func pubLightSensorValue(client mqtt.Client) {
 	topic := fmt.Sprintf("%d/%s", lamp.Id, "light-sensor")
 	fmt.Println("Topic for pub " + topic)
 	for {
-		ts := time.Now().UnixNano() / int64(time.Millisecond)
-		data := lightSensorValue{
-			Id:        strconv.Itoa(lamp.Id),
-			Val:       strconv.Itoa(simulateLightSensor()),
-			TimeStamp: strconv.FormatInt(ts, 10),
-		}
-		jsonData, err := json.Marshal(data)
-		if err != nil {
-			log.Fatal(err)
-		}
-		token := client.Publish(topic, 0, false, jsonData)
+		// ts := time.Now().UnixNano() / int64(time.Millisecond)
+		// data := lightSensorValue{
+		// 	Id:        strconv.Itoa(lamp.Id),
+		// 	Val:       strconv.Itoa(simulateLightSensor()),
+		// 	TimeStamp: strconv.FormatInt(ts, 10),
+		// }
+		// jsonData, err := json.Marshal(data)
+		// if err != nil {
+		// 	log.Fatal(err)
+		// }
+		// token := client.Publish(topic, 0, false, jsonData)
+		data := fmt.Sprintf("light-sensor,device-id=%d value=%d", lamp.Id, simulateLightSensor())
+		token := client.Publish(topic, 0, false, data)
 		token.Wait()
 
 		if token.Error() != nil {

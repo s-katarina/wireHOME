@@ -105,7 +105,6 @@ public class Beans {
                 } else if (isStringMatchingPattern(topic, "\\d+/automatic")) {
                     lampService.setAutomaticRegime((long) payloadDTO.getDeviceId(), payloadDTO.getUsedFor());
                 } else if (topic.contains("light-sensor")) {
-                    TelemetryPayloadDTO telemetryPayloadDTO = getPayload(message, TelemetryPayloadDTO.class);
                 } else if (isStringMatchingPattern(topic, "\\d+/regime")) {
                     gateService.changeGateRegime((long) payloadDTO.getDeviceId(), payloadDTO.getUsedFor());
                 } else if (isStringMatchingPattern(topic, "\\d+/open")) {
