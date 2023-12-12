@@ -8,6 +8,8 @@ import projectnwt2023.backend.devices.Device;
 import projectnwt2023.backend.devices.Lamp;
 import projectnwt2023.backend.devices.State;
 
+import static projectnwt2023.backend.helper.Constants.imgPathForFrontend;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -24,7 +26,7 @@ public class LampDTO extends DeviceDTO {
         this.setUsesElectricity(lamp.isUsesElectricity());
         this.setConsumptionAmount(lamp.getConsumptionAmount());
         this.setPropertyId(Math.toIntExact(lamp.getProperty().getId()));
-        this.setImagePath(lamp.getImagePath());
+        this.setImagePath(imgPathForFrontend + lamp.getImagePath());
         this.setDeviceType(lamp.getTopic());
         this.setBulbState(lamp.isBulbState());
         this.setAutomatic(lamp.isAutomatic());

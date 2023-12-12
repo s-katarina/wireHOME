@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import projectnwt2023.backend.devices.Device;
 import projectnwt2023.backend.devices.Lamp;
 import projectnwt2023.backend.devices.State;
+import projectnwt2023.backend.devices.dto.LampDTO;
 import projectnwt2023.backend.devices.dto.PayloadDTO;
 import projectnwt2023.backend.devices.mqtt.Gateway;
 import projectnwt2023.backend.devices.repository.DeviceRepository;
@@ -52,7 +53,7 @@ public class LampService implements ILampService {
         Lamp lamp = (Lamp) device.get();
         lamp.setBulbState(state);
         System.out.println("Changed bulb state to " + state);
-        this.simpMessagingTemplate.convertAndSend("/lamp/" + lampId, "Bulb state changed to " + state);
+        this.simpMessagingTemplate.convertAndSend("/lamp/" + lampId, new LampDTO(lamp));
         return deviceRepository.save(lamp);
     }
 
@@ -67,6 +68,7 @@ public class LampService implements ILampService {
         boolean automatic = usedFor.equals("ON");
         lamp.setAutomatic(automatic);
         System.out.println("Changed automatic to " + automatic);
+        this.simpMessagingTemplate.convertAndSend("/lamp/" + lampId, new LampDTO(lamp));
         return deviceRepository.save(lamp);
     }
 

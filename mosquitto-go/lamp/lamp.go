@@ -151,7 +151,7 @@ func SetLamp(id int) {
 var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
 
 	fmt.Printf("Received message: %s from topic: %s\n", msg.Payload(), msg.Topic())
-	patternOn := "lamp/\\d+"
+	patternOn := "\\d+"
 	patternBulb := "lamp/\\d+/bulb/set"           // \\d+ matches one or more digits
 	patternAutomatic := "lamp/\\d+/automatic/set" 
 

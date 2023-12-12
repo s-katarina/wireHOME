@@ -73,3 +73,8 @@ export interface AppUserDTO {
     password: string | null;
     active: boolean | null;
 }
+
+export interface Lamp extends DeviceDTO {
+    bulbState: boolean,
+    automatic: boolean
+}
