@@ -39,6 +39,7 @@ public class DeviceController {
     ResponseEntity<?> turnOn(@PathVariable Integer deviceId){
         Device device = deviceService.getById(deviceId.longValue());
         try {
+            System.out.println(deviceId);
             mqttGateway.sendToMqtt("ON", String.valueOf(deviceId));
             return ResponseEntity.ok("Success");
         } catch (Exception e){

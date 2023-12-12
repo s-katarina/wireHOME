@@ -19,9 +19,12 @@ import javax.persistence.Table;
 public class Gate extends Device{
     private boolean isPublic;
 
+    private boolean isOpen;
+
     public Gate(DeviceRequestDTO deviceRequestDTO) {
         super(deviceRequestDTO);
         this.isPublic = true;
+        this.isOpen = false;
         this.setTopic("gate");
 
     }

@@ -73,7 +73,7 @@ func MakeAmbientSensore() AmbientSensore {
 var ambientSensore AmbientSensore = MakeAmbientSensore();
 var topicForBase string = "simulation/ambientSensor";
 
-func RunAmbientSensore() {
+func 	RunAmbientSensore() {
 	
 	fmt.Println("Response:", ambientSensore.BaseDevice.Id)
     var broker = "localhost"
