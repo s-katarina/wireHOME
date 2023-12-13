@@ -43,7 +43,7 @@ export class LampComponent implements OnInit, AfterViewInit {
     const stompClient: any = this.socketService.initWebSocket()
 
     stompClient.connect({}, () => {
-      stompClient.subscribe('/lamp/8', (message: { body: string }) => {
+      stompClient.subscribe(`/lamp/${this.lamp!.id}`, (message: { body: string }) => {
         console.log(message)
         try {
           const parsedData : Lamp = JSON.parse(message.body);

@@ -39,6 +39,7 @@ public class DeviceService implements IDeviceService {
     public Device changeDeviceState(Long id, State state) {
         Device device = getById(id);
         device.setState(state);
+        System.out.println(device.getState());
         return deviceRepository.save(device);
     }
 

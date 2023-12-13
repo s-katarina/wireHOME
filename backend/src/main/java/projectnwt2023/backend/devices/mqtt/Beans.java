@@ -103,7 +103,8 @@ public class Beans {
                 } else if (topic.contains("lamp")) {
                     lampService.parseRequest(topic, payloadDTO);
                 } else if (topic.contains("gate")) {
-                    gateService.parseRequest(topic, payloadDTO);
+                    System.out.println(topic);
+                    gateService.parseRequest(topic, getPayload(message, GateEventPayloadDTO.class));
                 }
 //                System.out.println(message.getPayload());
             }

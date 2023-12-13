@@ -28,6 +28,7 @@ public class GateService implements IGateService {
 
     @Override
     public void parseRequest(String topic, PayloadDTO payloadDTO) {
+        System.out.println(topic);
         if (isStringMatchingPattern(topic, "gate/\\d+/regime")) {
             changeGateRegime((long) payloadDTO.getDeviceId(), payloadDTO.getUsedFor());
         } else if (isStringMatchingPattern(topic, "gate/\\d+/open")) {
@@ -41,6 +42,8 @@ public class GateService implements IGateService {
         if (!device.isPresent()) {
             throw new EntityNotFoundException(Lamp.class);
         }
+
+        System.out.println("Changing gate regime (public) to " + regime);
 
         boolean isPublic;
         if (regime.equals("PUBLIC")) isPublic = true;

@@ -6,16 +6,16 @@ import (
 	// // "log"
 	// // "time"
 	// ambientSensore "tim10/mqtt/ambientSensore"
-	// "tim10/mqtt/gate"
-	lamp "tim10/mqtt/lamp"
+	"tim10/mqtt/gate"
+	// lamp "tim10/mqtt/lamp"
 )
 
 
 func main() {
     // ambientSensore.RunAmbientSensore()
 
-    lamp.RunLamp()
-    // gate.RunGate()
+    // lamp.RunLamp()
+    gate.RunGate()
 }
 
 

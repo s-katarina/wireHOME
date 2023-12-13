@@ -167,14 +167,14 @@ func getGate(deviceId int) Gate {
 
 }
 
-var gate Gate = getGate(9)
+var gate Gate = getGate(15)
 
 var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
 
 	fmt.Printf("Received message: %s from topic: %s\n", msg.Payload(), msg.Topic())
 	patternOn := "\\d+"
-	patternRegime := "\\d+/regime/set" // \\d+ matches one or more digits
-	patternOpen := "\\d+/open/set"
+	patternRegime := "gate/\\d+/regime/set" // \\d+ matches one or more digits
+	patternOpen := "gate/\\d+/open/set"
 
 	if helper.IsTopicMatch(patternOn, msg.Topic()) {
 		if string(msg.Payload()) == "ON" {
@@ -182,6 +182,7 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 			if changed {
 				gate.State = true
 			}
+			fmt.Println(gate.State)
 		}
 		if string(msg.Payload()) == "OFF" {
 			changed := gate.TurnOff(client, "OFF")
@@ -354,7 +355,7 @@ func simulateGate(client mqtt.Client) {
 
 		fmt.Println("Proximity detectedScore ", detectedScore)
 		// Vehicle is detected
-		if detectedScore > 0.7 {
+		if detectedScore > 0.8 {
 			fmt.Println("Gate regime ", gate.IsPublic)
 			fmt.Println("Gate open ", gate.IsOpen)
 

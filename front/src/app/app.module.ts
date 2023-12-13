@@ -15,6 +15,7 @@ import { RegisterComponent } from './modules/auth/register/register.component';
 import { LoginComponent } from './modules/auth/login/login.component';
 import { TokenExpirationInterceptor } from './infrastructure/interceptor/token-expiration';
 import { LampComponent } from './modules/devices/outdoor/lamp/lamp.component';
+import { GateComponent } from './modules/devices/outdoor/gate/gate.component';
 
 
 @NgModule({
@@ -24,6 +25,7 @@ import { LampComponent } from './modules/devices/outdoor/lamp/lamp.component';
     LoginComponent,
     RegisterComponent,
     LampComponent,
+    GateComponent,
   ],
   imports: [
     BrowserModule,

@@ -78,3 +78,8 @@ export interface Lamp extends DeviceDTO {
     bulbState: boolean,
     automatic: boolean
 }
+
+export interface Gate extends DeviceDTO {
+    open: boolean,
+    public: boolean
+}
