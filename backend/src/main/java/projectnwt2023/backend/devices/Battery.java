@@ -19,10 +19,12 @@ import javax.persistence.Table;
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Battery extends Device{
     private double capacity;
+    private double currentFill;
 
     public Battery(DeviceRequestDTO deviceRequestDTO) {
         super(deviceRequestDTO);
         this.capacity = deviceRequestDTO.getCapacity();
+        this.currentFill = 0;
         this.setTopic("battery");
     }
 }

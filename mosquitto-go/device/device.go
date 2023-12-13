@@ -129,24 +129,11 @@ func (device BaseDevice) TakesElectisity(client mqtt.Client) {
 	if (!device.UsesElectricity){
 			return
 		}
+	topic := fmt.Sprintf("energy/%d/%s", device.Id, "any-device")
     for {
-		currentTime:= time.Now()
-		myObj := ElectisityDTO{
-			DeviceId:   device.Id,
-			ConsumptionAmount: device.ConsumptionAmount,
-			TimeStamp: currentTime,
-		}
-	
-		// Convert the object to JSON
-		jsonData, err := json.Marshal(myObj)
-		if err != nil {
-			// log.Fatal(err)
-			fmt.Println("jbg")
-		}
-	
-        // text := fmt.Sprintf("Heartbeat %v", currentTime)
-        token := client.Publish("ELECTICITY", 0, false, jsonData)
-        token.Wait()
+		data := fmt.Sprintf("energy-maintaining,device-id=%d,property-id=%d value=%f", device.Id, device.PropertyId, -device.ConsumptionAmount)
+		token := client.Publish(topic, 0, false, data)
+		token.Wait()
         time.Sleep(time.Second * 15)
     }
 }

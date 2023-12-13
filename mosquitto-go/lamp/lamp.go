@@ -8,7 +8,6 @@ import (
 	"math"
 	"math/rand"
 	"net/http"
-	"strconv"
 	"tim10/mqtt/constants"
 	"tim10/mqtt/device"
 	"tim10/mqtt/helper"
@@ -147,7 +146,7 @@ func getLamp(deviceId int) Lamp {
 
 }
 
-var lamp Lamp = getLamp(8)
+var lamp Lamp = getLamp(2)
 
 func SetLamp(id int) {
 	lamp = getLamp(id)
@@ -248,6 +247,7 @@ func RunLamp() {
 	lamp.SubToBulbSet(client)
 	lamp.SubToAutomaticSet(client)
 	go pubLightSensorValue(client)
+	go lamp.TakesElectisity(client)
 	lamp.SendHeartBeat(client)
 }
 
@@ -284,20 +284,22 @@ func simulateLightSensor() int {
 }
 
 func pubLightSensorValue(client mqtt.Client) {
-	topic := fmt.Sprintf("%d/%s", lamp.Id, "light-sensor")
+	topic := fmt.Sprintf("lamp/%d/%s", lamp.Id, "light-sensor")
 	fmt.Println("Topic for pub " + topic)
 	for {
-		ts := time.Now().UnixNano() / int64(time.Millisecond)
-		data := lightSensorValue{
-			Id:        strconv.Itoa(lamp.Id),
-			Val:       strconv.Itoa(simulateLightSensor()),
-			TimeStamp: strconv.FormatInt(ts, 10),
-		}
-		jsonData, err := json.Marshal(data)
-		if err != nil {
-			log.Fatal(err)
-		}
-		token := client.Publish(topic, 0, false, jsonData)
+		// ts := time.Now().UnixNano() / int64(time.Millisecond)
+		// data := lightSensorValue{
+		// 	Id:        strconv.Itoa(lamp.Id),
+		// 	Val:       strconv.Itoa(simulateLightSensor()),
+		// 	TimeStamp: strconv.FormatInt(ts, 10),
+		// }
+		// jsonData, err := json.Marshal(data)
+		// if err != nil {
+		// 	log.Fatal(err)
+		// }
+		// token := client.Publish(topic, 0, false, jsonData)
+		data := fmt.Sprintf("light-sensor,device-id=%d value=%d", lamp.Id, simulateLightSensor())
+		token := client.Publish(topic, 0, false, data)
 		token.Wait()
 
 		if token.Error() != nil {

@@ -63,7 +63,6 @@ func MakeSolarPanel() SolarPanel {
 		fmt.Println("Error reading response body:", err)
 		return SolarPanel{}
 	}
-
 	var PanelData =SolarPanel{}
 	err = json.Unmarshal(body, &PanelData)
 	if err != nil {
@@ -109,41 +108,44 @@ func RunSolarPanel() {
         panic(token.Error())
     }
 
-    // solarPanel.Sub(client)
-    // solarPanel.SendHeartBeat(client)
-	sendElectisityByMinute(client)
+    solarPanel.Sub(client)
+	go sendElectisityByMinute(client)
+	go solarPanel.TakesElectisity(client)
+    solarPanel.SendHeartBeat(client)
     client.Disconnect(500)
 }
 
 func sendElectisityByMinute(client mqtt.Client) {
 	// fmt.Printf("lag: %f step\n", solarPanel.Latitude)
 	// fmt.Printf("lon: %f step\n", solarPanel.Longitude)
-    var now = time.Now()
+	topic := fmt.Sprintf("energy/%d/%s", solarPanel.Id, "solar-panel")
+	for{
+		var now = time.Now()
 
-	var times = suncalc.GetTimes(now, solarPanel.Latitude, solarPanel.Longitude)
-
-	if (now.Before(times[suncalc.Sunrise].Value) || now.After(times[suncalc.Sunset].Value)) {
-		fmt.Println("nema sunca")
-	}
-
-	var sunPos  = suncalc.GetPosition(now, solarPanel.Latitude, solarPanel.Longitude);
-	// fmt.Printf("Sun Azimuth: %f deg\n", sunPos.Azimuth*180/math.Pi)
-	// fmt.Printf("Sun Altitude: %f deg\n", sunPos.Altitude*180/math.Pi)
-	duration := times[suncalc.Sunset].Value.Sub(times[suncalc.Sunrise].Value)
-	sunnyHours := duration.Hours()
-	fmt.Println(sunnyHours)
-
-	var efficiency = solarPanel.SurfaceSize * 1000 * solarPanel.Efficiency
-	var outputByDay = efficiency * sunnyHours / 1000
-	fmt.Printf("Output by day: %f\n",outputByDay)
-	var outputByMinute = (outputByDay/(24*60)) * (1 - math.Abs(math.Cos(sunPos.Altitude*180/math.Pi)))
-	fmt.Printf("Output by min: %f\n",outputByMinute)
-
+		var times = suncalc.GetTimes(now, solarPanel.Latitude, solarPanel.Longitude)
 	
-	message := "Hello, MQTT!"
-	token := client.Publish("energy;;", 0, false, message)
-	token.Wait()
+		var sunPos  = suncalc.GetPosition(now, 45.25840280007606, 19.8516726409658);
+		// var sunPos  = suncalc.GetPosition(now, solarPanel.Latitude, solarPanel.Longitude);
+		// fmt.Printf("Sun Azimuth: %f deg\n", sunPos.Azimuth*180/math.Pi)
+		// fmt.Printf("Sun Altitude: %f deg\n", sunPos.Altitude*180/math.Pi)
+		duration := times[suncalc.Sunset].Value.Sub(times[suncalc.Sunrise].Value)
+		sunnyHours := duration.Hours()
+		fmt.Println(times[suncalc.Sunrise].Value)
+	
+		var efficiency = solarPanel.SurfaceSize * 1000 * solarPanel.Efficiency
+		var outputByDay = (efficiency/100) * sunnyHours / 1000
+		fmt.Printf("Output by day: %f\n",outputByDay)
+		var outputByMinute = (outputByDay/(24*60)) * (1 - math.Abs(math.Cos(sunPos.Altitude*180/math.Pi)))
+		fmt.Printf("Output by min: %f\n",outputByMinute)
+	
+		if (now.Before(times[suncalc.Sunrise].Value) || now.After(times[suncalc.Sunset].Value)) {
+			outputByMinute = 0.0
+		}
 
-	fmt.Printf("Message sent: %s\n", message)
-
+		data := fmt.Sprintf("energy-maintaining,device-id=%d,property-id=%d value=%f", solarPanel.Id, solarPanel.PropertyId, outputByMinute)
+		token := client.Publish(topic, 0, false, data)
+		token.Wait()
+	
+		time.Sleep(time.Second * 30)
+	}
 }	

@@ -87,7 +87,7 @@ public class Beans {
                 String topic = (String) message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC);
                 System.out.println(message.getPayload());
                 PayloadDTO payloadDTO = getPayload(message, PayloadDTO.class);
-                System.out.println(payloadDTO);
+//                System.out.println(payloadDTO);
                 if (topic == null){
                     System.out.println("null je topic");
                 }
@@ -96,6 +96,7 @@ public class Beans {
                     deviceService.changeDeviceState((long) payloadDTO.getDeviceId(), State.offline);
                 }
                 else if(topic.equals("ON")) {
+                    System.out.println("usao u ukljuci");
                     deviceService.changeDeviceState((long) payloadDTO.getDeviceId(), State.online);
                 }
                 else if(topic.equals("OFF")) {
@@ -113,7 +114,7 @@ public class Beans {
                     System.out.println(dto);
                     gateService.changeGateOpen((long) dto.getDeviceId(), dto.getUsedFor());
                 }
-                System.out.println(message.getPayload());
+//                System.out.println(message.getPayload());
             }
         };
     }
