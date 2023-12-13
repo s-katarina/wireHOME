@@ -7,20 +7,13 @@ import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root'
 })
-export class LampService {
+export class OutdoorDeviceService {
 
-  private lampSource = new BehaviorSubject<Lamp | undefined>(undefined);
-  currentLamp = this.lampSource.asObservable();
+  private selectedDeviceId = new BehaviorSubject<string>("");
+  selectedLampId = this.selectedDeviceId.asObservable();
 
-  setLamp(property: Lamp | undefined) {
-    this.lampSource.next(property);
-  }
-
-  private selectedLamp = new BehaviorSubject<string>("");
-  selectedLampId$ = this.selectedLamp.asObservable();
-
-  setSelectedLampId(id: string) {
-    this.selectedLamp.next(id);
+  setSelectedDeviceId(id: string) {
+    this.selectedDeviceId.next(id);
   }
 
   constructor(private readonly http: HttpClient) { }

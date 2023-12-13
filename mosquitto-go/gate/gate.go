@@ -124,14 +124,14 @@ func (gate Gate) setToClosed(caller Caller) GateEventMessageDTO {
 }
 
 func (gate Gate) SubToRegimeSet(client mqtt.Client) {
-	topic := fmt.Sprintf("%d/%s", gate.Id, "regime/set")
+	topic := fmt.Sprintf("gate/%d/%s", gate.Id, "regime/set")
 	token := client.Subscribe(topic, 1, nil)
 	token.Wait()
 	fmt.Printf("Subscribed to topic: %s", topic)
 }
 
 func (gate Gate) SubToOpenSet(client mqtt.Client) {
-	topic := fmt.Sprintf("%d/%s", gate.Id, "open/set")
+	topic := fmt.Sprintf("gate/%d/%s", gate.Id, "open/set")
 	token := client.Subscribe(topic, 1, nil)
 	token.Wait()
 	fmt.Printf("Subscribed to topic: %s", topic)
@@ -199,7 +199,7 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 		} else if string(msg.Payload()) == "PRIVATE" {
 			public = false
 		}
-		changed := gate.ChangeRegime(client, fmt.Sprintf("%d/%s", gate.Id, "regime"), public)
+		changed := gate.ChangeRegime(client, fmt.Sprintf("gate/%d/%s", gate.Id, "regime"), public)
 		// Command can be executed, is sent to backend
 		if changed {
 			gate.IsPublic = public
@@ -268,7 +268,7 @@ func RunGate() {
 }
 
 func pubDistanceSensorValue(client mqtt.Client) {
-	topic := fmt.Sprintf("%d/%s", gate.Id, "distance-sensor")
+	topic := fmt.Sprintf("gate/%d/%s", gate.Id, "distance-sensor")
 	fmt.Println("Topic for pub " + topic)
 }
 
@@ -293,7 +293,7 @@ func (gate Gate) ChangeRegime(client mqtt.Client, topic string, public bool) boo
 func (gate Gate) ChangeOpen(client mqtt.Client, open bool, caller Caller) bool {
 	fmt.Printf("IN CHANGE OPEN, before call: %t, wanted to be %t\n", gate.IsOpen, open)
 
-	topic := fmt.Sprintf("%d/%s", gate.Id, "open")
+	topic := fmt.Sprintf("gate/%d/%s", gate.Id, "open")
 	var messageDTO GateEventMessageDTO
 	if open {
 		messageDTO = gate.setToOpen(caller)

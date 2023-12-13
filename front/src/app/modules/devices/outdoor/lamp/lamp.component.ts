@@ -2,7 +2,7 @@ import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { WebsocketService } from 'src/app/infrastructure/socket/websocket.service';
 import { Lamp } from 'src/app/model/model';
 import Swal from 'sweetalert2';
-import { LampService } from '../service/lamp.service';
+import { OutdoorDeviceService } from '../service/outdoor-device-service';
 
 @Component({
   selector: 'app-lamp',
@@ -12,8 +12,14 @@ import { LampService } from '../service/lamp.service';
 export class LampComponent implements OnInit, AfterViewInit {
 
   constructor(private socketService: WebsocketService,
-              private readonly lampService: LampService) { }
+              private readonly lampService: OutdoorDeviceService) { 
+      this.lampService.selectedLampId.subscribe((res: string) => {
+        this.lampId = res;
+        console.log("Lamp component constructed for lamp with id = " + this.lampId)
+      })
+  }
 
+  private lampId: string = ""
   public lamp: Lamp | undefined;
   public automaticMode: string = "On"
   public bulbTurned: string = "On"
@@ -24,7 +30,7 @@ export class LampComponent implements OnInit, AfterViewInit {
 
 
   ngOnInit(): void {
-    this.lampService.getLamp("8").subscribe((res: any) => {
+    this.lampService.getLamp(this.lampId).subscribe((res: any) => {
       this.lamp = res;
       this.automaticMode = this.lamp?.automatic ? "On" : "Off"
       this.bulbTurned = this.lamp?.bulbState ? "On" : "Off"

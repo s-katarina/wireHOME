@@ -102,12 +102,8 @@ public class Beans {
                     deviceService.changeDeviceState((long) payloadDTO.getDeviceId(), State.offline);
                 } else if (topic.contains("lamp")) {
                     lampService.parseRequest(topic, payloadDTO);
-                } else if (isStringMatchingPattern(topic, "\\d+/regime")) {
-                    gateService.changeGateRegime((long) payloadDTO.getDeviceId(), payloadDTO.getUsedFor());
-                } else if (isStringMatchingPattern(topic, "\\d+/open")) {
-                    GateEventPayloadDTO dto = getPayload(message, GateEventPayloadDTO.class);
-                    System.out.println(dto);
-                    gateService.changeGateOpen((long) dto.getDeviceId(), dto.getUsedFor());
+                } else if (topic.contains("gate")) {
+                    gateService.parseRequest(topic, payloadDTO);
                 }
 //                System.out.println(message.getPayload());
             }

@@ -26,7 +26,7 @@ public class LampDTO extends DeviceDTO {
         this.setUsesElectricity(lamp.isUsesElectricity());
         this.setConsumptionAmount(lamp.getConsumptionAmount());
         this.setPropertyId(Math.toIntExact(lamp.getProperty().getId()));
-        this.setImagePath(imgPathForFrontend + lamp.getImagePath());
+        this.setImagePath(lamp.getImagePath());
         this.setDeviceType(lamp.getTopic());
         this.setBulbState(lamp.isBulbState());
         this.setAutomatic(lamp.isAutomatic());

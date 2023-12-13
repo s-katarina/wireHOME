@@ -14,7 +14,7 @@ import { CreateDeviceComponent } from './modules/devices/create-device/create-de
 import { RegisterComponent } from './modules/auth/register/register.component';
 import { LoginComponent } from './modules/auth/login/login.component';
 import { TokenExpirationInterceptor } from './infrastructure/interceptor/token-expiration';
-import { LampComponent } from './modules/devices/lamp/lamp.component';
+import { LampComponent } from './modules/devices/outdoor/lamp/lamp.component';
 
 
 @NgModule({
