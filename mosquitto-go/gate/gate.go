@@ -310,6 +310,12 @@ func (gate Gate) ChangeOpen(client mqtt.Client, open bool, caller Caller) bool {
 	}
 	token := client.Publish(topic, 0, false, jsonData)
 	token.Wait()
+
+	event := "OPEN"
+	if (!open) {
+		event = "CLOSE"
+	}
+	pubGateEvent(client, event, "USER")
 	return messageDTO.UsedFor != "Error"
 }
 
@@ -355,7 +361,7 @@ func simulateGate(client mqtt.Client) {
 
 		fmt.Println("Proximity detectedScore ", detectedScore)
 		// Vehicle is detected
-		if detectedScore > 0.8 {
+		if detectedScore > 0.1 {
 			fmt.Println("Gate regime ", gate.IsPublic)
 			fmt.Println("Gate open ", gate.IsOpen)
 
@@ -398,9 +404,29 @@ func processVehicleEvent(client mqtt.Client, licencePlate string, entrance bool)
 	}
 	fmt.Println("Gate open after sending to close GATE_EVENT ", gate.IsOpen)
 
-
+	event := "ENTER"
+	if (!entrance) {
+		event = "LEAVE"
+	}
 	// Publish event type (enterance or leaving), vehicle licence plate, timestamp
+	pubGateEvent(client, event, licencePlate)
 
+}
+
+func pubGateEvent(client mqtt.Client, event string, caller string) {
+	topic := fmt.Sprintf("gate/%d/%s", gate.Id, "event")
+	fmt.Println("Topic for pub " + topic)
+	data := fmt.Sprintf("gate-event,device-id=%d value=\"%s\",caller=\"%s\"", gate.Id, event, caller)
+	// gate-event,8 value=OPEN or CLOSE,caller=USER
+	// gate-event,8 value=ENTER or LEAVE,caller=WR-131
+	token := client.Publish(topic, 0, false, data)
+	token.Wait()
+
+	if token.Error() != nil {
+		fmt.Println("Gate event publish token error")
+	}
+
+	fmt.Println("Message for gate event published successfully")
 }
 
 func containsLicencePlate(licencePlate string) bool {
