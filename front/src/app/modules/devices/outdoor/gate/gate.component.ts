@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { WebsocketService } from 'src/app/infrastructure/socket/websocket.service';
-import { Gate } from 'src/app/model/model';
+import { Gate, GateEvent } from 'src/app/model/model';
 import Swal from 'sweetalert2';
 import { OutdoorDeviceService } from '../service/outdoor-device-service';
 
@@ -56,6 +56,18 @@ export class GateComponent implements OnInit, AfterViewInit  {
           this.open = this.gate?.open ? "Open" : "Closed"
           this.online = this.gate?.state ? "Online" : "Offline"
           return this.gate;
+        } catch (error) {
+          console.error('Error parsing JSON string:', error);
+          return null;
+        }
+      })
+
+      stompClient.subscribe(`/gate/${this.gate!.id}/event`, (message: { body: string }) => {
+        console.log(message)
+        try {
+          const parsedData : GateEvent = JSON.parse(message.body);
+          console.log(parsedData)
+          return ""
         } catch (error) {
           console.error('Error parsing JSON string:', error);
           return null;

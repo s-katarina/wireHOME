@@ -87,7 +87,6 @@ public class Beans {
                 String topic = (String) message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC);
                 System.out.println(message.getPayload());
                 PayloadDTO payloadDTO = getPayload(message, PayloadDTO.class);
-                System.out.println(payloadDTO);
                 if (topic == null){
                     System.out.println("null je topic");
                 }
@@ -103,15 +102,14 @@ public class Beans {
                 } else if (topic.contains("lamp")) {
                     lampService.parseRequest(topic, payloadDTO);
                 } else if (topic.contains("gate")) {
-                    System.out.println(topic);
-                    gateService.parseRequest(topic, getPayload(message, GateEventPayloadDTO.class));
+                    gateService.parseRequest(topic, message);
                 }
 //                System.out.println(message.getPayload());
             }
         };
     }
 
-    private static <T> T getPayload(Message<?> message, Class<T> dtoClass) {
+    public static <T> T getPayload(Message<?> message, Class<T> dtoClass) {
         Object payload = message.getPayload();
         String jsonPayload = (String) payload;
 

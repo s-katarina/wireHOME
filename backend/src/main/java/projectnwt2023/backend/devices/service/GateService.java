@@ -1,19 +1,24 @@
 package projectnwt2023.backend.devices.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.Message;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import projectnwt2023.backend.devices.Device;
 import projectnwt2023.backend.devices.Gate;
 import projectnwt2023.backend.devices.Lamp;
 import projectnwt2023.backend.devices.dto.GateDTO;
-import projectnwt2023.backend.devices.dto.LampDTO;
+import projectnwt2023.backend.devices.dto.GateEventDTO;
+import projectnwt2023.backend.devices.dto.GateEventPayloadDTO;
 import projectnwt2023.backend.devices.dto.PayloadDTO;
+import projectnwt2023.backend.devices.mqtt.Beans;
 import projectnwt2023.backend.devices.repository.DeviceRepository;
 import projectnwt2023.backend.devices.service.interfaces.IGateService;
 import projectnwt2023.backend.exceptions.EntityNotFoundException;
 
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static projectnwt2023.backend.helper.RegexPattern.isStringMatchingPattern;
 
@@ -27,12 +32,16 @@ public class GateService implements IGateService {
     private SimpMessagingTemplate simpMessagingTemplate;
 
     @Override
-    public void parseRequest(String topic, PayloadDTO payloadDTO) {
+    public void parseRequest(String topic, Message<?> message) {
         System.out.println(topic);
         if (isStringMatchingPattern(topic, "gate/\\d+/regime")) {
+            PayloadDTO payloadDTO = Beans.getPayload(message, GateEventPayloadDTO.class);
             changeGateRegime((long) payloadDTO.getDeviceId(), payloadDTO.getUsedFor());
         } else if (isStringMatchingPattern(topic, "gate/\\d+/open")) {
+            PayloadDTO payloadDTO = Beans.getPayload(message, GateEventPayloadDTO.class);
             changeGateOpen((long) payloadDTO.getDeviceId(), payloadDTO.getUsedFor());
+        } else if (isStringMatchingPattern(topic, "gate/\\d+/event")) {
+            processEvent((String) message.getPayload());
         }
     }
 
@@ -42,8 +51,6 @@ public class GateService implements IGateService {
         if (!device.isPresent()) {
             throw new EntityNotFoundException(Lamp.class);
         }
-
-        System.out.println("Changing gate regime (public) to " + regime);
 
         boolean isPublic;
         if (regime.equals("PUBLIC")) isPublic = true;
@@ -74,5 +81,23 @@ public class GateService implements IGateService {
         System.out.println("Changed gate open to " + open);
         this.simpMessagingTemplate.convertAndSend("/gate/" + gateId, new GateDTO(gate));
         return deviceRepository.save(gate);
+    }
+
+    @Override
+    public void processEvent(String payload) {
+        String pattern = "gate-event,device-id=(\\d+) value=\"([^\"]*)\",caller=\"([^\"]*)\"";
+
+        Pattern r = Pattern.compile(pattern);
+        Matcher matcher = r.matcher(payload);
+        if (matcher.find()) {
+            String deviceId = matcher.group(1);
+            String value = matcher.group(2);
+            String caller = matcher.group(3);
+
+            this.simpMessagingTemplate.convertAndSend("/gate/" + deviceId + "/event", new GateEventDTO(caller, value));
+
+        } else {
+            System.out.println("No match found");
+        }
     }
 }

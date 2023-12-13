@@ -83,3 +83,8 @@ export interface Gate extends DeviceDTO {
     open: boolean,
     public: boolean
 }
+
+export interface GateEvent  {
+    caller: String,
+    eventType: String
+}
