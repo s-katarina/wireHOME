@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { FormControl, FormGroup } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
@@ -6,6 +7,7 @@ import { WebsocketService } from 'src/app/infrastructure/socket/websocket.servic
 import { Gate, GateEvent } from 'src/app/model/model';
 import Swal from 'sweetalert2';
 import { OutdoorDeviceService } from '../service/outdoor-device-service';
+import { DateAdapter } from '@angular/material/core';
 
 @Component({
   selector: 'app-gate',
@@ -16,9 +18,11 @@ export class GateComponent implements OnInit, AfterViewInit  {
   
 
   constructor(private socketService: WebsocketService,
-    private readonly gateService: OutdoorDeviceService) { 
+    private readonly gateService: OutdoorDeviceService,
+    private dateAdapter: DateAdapter<Date>) { 
     this.gateService.selectedLampId.subscribe((res: string) => {
     this.gateId = res;
+    this.dateAdapter.setLocale('en-GB'); //dd/MM/yyyy
 })
 }
 
@@ -43,6 +47,12 @@ export class GateComponent implements OnInit, AfterViewInit  {
   public pageSize : number = 10;
   public length : number = 0;
 
+  public filterApplied : boolean = false;
+
+  range = new FormGroup({
+    start: new FormControl<Date | null>(null),
+    end: new FormControl<Date | null>(null),
+  });
 
   ngOnInit(): void {
     this.gateService.getGate(this.gateId).subscribe((res: any) => {
@@ -90,7 +100,8 @@ export class GateComponent implements OnInit, AfterViewInit  {
           const end = (this.currentPage + 1) * this.pageSize;
           const start = this.currentPage * this.pageSize;
           const part = this.events.slice(start, end);
-          this.dataSource = new MatTableDataSource<GateEvent>(part);          this.eventTable.renderRows();   
+          // Stop table rerendering if filter is applied
+          if (!this.filterApplied) this.dataSource = new MatTableDataSource<GateEvent>(part);          this.eventTable.renderRows();   
           this.dataSource.sort = this.sort;
           this.dataSource.paginator = this.paginator;
           this.length = this.events.length;
@@ -170,8 +181,50 @@ export class GateComponent implements OnInit, AfterViewInit  {
       minute: '2-digit',
       hour12: false,
   };
-    return new Intl.DateTimeFormat('en-US', options).format(date);
+    return new Intl.DateTimeFormat('en-GB', options).format(date);
   }
+
+  filterInitiator: string = '';
+  filterEvent: string = '';
+
+  applyFilter(): void {
+    this.filterApplied = true;
+
+    // Initiator and event type filter
+    let filteredEvents = this.events.filter(event =>
+      event.caller.toLowerCase().includes(this.filterInitiator.toLowerCase()) &&
+      event.eventType.toLowerCase().includes(this.filterEvent.toLowerCase())
+    );
+    console.log(filteredEvents)
+    // Date range filter
+    if (this.range.controls.start.valid && this.range.controls.end.valid) { 
+      filteredEvents = this.filterByDateRange(filteredEvents);
+    }
+    console.log(filteredEvents)
+
+    this.dataSource = new MatTableDataSource<GateEvent>(filteredEvents);
+    this.dataSource.sort = this.sort;
+  }
+
+  clearFilter(): void {
+    this.filterApplied = false;
+    this.filterInitiator = '';
+    this.filterEvent = '';
+    this.range.reset();
+    this.dataSource = new MatTableDataSource<GateEvent>(this.events);
+    this.dataSource.sort = this.sort;
+  }
+
+  filterByDateRange(events: GateEvent[]): GateEvent[] {
+    const startDate = Math.floor(this.range.value.start!.getTime());;
+    const endDate = Math.floor(this.range.value.end!.getTime());;
+
+    return events.filter(event => {
+      const eventDate = parseInt(event.timestamp, 10);
+      return eventDate >= startDate && eventDate <= endDate;
+    });
+  }
+
 
   private fireSwalToast(success: boolean, title: string): void {
     const Toast = Swal.mixin({
