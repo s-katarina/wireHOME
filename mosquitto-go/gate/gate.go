@@ -315,7 +315,7 @@ func (gate Gate) ChangeOpen(client mqtt.Client, open bool, caller Caller) bool {
 	if (!open) {
 		event = "CLOSE"
 	}
-	pubGateEvent(client, event, "USER")
+	pubGateEvent(client, event, string(caller))
 	return messageDTO.UsedFor != "Error"
 }
 
@@ -391,6 +391,11 @@ func processVehicleEvent(client mqtt.Client, licencePlate string, entrance bool)
 		return
 	}
 
+	event := "ENTER"
+	if (!entrance) {
+		event = "LEAVE"
+	}
+
 	if !gate.IsOpen {
 		if (gate.ChangeOpen(client, true, GateEvent)) {
 			gate.IsOpen = true
@@ -398,18 +403,17 @@ func processVehicleEvent(client mqtt.Client, licencePlate string, entrance bool)
 		time.Sleep(time.Second)
 		fmt.Println("Gate open after sending to open GATE_EVENT ", gate.IsOpen)
 	}
+
+	pubGateEvent(client, event, licencePlate)
 	time.Sleep(time.Second * 30)
+
 	if (gate.ChangeOpen(client, false, GateEvent)) {
 		gate.IsOpen = false
 	}
 	fmt.Println("Gate open after sending to close GATE_EVENT ", gate.IsOpen)
 
-	event := "ENTER"
-	if (!entrance) {
-		event = "LEAVE"
-	}
+	
 	// Publish event type (enterance or leaving), vehicle licence plate, timestamp
-	pubGateEvent(client, event, licencePlate)
 
 }
 

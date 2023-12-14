@@ -10,4 +10,5 @@ import lombok.*;
 public class GateEventDTO {
     private String caller;
     private String eventType;
+    private String timestamp;
 }

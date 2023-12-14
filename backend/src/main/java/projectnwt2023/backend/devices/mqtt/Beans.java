@@ -100,7 +100,7 @@ public class Beans {
                 else if(topic.equals("OFF")) {
                     deviceService.changeDeviceState((long) payloadDTO.getDeviceId(), State.offline);
                 } else if (topic.contains("lamp")) {
-                    lampService.parseRequest(topic, payloadDTO);
+                    lampService.parseRequest(topic, getPayload(message, PayloadDTO.class));
                 } else if (topic.contains("gate")) {
                     gateService.parseRequest(topic, message);
                 }

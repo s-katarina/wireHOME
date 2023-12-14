@@ -83,6 +83,7 @@ public class GateService implements IGateService {
         return deviceRepository.save(gate);
     }
 
+    // For real-time updates
     @Override
     public void processEvent(String payload) {
         String pattern = "gate-event,device-id=(\\d+) value=\"([^\"]*)\",caller=\"([^\"]*)\"";
@@ -94,7 +95,7 @@ public class GateService implements IGateService {
             String value = matcher.group(2);
             String caller = matcher.group(3);
 
-            this.simpMessagingTemplate.convertAndSend("/gate/" + deviceId + "/event", new GateEventDTO(caller, value));
+            this.simpMessagingTemplate.convertAndSend("/gate/" + deviceId + "/event", new GateEventDTO(caller, value, String.valueOf(System.currentTimeMillis())));
 
         } else {
             System.out.println("No match found");
