@@ -1,21 +1,19 @@
 package main
 
 import (
-	// "fmt"
-	// mqtt "github.com/eclipse/paho.mqtt.golang"
-	// // "log"
-	// // "time"
+    solarPanel "tim10/mqtt/solarPanel"
 	// ambientSensore "tim10/mqtt/ambientSensore"
-	"tim10/mqtt/gate"
-	// lamp "tim10/mqtt/lamp"
+	// "tim10/mqtt/gate"
+	lamp "tim10/mqtt/lamp"
 )
 
 
 func main() {
-    // ambientSensore.RunAmbientSensore()
+    // ambientSensore.RunAmbientSensore();
+    go solarPanel.RunSolarPanel();
 
-    // lamp.RunLamp()
-    gate.RunGate()
+    //gate.RunGate()
+    lamp.RunLamp()
 }
 
 

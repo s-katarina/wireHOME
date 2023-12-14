@@ -8,7 +8,6 @@ import (
 	"math"
 	"math/rand"
 	"net/http"
-	// "strconv"
 	"tim10/mqtt/constants"
 	"tim10/mqtt/device"
 	"tim10/mqtt/helper"
@@ -142,7 +141,7 @@ func getLamp(deviceId int) Lamp {
 
 }
 
-var lamp Lamp = getLamp(8)
+var lamp Lamp = getLamp(2)
 
 func SetLamp(id int) {
 	lamp = getLamp(id)
@@ -243,6 +242,7 @@ func RunLamp() {
 	lamp.SubToBulbSet(client)
 	lamp.SubToAutomaticSet(client)
 	go pubLightSensorValue(client)
+	go lamp.TakesElectisity(client)
 	lamp.SendHeartBeat(client)
 }
 
