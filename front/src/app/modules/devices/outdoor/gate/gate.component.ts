@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -14,7 +14,7 @@ import { DateAdapter } from '@angular/material/core';
   templateUrl: './gate.component.html',
   styleUrls: ['./gate.component.css']
 })
-export class GateComponent implements OnInit, AfterViewInit  {
+export class GateComponent implements OnInit, AfterViewInit, OnDestroy {
   
 
   constructor(private socketService: WebsocketService,
@@ -113,6 +113,12 @@ export class GateComponent implements OnInit, AfterViewInit  {
       })
     })
   }
+
+  ngOnDestroy(): void {
+    // Close the socket connection when the component is destroyed
+    this.socketService.closeWebSocket();
+  }
+  
 
   onOffClick(): void {
     if (this.gate?.state) {
@@ -216,6 +222,10 @@ export class GateComponent implements OnInit, AfterViewInit  {
   }
 
   filterByDateRange(events: GateEvent[]): GateEvent[] {
+
+    if (this.range.value.start === null || this.range.value.start === null) {
+      return events;
+    }
     const startDate = Math.floor(this.range.value.start!.getTime());;
     const endDate = Math.floor(this.range.value.end!.getTime());;
 

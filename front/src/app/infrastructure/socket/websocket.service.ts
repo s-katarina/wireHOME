@@ -21,4 +21,10 @@ export class WebsocketService {
     // });
     return this.stompClient
   }
+
+  closeWebSocket() {
+    if (this.stompClient && this.stompClient.connected) {
+      this.stompClient.disconnect();
+    }
+  }
 }

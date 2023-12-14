@@ -93,7 +93,7 @@ p {
 .card {
     flex: 0 0 auto;
     width: 13vw;
-    height: 11vw;
+    height: 10vw;
     margin: 20px;
     border-radius: 20px;
     background-color: rgb(255, 255, 255);
@@ -101,10 +101,9 @@ p {
     cursor: pointer;
 }
 .card .img-card {
-    margin-left: 1vw;
-    width: 11vw;
-    height: 7vw;
-    border-radius: 20px;
+    width: 13vw;
+    height: 8vw;
+    border-radius: 0 0 20px 20px;
 }
 
 p{
