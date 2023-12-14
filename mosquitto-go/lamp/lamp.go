@@ -96,24 +96,19 @@ func automaticOff(lamp Lamp) device.MessageDTO {
 }
 
 func (lamp Lamp) SubToBulbSet(client mqtt.Client) {
-	topic := fmt.Sprintf("%d/%s", lamp.Id, "bulb/set")
+	topic := fmt.Sprintf("lamp/%d/%s", lamp.Id, "bulb/set")
 	token := client.Subscribe(topic, 1, nil)
 	token.Wait()
 	fmt.Printf("Subscribed to topic: %s", topic)
 }
 
 func (lamp Lamp) SubToAutomaticSet(client mqtt.Client) {
-	topic := fmt.Sprintf("%d/%s", lamp.Id, "automatic/set")
+	topic := fmt.Sprintf("lamp/%d/%s", lamp.Id, "automatic/set")
 	token := client.Subscribe(topic, 1, nil)
 	token.Wait()
 	fmt.Printf("Subscribed to topic: %s", topic)
 }
 
-type lightSensorValue struct {
-	Id        string `json:"deviceId"`
-	TimeStamp string `json:"timeStamp"`
-	Val       string `json:"value"`
-}
 
 func getLamp(deviceId int) Lamp {
 
@@ -156,8 +151,8 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 
 	fmt.Printf("Received message: %s from topic: %s\n", msg.Payload(), msg.Topic())
 	patternOn := "\\d+"
-	patternBulb := "\\d+/bulb/set"           // \\d+ matches one or more digits
-	patternAutomatic := "\\d+/automatic/set" // \\d+ matches one or more digits
+	patternBulb := "lamp/\\d+/bulb/set"           // \\d+ matches one or more digits
+	patternAutomatic := "lamp/\\d+/automatic/set" 
 
 	if helper.IsTopicMatch(patternOn, msg.Topic()) {
 		if string(msg.Payload()) == "ON" {
@@ -314,7 +309,7 @@ func pubLightSensorValue(client mqtt.Client) {
 
 func (lamp Lamp) TurnBulbOn(client mqtt.Client) bool {
 	myObj := bulbOn(lamp)
-	topic := fmt.Sprintf("%d/%s", lamp.Id, "bulb")
+	topic := fmt.Sprintf("lamp/%d/%s", lamp.Id, "bulb")
 
 	jsonData, err := json.Marshal(myObj)
 	if err != nil {
@@ -328,7 +323,7 @@ func (lamp Lamp) TurnBulbOn(client mqtt.Client) bool {
 
 func (lamp Lamp) TurnBulbOff(client mqtt.Client) bool {
 	myObj := bulbOff(lamp)
-	topic := fmt.Sprintf("%d/%s", lamp.Id, "bulb")
+	topic := fmt.Sprintf("lamp/%d/%s", lamp.Id, "bulb")
 
 	jsonData, err := json.Marshal(myObj)
 	if err != nil {
@@ -346,7 +341,7 @@ func (lamp Lamp) TurnAutomaticOnOff(client mqtt.Client, on bool) bool {
 	} else {
 		myObj = automaticOff(lamp)
 	}
-	topic := fmt.Sprintf("%d/%s", lamp.Id, "automatic")
+	topic := fmt.Sprintf("lamp/%d/%s", lamp.Id, "automatic")
 
 	jsonData, err := json.Marshal(myObj)
 	if err != nil {

@@ -124,14 +124,14 @@ func (gate Gate) setToClosed(caller Caller) GateEventMessageDTO {
 }
 
 func (gate Gate) SubToRegimeSet(client mqtt.Client) {
-	topic := fmt.Sprintf("%d/%s", gate.Id, "regime/set")
+	topic := fmt.Sprintf("gate/%d/%s", gate.Id, "regime/set")
 	token := client.Subscribe(topic, 1, nil)
 	token.Wait()
 	fmt.Printf("Subscribed to topic: %s", topic)
 }
 
 func (gate Gate) SubToOpenSet(client mqtt.Client) {
-	topic := fmt.Sprintf("%d/%s", gate.Id, "open/set")
+	topic := fmt.Sprintf("gate/%d/%s", gate.Id, "open/set")
 	token := client.Subscribe(topic, 1, nil)
 	token.Wait()
 	fmt.Printf("Subscribed to topic: %s", topic)
@@ -167,14 +167,14 @@ func getGate(deviceId int) Gate {
 
 }
 
-var gate Gate = getGate(9)
+var gate Gate = getGate(15)
 
 var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
 
 	fmt.Printf("Received message: %s from topic: %s\n", msg.Payload(), msg.Topic())
 	patternOn := "\\d+"
-	patternRegime := "\\d+/regime/set" // \\d+ matches one or more digits
-	patternOpen := "\\d+/open/set"
+	patternRegime := "gate/\\d+/regime/set" // \\d+ matches one or more digits
+	patternOpen := "gate/\\d+/open/set"
 
 	if helper.IsTopicMatch(patternOn, msg.Topic()) {
 		if string(msg.Payload()) == "ON" {
@@ -182,6 +182,7 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 			if changed {
 				gate.State = true
 			}
+			fmt.Println(gate.State)
 		}
 		if string(msg.Payload()) == "OFF" {
 			changed := gate.TurnOff(client, "OFF")
@@ -199,7 +200,7 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 		} else if string(msg.Payload()) == "PRIVATE" {
 			public = false
 		}
-		changed := gate.ChangeRegime(client, fmt.Sprintf("%d/%s", gate.Id, "regime"), public)
+		changed := gate.ChangeRegime(client, fmt.Sprintf("gate/%d/%s", gate.Id, "regime"), public)
 		// Command can be executed, is sent to backend
 		if changed {
 			gate.IsPublic = public
@@ -268,7 +269,7 @@ func RunGate() {
 }
 
 func pubDistanceSensorValue(client mqtt.Client) {
-	topic := fmt.Sprintf("%d/%s", gate.Id, "distance-sensor")
+	topic := fmt.Sprintf("gate/%d/%s", gate.Id, "distance-sensor")
 	fmt.Println("Topic for pub " + topic)
 }
 
@@ -293,7 +294,7 @@ func (gate Gate) ChangeRegime(client mqtt.Client, topic string, public bool) boo
 func (gate Gate) ChangeOpen(client mqtt.Client, open bool, caller Caller) bool {
 	fmt.Printf("IN CHANGE OPEN, before call: %t, wanted to be %t\n", gate.IsOpen, open)
 
-	topic := fmt.Sprintf("%d/%s", gate.Id, "open")
+	topic := fmt.Sprintf("gate/%d/%s", gate.Id, "open")
 	var messageDTO GateEventMessageDTO
 	if open {
 		messageDTO = gate.setToOpen(caller)
@@ -309,6 +310,12 @@ func (gate Gate) ChangeOpen(client mqtt.Client, open bool, caller Caller) bool {
 	}
 	token := client.Publish(topic, 0, false, jsonData)
 	token.Wait()
+
+	event := "OPEN"
+	if (!open) {
+		event = "CLOSE"
+	}
+	pubGateEvent(client, event, "USER")
 	return messageDTO.UsedFor != "Error"
 }
 
@@ -354,7 +361,7 @@ func simulateGate(client mqtt.Client) {
 
 		fmt.Println("Proximity detectedScore ", detectedScore)
 		// Vehicle is detected
-		if detectedScore > 0.7 {
+		if detectedScore > 0.1 {
 			fmt.Println("Gate regime ", gate.IsPublic)
 			fmt.Println("Gate open ", gate.IsOpen)
 
@@ -397,9 +404,29 @@ func processVehicleEvent(client mqtt.Client, licencePlate string, entrance bool)
 	}
 	fmt.Println("Gate open after sending to close GATE_EVENT ", gate.IsOpen)
 
-
+	event := "ENTER"
+	if (!entrance) {
+		event = "LEAVE"
+	}
 	// Publish event type (enterance or leaving), vehicle licence plate, timestamp
+	pubGateEvent(client, event, licencePlate)
 
+}
+
+func pubGateEvent(client mqtt.Client, event string, caller string) {
+	topic := fmt.Sprintf("gate/%d/%s", gate.Id, "event")
+	fmt.Println("Topic for pub " + topic)
+	data := fmt.Sprintf("gate-event,device-id=%d value=\"%s\",caller=\"%s\"", gate.Id, event, caller)
+	// gate-event,8 value=OPEN or CLOSE,caller=USER
+	// gate-event,8 value=ENTER or LEAVE,caller=WR-131
+	token := client.Publish(topic, 0, false, data)
+	token.Wait()
+
+	if token.Error() != nil {
+		fmt.Println("Gate event publish token error")
+	}
+
+	fmt.Println("Message for gate event published successfully")
 }
 
 func containsLicencePlate(licencePlate string) bool {

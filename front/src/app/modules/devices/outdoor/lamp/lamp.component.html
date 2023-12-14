@@ -1,0 +1,52 @@
+<div class="page">
+    <h2>{{lamp!.modelName}}</h2>
+    <h3>Lamp</h3>
+    <mat-divider></mat-divider>
+    <div class="cols">
+        <div class="left-column">
+            <div class="settings-group">
+                <button  mat-button 
+                    (mouseenter)="isButtonHovered = true"
+                    (mouseleave)="isButtonHovered = false"
+                    (click)="onOffClick()">
+                        <mat-icon *ngIf="!isButtonHovered && lamp!.state">check_circle</mat-icon>
+                        <mat-icon *ngIf="!isButtonHovered && !lamp!.state">cloud_off</mat-icon>
+                        <mat-icon *ngIf="isButtonHovered">settings_power</mat-icon>
+                </button>
+                <button class="placeholder-btn" mat-button>Device is {{online}}</button>
+            </div>
+
+            <div  class="changeable-section" [ngClass]="{'disabled-section': !lamp!.state}">
+                <div class="settings-group">
+                    <button  mat-button 
+                     [ngClass]="{'disabled-button': !lamp!.state}"
+                     (click)="onBulbOnOffClick()"><mat-icon>brightness_medium</mat-icon></button>
+                    <button class="placeholder-btn" mat-button >Bulb is turned {{bulbTurned}}</button>
+                </div>
+    
+                <div class="settings-group">
+                    <button   mat-button [ngClass]="{'disabled-button': !lamp!.state}"
+                    (click)="onAutomaticOnOffClick()"><mat-icon>autorenew</mat-icon></button>
+                    <button class="placeholder-btn" mat-button >Automatic mode is {{automaticMode}}</button>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <button class="placeholder-btn"  mat-button><mat-icon>battery_charging_full</mat-icon></button>
+                <button  class="placeholder-btn" mat-button>Charging:</button>
+                <button  class="placeholder-btn" mat-button>{{charging}} </button>
+            </div>
+
+            <div class="settings-group">
+                <button class="placeholder-btn"  mat-button><mat-icon>data_usage</mat-icon></button>
+                <button  class="placeholder-btn" mat-button>Consumption:</button>
+                <button  class="placeholder-btn" mat-button>{{lamp!.consumptionAmount}} Watts</button>
+            </div>
+
+        </div>
+        
+        <div class="right-column">
+        <img class="img-card" [src]="lamp!.imagePath" alt="Lamp Image">
+        </div>
+    </div>
+</div>

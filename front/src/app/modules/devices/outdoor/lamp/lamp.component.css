@@ -1,0 +1,63 @@
+.page {
+    margin: 5%;
+}
+
+h2 {
+    font-size: 2em;
+    line-height: 1.3em;
+    font-family: 'Sora-semibold', Roboto, "Helvetica Neue", sans-serif !important; 
+    color: rgb(0, 0, 0);
+}
+h3 {
+    font-size: 1.6em;
+    line-height: 1.1em;
+    font-family: 'Sora-regular', Roboto, "Helvetica Neue", sans-serif !important; 
+    color: rgb(0, 0, 0);
+}
+
+.mat-divider {
+    border-top: 2px solid rgb(190, 190, 190);
+    margin-bottom: 10px;
+}
+
+img {
+    height: auto;
+    width: 30vw;
+    border-radius: 20px;
+}
+
+.cols {
+    display: flex;
+  }
+  
+  .left-column {
+    flex: 1; 
+    flex-direction: column;
+  }
+  
+  .right-column {
+    flex: 0; 
+    margin-left: 20px; 
+}
+
+.placeholder-btn, .disabled-button {
+    pointer-events: none; 
+    cursor: not-allowed;
+}
+
+.settings-group {
+    margin: 10px 0;
+}
+
+.disabled-section {
+    background-color: rgba(208, 208, 208, 0.385); 
+    color: rgb(149, 149, 149); 
+    border-radius: 20px;
+}
+
+.changeable-section {
+    border-radius: 20px;
+    padding: 15px;
+    margin-left: 30px;
+    margin-bottom: 40px;
+}

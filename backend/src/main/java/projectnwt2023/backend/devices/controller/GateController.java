@@ -43,8 +43,8 @@ public class GateController {
                                 @RequestParam("public") Boolean isPublic){
         Device device = deviceService.getById(deviceId.longValue());
         try {
-            if (isPublic) mqttGateway.sendToMqtt("PUBLIC", String.valueOf(deviceId)+"/regime/set");
-            else  mqttGateway.sendToMqtt("PRIVATE", String.valueOf(deviceId)+"/regime/set");
+            if (isPublic) mqttGateway.sendToMqtt("PUBLIC", "gate/"+String.valueOf(deviceId)+"/regime/set");
+            else  mqttGateway.sendToMqtt("PRIVATE", "gate/"+String.valueOf(deviceId)+"/regime/set");
             return ResponseEntity.ok("Success");
         } catch (Exception e){
             e.printStackTrace();
@@ -54,11 +54,11 @@ public class GateController {
 
     @PutMapping(value = "/{deviceId}/open", produces = "application/json")
     ResponseEntity<?> setOpen(@PathVariable Integer deviceId,
-                                @RequestParam("should") Boolean shouldOpen){
+                                @RequestParam("val") Boolean shouldOpen){
         Device device = deviceService.getById(deviceId.longValue());
         try {
-            if (shouldOpen) mqttGateway.sendToMqtt("OPEN", String.valueOf(deviceId)+"/open/set");
-            else  mqttGateway.sendToMqtt("CLOSE", String.valueOf(deviceId)+"/open/set");
+            if (shouldOpen) mqttGateway.sendToMqtt("OPEN", "gate/"+String.valueOf(deviceId)+"/open/set");
+            else  mqttGateway.sendToMqtt("CLOSE", "gate/"+String.valueOf(deviceId)+"/open/set");
             return ResponseEntity.ok("Success");
         } catch (Exception e){
             e.printStackTrace();

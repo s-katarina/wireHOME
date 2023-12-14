@@ -14,6 +14,8 @@ Aplication desinged for monitoring and manipulating smart devices inside of your
 * [PostgreSQL database](https://www.postgresql.org/) listening on port 5432
 * [Mosquitto MQTT broker](https://mosquitto.org/) listening on port 1883
 * [NGINX: Advanced Load Balancer, Web Server, & Reverse Proxy](https://nginx.org/en/docs/windows.html)
+* [InfluxDB v2](https://www.influxdata.com/downloads/) listening on port 8086
+* [Telegraf](https://www.influxdata.com/downloads/) 
 
 
 ## Setup
@@ -28,15 +30,20 @@ Aplication desinged for monitoring and manipulating smart devices inside of your
    - Run Mosquitto broker ((re)start service or start stand-alone application)
    - Set required information in **application.properties** (`mqtt.host`, `mqtt.port`, `mqtt.username` and `mqtt.password`)
    - Run mosquitto with command `mosquitto -c -v <cofiguration-file>`
-4. Load dependencies of backend (`pom.xml`) with Maven and start application
-5. Set your self in front folder. Run `npm install` and start application with `ng serve`
-6. mosquitto-go is ran by command `go run main.go`
-7. Run applications in following order:
+4. Install InfluxDB and Telegraf and set telegraf.config file the same as the config file provided
+   - Open cmd and position inside directory where InfluxDB is installed (on Windows machine default installation directory is `C:\Program Files\influxdata\InfluxDB`) and run `influxd.exe`
+   - Open cmd and position inside directory where Telegraf is installed (on Windows machine default installation directory is `C:\Program Files\influxdata\Telegraf`) and run `telegraf --config telegraf.conf` or 'telegraf.exe'
+5. Load dependencies of backend (`pom.xml`) with Maven and start application
+6. Set your self in front folder. Run `npm install` and start application with `ng serve`
+7. mosquitto-go is ran by command `go run main.go`
+8. Run applications in following order:
    1) Mosquitto broker
    2) PostgreSQL database
-   3) bakend application
-   4) front application
-   4) mosquitto-go (one or more of them)
+   3) Bakend application
+   4) Front application
+   5) InfluxDB
+   6) Telegraf
+   7) mosquitto-go (one or more of them)
 
 
 ## Authors

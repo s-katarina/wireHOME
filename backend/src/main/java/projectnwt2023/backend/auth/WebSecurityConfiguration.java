@@ -19,6 +19,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -34,6 +35,7 @@ public class WebSecurityConfiguration {
             .csrf().disable()
             .authorizeRequests()
             .antMatchers("/**").permitAll()
+            .antMatchers("/socket/**").permitAll()
             .antMatchers(HttpMethod.POST, "/api/user").permitAll()
             .antMatchers("/api/user/login").permitAll()
             .antMatchers(HttpMethod.GET, "/api/user/activate/**").permitAll()
@@ -59,9 +61,13 @@ public class WebSecurityConfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("*");
-        configuration.addAllowedMethod("*");
-        configuration.addAllowedHeader("*");
+//        configuration.addAllowedOrigin("*");
+//        configuration.addAllowedMethod("*");
+//        configuration.addAllowedHeader("*");
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200", "http://localhost")); // Add your front-end origin(s)
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With"));
+        configuration.setAllowCredentials(true); // Set to true
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

@@ -100,6 +100,7 @@ func OffObj(device BaseDevice) MessageDTO{
 
 func (device BaseDevice) TurnOn(client mqtt.Client, topic string) bool{
 	myObj := OnObj(device)
+	fmt.Println(myObj)
 	
 		// Convert the object to JSON
 	jsonData, err := json.Marshal(myObj)

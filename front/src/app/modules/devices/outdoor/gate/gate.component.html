@@ -1,0 +1,53 @@
+<div class="page">
+    <h2>{{gate!.modelName}}</h2>
+    <h3>Gate</h3>
+    <mat-divider></mat-divider>
+    <div class="cols">
+        <div class="left-column">
+            <div class="settings-group">
+                <button  mat-button 
+                    (mouseenter)="isButtonHovered = true"
+                    (mouseleave)="isButtonHovered = false"
+                    (click)="onOffClick()">
+                        <mat-icon *ngIf="!isButtonHovered && gate!.state">check_circle</mat-icon>
+                        <mat-icon *ngIf="!isButtonHovered && !gate!.state">cloud_off</mat-icon>
+                        <mat-icon *ngIf="isButtonHovered">settings_power</mat-icon>
+                </button>
+                <button class="placeholder-btn" mat-button>Device is {{online}}</button>
+            </div>
+
+            <div  class="changeable-section" [ngClass]="{'disabled-section': !gate!.state}">
+                <div class="settings-group">
+                    <button  mat-button 
+                     [ngClass]="{'disabled-button': !gate!.state}"
+                     (click)="onRegimeClick()"><mat-icon>public</mat-icon></button>
+                    <button class="placeholder-btn" mat-button >Gate regime is {{regime}}</button>
+                </div>
+    
+                <div class="settings-group">
+                    <button   mat-button 
+                    [ngClass]="{'disabled-button': !gate!.state}"
+                    (click)="onOpenClick()"><mat-icon>lock_open</mat-icon></button>
+                    <button class="placeholder-btn" mat-button >Gate is {{open}}</button>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <button class="placeholder-btn"  mat-button><mat-icon>battery_charging_full</mat-icon></button>
+                <button  class="placeholder-btn" mat-button>Charging:</button>
+                <button  class="placeholder-btn" mat-button>{{charging}} </button>
+            </div>
+
+            <div class="settings-group">
+                <button class="placeholder-btn"  mat-button><mat-icon>data_usage</mat-icon></button>
+                <button  class="placeholder-btn" mat-button>Consumption:</button>
+                <button  class="placeholder-btn" mat-button>{{gate!.consumptionAmount}} Watts</button>
+            </div>
+
+        </div>
+        
+        <div class="right-column">
+        <img class="img-card" [src]="gate!.imagePath" alt="Lamp Image">
+        </div>
+    </div>
+</div>

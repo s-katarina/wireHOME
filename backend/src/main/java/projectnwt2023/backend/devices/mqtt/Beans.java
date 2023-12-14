@@ -87,7 +87,6 @@ public class Beans {
                 String topic = (String) message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC);
                 System.out.println(message.getPayload());
                 PayloadDTO payloadDTO = getPayload(message, PayloadDTO.class);
-//                System.out.println(payloadDTO);
                 if (topic == null){
                     System.out.println("null je topic");
                 }
@@ -101,25 +100,17 @@ public class Beans {
                 }
                 else if(topic.equals("OFF")) {
                     deviceService.changeDeviceState((long) payloadDTO.getDeviceId(), State.offline);
-                } else if (isStringMatchingPattern(topic, "\\d+/bulb")) {
-                    lampService.changeBulbState((long) payloadDTO.getDeviceId(), payloadDTO.getUsedFor());
-                } else if (isStringMatchingPattern(topic, "\\d+/automatic")) {
-                    lampService.setAutomaticRegime((long) payloadDTO.getDeviceId(), payloadDTO.getUsedFor());
-                } else if (topic.contains("light-sensor")) {
-                    TelemetryPayloadDTO telemetryPayloadDTO = getPayload(message, TelemetryPayloadDTO.class);
-                } else if (isStringMatchingPattern(topic, "\\d+/regime")) {
-                    gateService.changeGateRegime((long) payloadDTO.getDeviceId(), payloadDTO.getUsedFor());
-                } else if (isStringMatchingPattern(topic, "\\d+/open")) {
-                    GateEventPayloadDTO dto = getPayload(message, GateEventPayloadDTO.class);
-                    System.out.println(dto);
-                    gateService.changeGateOpen((long) dto.getDeviceId(), dto.getUsedFor());
+                } else if (topic.contains("lamp")) {
+                    lampService.parseRequest(topic, payloadDTO);
+                } else if (topic.contains("gate")) {
+                    gateService.parseRequest(topic, message);
                 }
 //                System.out.println(message.getPayload());
             }
         };
     }
 
-    private static <T> T getPayload(Message<?> message, Class<T> dtoClass) {
+    public static <T> T getPayload(Message<?> message, Class<T> dtoClass) {
         Object payload = message.getPayload();
         String jsonPayload = (String) payload;
 
