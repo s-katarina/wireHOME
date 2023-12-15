@@ -79,4 +79,17 @@ public class GateController {
         return new ResponseEntity<>(new ApiResponse<>(200, ret), HttpStatus.OK);
     }
 
+    @GetMapping(value = "/{deviceId}/range", produces = "application/json")
+    ResponseEntity<ApiResponse<List<GateEventDTO>>> getRangeGateEvents(@PathVariable Integer deviceId,
+                                                                       @RequestParam String start,
+                                                                       @RequestParam String end){
+
+        List<GateEventMeasurement> res = gateService.getDateRangeGateEvents(Long.valueOf(deviceId), start, end);
+        List<GateEventDTO> ret = new ArrayList<>();
+        for (GateEventMeasurement measurement : res) {
+            ret.add(new GateEventDTO(measurement.getCaller(), measurement.getValue(), String.valueOf(measurement.getTimestamp().getTime())));
+        }
+        return new ResponseEntity<>(new ApiResponse<>(200, ret), HttpStatus.OK);
+    }
+
 }

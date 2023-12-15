@@ -4,7 +4,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTable, MatTableDataSource } from '@angular/material/table';
 import { WebsocketService } from 'src/app/infrastructure/socket/websocket.service';
-import { Gate, GateEvent } from 'src/app/model/model';
+import { ApiResponse, Gate, GateEvent } from 'src/app/model/model';
 import Swal from 'sweetalert2';
 import { OutdoorDeviceService } from '../service/outdoor-device-service';
 import { DateAdapter } from '@angular/material/core';
@@ -38,6 +38,7 @@ export class GateComponent implements OnInit, AfterViewInit, OnDestroy {
   displayedColumns : string[] = ['eventType', 'caller', 'timestamp'];
   dataSource!: MatTableDataSource<GateEvent>;
   events : GateEvent[] = [];
+  recentEvents: GateEvent[] = [];
 
   @ViewChild(MatPaginator) paginator! : MatPaginator;
   @ViewChild(MatSort) sort! : MatSort;
@@ -68,7 +69,8 @@ export class GateComponent implements OnInit, AfterViewInit, OnDestroy {
     this.dataSource.paginator = this.paginator;
     this.gateService.getGateEvents(this.gateId).subscribe((res: any) => {
       console.log(res)
-      this.events = res.data
+      this.recentEvents = res.data
+      this.events = this.recentEvents
       this.dataSource = new MatTableDataSource<GateEvent>(this.events);          
       this.eventTable.renderRows();   
       this.dataSource.sort = this.sort;
@@ -105,16 +107,19 @@ export class GateComponent implements OnInit, AfterViewInit, OnDestroy {
         try {
           const parsedData : GateEvent = JSON.parse(message.body);
           console.log(parsedData)
-          this.events.push(parsedData)
+          this.recentEvents.push(parsedData)
+          this.events = this.recentEvents
           const end = (this.currentPage + 1) * this.pageSize;
           const start = this.currentPage * this.pageSize;
           const part = this.events.slice(start, end);
           // Stop table rerendering if filter is applied
-          if (!this.filterApplied) this.dataSource = new MatTableDataSource<GateEvent>(part);          
-          this.eventTable.renderRows();   
-          this.dataSource.sort = this.sort;
-          this.dataSource.paginator = this.paginator;
-          this.length = this.events.length;
+          if (!this.filterApplied) {
+            this.dataSource = new MatTableDataSource<GateEvent>(part);          
+            this.eventTable.renderRows();   
+            this.dataSource.sort = this.sort;
+            this.dataSource.paginator = this.paginator;
+            this.length = this.events.length;
+          } 
           return ""
         } catch (error) {
           console.error('Error parsing JSON string:', error);
@@ -206,20 +211,38 @@ export class GateComponent implements OnInit, AfterViewInit, OnDestroy {
   applyFilter(): void {
     this.filterApplied = true;
 
-    // Initiator and event type filter
-    let filteredEvents = this.events.filter(event =>
-      event.caller.toLowerCase().includes(this.filterInitiator.toLowerCase()) &&
-      event.eventType.toLowerCase().includes(this.filterEvent.toLowerCase())
-    );
-    console.log(filteredEvents)
-    // Date range filter
-    if (this.range.controls.start.valid && this.range.controls.end.valid) { 
-      filteredEvents = this.filterByDateRange(filteredEvents);
-    }
-    console.log(filteredEvents)
+    let filteredEvents: GateEvent[] = [];
 
-    this.dataSource = new MatTableDataSource<GateEvent>(filteredEvents);
-    this.dataSource.sort = this.sort;
+    // Date range filter
+    if ((this.range.value.start != null && this.range.value.start != null) 
+        && this.range.controls.start.valid && this.range.controls.end.valid) { 
+        this.gateService.getRangeGateEvents(this.gate!.id, Math.floor(this.range.value.start!.getTime()).toString(), Math.floor(this.range.value.end!.getTime()).toString()).subscribe((res: ApiResponse) => {
+          if (res.status == 200) {
+            filteredEvents = res.data.filter((event: { caller: string; eventType: string; }) =>
+              event.caller.toLowerCase().includes(this.filterInitiator.toLowerCase()) &&
+              event.eventType.toLowerCase().includes(this.filterEvent.toLowerCase())
+              );
+            this.events = filteredEvents
+            this.dataSource = new MatTableDataSource<GateEvent>(this.events);
+            console.log(this.events)
+            this.dataSource.sort = this.sort;
+            this.dataSource.paginator = this.paginator;
+            this.length = this.events.length;
+          }
+        });
+    } else {
+      // Initiator and event type filter
+      filteredEvents = this.recentEvents.filter(event =>
+        event.caller.toLowerCase().includes(this.filterInitiator.toLowerCase()) &&
+        event.eventType.toLowerCase().includes(this.filterEvent.toLowerCase())
+      );
+      this.events = filteredEvents
+      this.dataSource = new MatTableDataSource<GateEvent>(this.events);
+      this.dataSource.sort = this.sort;
+      this.dataSource.paginator = this.paginator;
+      this.length = this.events.length;
+    }
+    
   }
 
   clearFilter(): void {
@@ -227,23 +250,23 @@ export class GateComponent implements OnInit, AfterViewInit, OnDestroy {
     this.filterInitiator = '';
     this.filterEvent = '';
     this.range.reset();
+    this.events = this.recentEvents
     this.dataSource = new MatTableDataSource<GateEvent>(this.events);
     this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
+    this.length = this.events.length;
   }
 
-  filterByDateRange(events: GateEvent[]): GateEvent[] {
+  // filterByDateRange(events: GateEvent[]): GateEvent[] {
 
-    if (this.range.value.start === null || this.range.value.start === null) {
-      return events;
-    }
-    const startDate = Math.floor(this.range.value.start!.getTime());;
-    const endDate = Math.floor(this.range.value.end!.getTime());;
+  //   const startDate = Math.floor(this.range.value.start!.getTime());;
+  //   const endDate = Math.floor(this.range.value.end!.getTime());;
 
-    return events.filter(event => {
-      const eventDate = parseInt(event.timestamp, 10);
-      return eventDate >= startDate && eventDate <= endDate;
-    });
-  }
+  //   return events.filter(event => {
+  //     const eventDate = parseInt(event.timestamp, 10);
+  //     return eventDate >= startDate && eventDate <= endDate;
+  //   });
+  // }
 
 
   private fireSwalToast(success: boolean, title: string): void {

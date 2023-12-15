@@ -112,4 +112,20 @@ public class GateService implements IGateService {
 
         return influxDBService.findRecentGateEvents(gateId.toString());
     }
+
+    @Override
+    public List<GateEventMeasurement> getDateRangeGateEvents(Long gateId, String start, String end) {
+        Optional<Device> device = deviceRepository.findById(gateId);
+        if (!device.isPresent()) {
+            throw new EntityNotFoundException(Lamp.class);
+        }
+
+        try {
+            List<GateEventMeasurement> res = influxDBService.findDateRangeGateEvents(String.valueOf(gateId), Long.parseLong(start), Long.parseLong(end));
+            return res;
+        } catch (NumberFormatException e) {
+            return null;
+        }
+
+    }
 }

@@ -16,4 +16,5 @@ public interface IGateService {
     void processEvent(String payload);
 
     public List<GateEventMeasurement> getRecentGateEvents(Long gateId);
+    public List<GateEventMeasurement> getDateRangeGateEvents(Long gateId, String start, String end);
 }

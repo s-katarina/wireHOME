@@ -59,8 +59,15 @@ export class OutdoorDeviceService {
     return this.http.put<any>(environment.apiHost + `gate/${id}/open`, {}, {params})
   }
 
-  getGateEvents(id:string): Observable<ApiResponse> {
+  getGateEvents(id: string): Observable<ApiResponse> {
     return this.http.get<ApiResponse>(environment.apiHost + `gate/${id}/recent`)
+  }
+
+  getRangeGateEvents(id: string, start: string, end: string): Observable<ApiResponse> {
+    const params = new HttpParams().set('start', start)
+                                    .set('end', end);
+
+    return this.http.get<ApiResponse>(environment.apiHost + `gate/${id}/range`, {params})
   }
 
 

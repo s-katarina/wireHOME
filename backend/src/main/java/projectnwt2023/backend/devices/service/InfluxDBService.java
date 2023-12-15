@@ -149,7 +149,9 @@ public class InfluxDBService {
                 String value = fluxRecord.getValueByKey("value") == null ? null : fluxRecord.getValueByKey("value").toString();
                 String caller = fluxRecord.getValueByKey("caller") == null ? null : fluxRecord.getValueByKey("caller").toString();
                 Date timestamp = fluxRecord.getTime() == null ? null : Date.from(fluxRecord.getTime());
-
+                System.out.println(value);
+                System.out.println(caller);
+                System.out.println(timestamp.getTime());
                 result.add(new GateEventMeasurement(measurementName, value, timestamp, caller));
             }
         }
@@ -164,5 +166,18 @@ public class InfluxDBService {
                 this.bucket, "gate-event", deviceId);
         return this.queryGate(fluxQuery);
     }
+
+    public List<GateEventMeasurement> findDateRangeGateEvents(String deviceId, Long startTimestamp, Long endTimestamp) {
+        System.out.println(deviceId);
+        System.out.println(startTimestamp);
+        System.out.println(endTimestamp);
+        String fluxQuery = String.format(
+                "from(bucket:\"%s\") |> range(start: %d, stop: %d)" +
+                        "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"device-id\"] == \"%s\")" +
+                        "|> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")",
+                this.bucket, startTimestamp/1000, endTimestamp/1000, "gate-event", deviceId);
+        return this.queryGate(fluxQuery);
+    }
+
 
 }
