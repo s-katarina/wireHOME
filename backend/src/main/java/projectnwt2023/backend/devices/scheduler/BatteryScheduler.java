@@ -33,7 +33,7 @@ public class BatteryScheduler {
             if (!propertyEnergy.containsKey(propertyId)) {
                 propertyEnergy.put(propertyId, 0.0);
             }
-            propertyEnergy.put(propertyId, propertyEnergy.get(propertyId) + energy.getConsumptionAmount());
+            propertyEnergy.put(propertyId, propertyEnergy.get(propertyId) + energy.getConsumptionAmount()/60);
         }
 
         for (Map.Entry<Integer, Double> entry : propertyEnergy.entrySet()) {
@@ -51,7 +51,7 @@ public class BatteryScheduler {
         values.put("property-id", String.valueOf(propertyId));
         influxDBService.save("property-electricity", (float) aggregatedAmount, new Date(), values);
 
-        ArrayList<Battery> batteries = batteryService.getBatteriesByPropertyId((long) propertyId);
+        ArrayList<Battery> batteries = batteryService.getBatteriesByPropertyId((long) propertyId); //TODO samo online baterija
         System.out.println(batteries.size());
         if (batteries.size() == 0) {
             sendToElectroDistibution(propertyId, (float) aggregatedAmount);
@@ -62,22 +62,25 @@ public class BatteryScheduler {
 
     private void processBateruesInProperty(int propertyId, double aggregatedAmount, ArrayList<Battery> batteries) {
         double perBattery = aggregatedAmount / batteries.size();
+        double finalElectisity = 0;
         for(Battery battery: batteries)
         {
             double electrisity = battery.getCurrentFill() + perBattery;
             if (electrisity<0){
                 battery.setCurrentFill(0);
+                finalElectisity += electrisity;
                 //posalji kkoliko je pozajmio
-                sendToElectroDistibution(propertyId, (float) electrisity);
             } else if (electrisity>battery.getCapacity()) {
                 battery.setCapacity(battery.getCapacity());
-                sendToElectroDistibution(propertyId, (float) electrisity);
+                finalElectisity += electrisity;
+
                 //posalji koliko je poslao
             } else {
                 battery.setCapacity(electrisity);
                 //ne salje se nista distribuciji
             }
         }
+        sendToElectroDistibution(propertyId, (float) finalElectisity);
     }
 
 

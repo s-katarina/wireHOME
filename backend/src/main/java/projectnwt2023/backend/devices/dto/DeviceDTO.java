@@ -28,6 +28,8 @@ public class DeviceDTO {
 
     private String deviceType;
 
+    private boolean on;
+
     public DeviceDTO(Device device) {
         this.id = Math.toIntExact(device.getId());
         this.state = device.getState() == State.online;
@@ -37,6 +39,6 @@ public class DeviceDTO {
         this.propertyId = Math.toIntExact(device.getProperty().getId());
         this.imagePath = device.getImagePath();
         this.deviceType = device.getTopic();
-
+        this.on = device.isDeviceOn();
     }
 }
