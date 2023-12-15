@@ -73,6 +73,10 @@ public class DeviceService implements IDeviceService {
     @Override
     public Device changeDeviceOnOff(long deviceId, boolean isOn) {
         Device device = getById(deviceId);
+        if (device.getState() == State.offline){
+            System.out.println("offline je");
+            return null;
+        }
         device.setDeviceOn(isOn);
         device.setLastHeartbeat(LocalDateTime.now());
 //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
