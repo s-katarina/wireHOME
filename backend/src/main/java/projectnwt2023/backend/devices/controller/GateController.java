@@ -76,7 +76,7 @@ public class GateController {
         for (GateEventMeasurement measurement : res) {
             ret.add(new GateEventDTO(measurement.getCaller(), measurement.getValue(), String.valueOf(measurement.getTimestamp().getTime())));
         }
-        return new ResponseEntity<>(new ApiResponse<List<GateEventDTO>>(200, ret), HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse<>(200, ret), HttpStatus.OK);
     }
 
 }

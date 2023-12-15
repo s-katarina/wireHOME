@@ -5,14 +5,19 @@
     <div class="cols">
         <div class="left-column">
             <div class="settings-group">
-                <button  mat-button 
-                    (mouseenter)="isButtonHovered = true"
-                    (mouseleave)="isButtonHovered = false"
-                    (click)="onOffClick()">
-                        <mat-icon *ngIf="!isButtonHovered && gate!.state">check_circle</mat-icon>
-                        <mat-icon *ngIf="!isButtonHovered && !gate!.state">cloud_off</mat-icon>
-                        <mat-icon *ngIf="isButtonHovered">settings_power</mat-icon>
+                <button  mat-button  class="placeholder-btn">
+                        <mat-icon *ngIf="gate!.state">check_circle</mat-icon>
+                        <mat-icon *ngIf="!gate!.state">cloud_off</mat-icon>
                 </button>
+
+                <!-- <button  mat-button 
+                (mouseenter)="isButtonHovered = true"
+                (mouseleave)="isButtonHovered = false"
+                (click)="onOffClick()">
+                    <mat-icon *ngIf="!isButtonHovered && gate!.state">check_circle</mat-icon>
+                    <mat-icon *ngIf="!isButtonHovered && !gate!.state">cloud_off</mat-icon>
+                    <mat-icon *ngIf="isButtonHovered">settings_power</mat-icon>
+            </button> -->
                 <button class="placeholder-btn" mat-button>Device is {{online}}</button>
             </div>
 

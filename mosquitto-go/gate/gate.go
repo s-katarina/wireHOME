@@ -167,7 +167,7 @@ func getGate(deviceId int) Gate {
 
 }
 
-var gate Gate = getGate(15)
+var gate Gate = getGate(1)
 
 var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
 
@@ -361,7 +361,7 @@ func simulateGate(client mqtt.Client) {
 
 		fmt.Println("Proximity detectedScore ", detectedScore)
 		// Vehicle is detected
-		if detectedScore > 0.1 {
+		if detectedScore > 0.7 {
 			fmt.Println("Gate regime ", gate.IsPublic)
 			fmt.Println("Gate open ", gate.IsOpen)
 

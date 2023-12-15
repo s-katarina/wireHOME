@@ -33,7 +33,7 @@ export class GateComponent implements OnInit, AfterViewInit, OnDestroy {
   public online: string = "Online"
   public charging: string = "Battery"
 
-  isButtonHovered: boolean = false;
+  // isButtonHovered: boolean = false;
 
   displayedColumns : string[] = ['eventType', 'caller', 'timestamp'];
   dataSource!: MatTableDataSource<GateEvent>;
@@ -69,6 +69,11 @@ export class GateComponent implements OnInit, AfterViewInit, OnDestroy {
     this.gateService.getGateEvents(this.gateId).subscribe((res: any) => {
       console.log(res)
       this.events = res.data
+      this.dataSource = new MatTableDataSource<GateEvent>(this.events);          
+      this.eventTable.renderRows();   
+      this.dataSource.sort = this.sort;
+      this.dataSource.paginator = this.paginator;
+      this.length = this.events.length;
     })
   }
 
@@ -105,7 +110,8 @@ export class GateComponent implements OnInit, AfterViewInit, OnDestroy {
           const start = this.currentPage * this.pageSize;
           const part = this.events.slice(start, end);
           // Stop table rerendering if filter is applied
-          if (!this.filterApplied) this.dataSource = new MatTableDataSource<GateEvent>(part);          this.eventTable.renderRows();   
+          if (!this.filterApplied) this.dataSource = new MatTableDataSource<GateEvent>(part);          
+          this.eventTable.renderRows();   
           this.dataSource.sort = this.sort;
           this.dataSource.paginator = this.paginator;
           this.length = this.events.length;
@@ -124,15 +130,15 @@ export class GateComponent implements OnInit, AfterViewInit, OnDestroy {
   }
   
 
-  onOffClick(): void {
-    if (this.gate?.state) {
-      this.gateService.postOff(this.gate.id).subscribe((res: any) => {
-        console.log(res);
-      });
-    } else this.gateService.postOn(this.gate!.id).subscribe((res: any) => {
-      console.log(res);
-    });
-  }
+  // onOffClick(): void {
+  //   if (this.gate?.state) {
+  //     this.gateService.postOff(this.gate.id).subscribe((res: any) => {
+  //       console.log(res);
+  //     });
+  //   } else this.gateService.postOn(this.gate!.id).subscribe((res: any) => {
+  //     console.log(res);
+  //   });
+  // }
 
   
   onRegimeClick(): void {

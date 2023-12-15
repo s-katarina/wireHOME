@@ -17,10 +17,7 @@ import projectnwt2023.backend.devices.dto.GateEventMeasurement;
 import projectnwt2023.backend.devices.dto.Measurement;
 import projectnwt2023.backend.helper.InfluxDbConfiguration;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -149,9 +146,9 @@ public class InfluxDBService {
             List<FluxRecord> records = fluxTable.getRecords();
             for (FluxRecord fluxRecord : records) {
                 String measurementName = fluxRecord.getMeasurement();
-                String value = fluxRecord.getValue() == null ? null : fluxRecord.getValue().toString();
+                String value = fluxRecord.getValueByKey("value") == null ? null : fluxRecord.getValueByKey("value").toString();
+                String caller = fluxRecord.getValueByKey("caller") == null ? null : fluxRecord.getValueByKey("caller").toString();
                 Date timestamp = fluxRecord.getTime() == null ? null : Date.from(fluxRecord.getTime());
-                String caller = (String) fluxRecord.getValueByKey("caller");
 
                 result.add(new GateEventMeasurement(measurementName, value, timestamp, caller));
             }
@@ -162,7 +159,8 @@ public class InfluxDBService {
     public List<GateEventMeasurement> findRecentGateEvents(String deviceId) {
         String fluxQuery = String.format(
                 "from(bucket:\"%s\") |> range(start: -2h, stop: now())" +
-                        "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\\\"device-id\\\"] == \\\"%s\\\")",
+                        "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"device-id\"] == \"%s\")" +
+                        "|> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")",
                 this.bucket, "gate-event", deviceId);
         return this.queryGate(fluxQuery);
     }
