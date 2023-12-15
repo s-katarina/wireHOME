@@ -8,18 +8,23 @@ import com.influxdb.client.domain.WritePrecision;
 import com.influxdb.client.write.Point;
 import com.influxdb.query.FluxRecord;
 import com.influxdb.query.FluxTable;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.influx.InfluxDbProperties;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import projectnwt2023.backend.devices.dto.EnergyDTO;
+import projectnwt2023.backend.devices.dto.GraphDTO;
+import projectnwt2023.backend.devices.dto.GraphRequestDTO;
 import projectnwt2023.backend.devices.dto.Measurement;
+import projectnwt2023.backend.helper.Constants;
 import projectnwt2023.backend.helper.InfluxDbConfiguration;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -138,5 +143,39 @@ public class InfluxDBService {
             // Handle other exceptions
             e.printStackTrace();
         }
+    }
+
+    public ArrayList<GraphDTO> findDeviceEnergyForDate(GraphRequestDTO graphRequestDTO) {
+        DateTimeFormatter inputFormatter = Constants.dateTimeFormatterWithSeconds;
+
+//        String fromString = graphRequestDTO.getFrom();
+//        String toString = getStringDateForINflux(graphRequestDTO.getTo(), inputFormatter);
+        System.out.println("graphRequestDTO.getFrom()");
+        System.out.println(graphRequestDTO.getFrom());
+        System.out.println(graphRequestDTO.getFrom().getClass());
+
+        // Print the result
+        String fluxQuery = String.format(
+                "from(bucket:\"%s\") |> range(start: %s, stop: %s)" +
+                        "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"device-id\"] == \"%s\")" +                 // where measurement name (_measurement) equals value measurementName
+                        "|> sort(columns: [\"_time\"], desc: false)", this.bucket,
+                graphRequestDTO.getFrom(), graphRequestDTO.getTo(),
+                        "energy-maintaining", graphRequestDTO.getId());
+        ArrayList<EnergyDTO> energies = queryForEnergy(fluxQuery);
+        ArrayList<GraphDTO> grapfValue = new ArrayList<>();
+        for (EnergyDTO energyDTO: energies){
+            grapfValue.add(new GraphDTO(energyDTO.getTimestamp().getTime(), energyDTO.getConsumptionAmount()));
+        }
+        return grapfValue;
+    }
+
+    @NotNull
+    private static String getStringDateForINflux(String date, DateTimeFormatter inputFormatter) {
+        LocalDateTime localDateStart = LocalDateTime.parse(date, inputFormatter);
+        // Convert LocalDateTime to ZonedDateTime with ZoneOffset.UTC
+        ZonedDateTime zonedDateTime = localDateStart.atZone(ZoneOffset.UTC);
+        // Format the ZonedDateTime in the desired format
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        return zonedDateTime.format(outputFormatter);
     }
 }

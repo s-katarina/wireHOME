@@ -40,15 +40,18 @@ public class DeviceService implements IDeviceService {
     @Override
     public Device changeDeviceState(Long id, State state) {
         Device device = getById(id);
-        device.setState(state);
-        device.setLastHeartbeat(LocalDateTime.now());
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (device.getState() != state) {
+            //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
 //        AppUser sender = appUserService.findByEmail(authentication.getName());
-        Map<String, String> values = new HashMap<>();
-        values.put("device-id", String.valueOf(device.getId()));
-        values.put("user-email", "kata");
-        influxDBService.save("online/offline", state.getNumericValue(), new Date(), values);
+            Map<String, String> values = new HashMap<>();
+            values.put("device-id", String.valueOf(device.getId()));
+            values.put("user-email", "kata");
+            influxDBService.save("online/offline", state.getNumericValue(), new Date(), values);
+        }
+        device.setState(state);
+        device.setLastHeartbeat(LocalDateTime.now());
+
         return deviceRepository.save(device);
     }
 

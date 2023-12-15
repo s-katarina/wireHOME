@@ -89,3 +89,13 @@ export interface GateEvent  {
     caller: String,
     eventType: String
 }
+
+
+export interface ChartData {
+    data: GraphDTO[]
+} 
+
+export interface GraphDTO {
+    x: number
+    y: number
+}
