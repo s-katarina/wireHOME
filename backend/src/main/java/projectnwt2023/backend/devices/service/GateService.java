@@ -7,15 +7,13 @@ import org.springframework.stereotype.Service;
 import projectnwt2023.backend.devices.Device;
 import projectnwt2023.backend.devices.Gate;
 import projectnwt2023.backend.devices.Lamp;
-import projectnwt2023.backend.devices.dto.GateDTO;
-import projectnwt2023.backend.devices.dto.GateEventDTO;
-import projectnwt2023.backend.devices.dto.GateEventPayloadDTO;
-import projectnwt2023.backend.devices.dto.PayloadDTO;
+import projectnwt2023.backend.devices.dto.*;
 import projectnwt2023.backend.devices.mqtt.Beans;
 import projectnwt2023.backend.devices.repository.DeviceRepository;
 import projectnwt2023.backend.devices.service.interfaces.IGateService;
 import projectnwt2023.backend.exceptions.EntityNotFoundException;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -30,6 +28,9 @@ public class GateService implements IGateService {
 
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
+
+    @Autowired
+    InfluxDBService influxDBService;
 
     @Override
     public void parseRequest(String topic, Message<?> message) {
@@ -100,5 +101,15 @@ public class GateService implements IGateService {
         } else {
             System.out.println("No match found");
         }
+    }
+
+    @Override
+    public List<GateEventMeasurement> getRecentGateEvents(Long gateId) {
+        Optional<Device> device = deviceRepository.findById(gateId);
+        if (!device.isPresent()) {
+            throw new EntityNotFoundException(Lamp.class);
+        }
+
+        return influxDBService.findRecentGateEvents(gateId.toString());
     }
 }

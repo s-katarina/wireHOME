@@ -66,6 +66,10 @@ export class GateComponent implements OnInit, AfterViewInit, OnDestroy {
     })
     this.dataSource = new MatTableDataSource<GateEvent>(this.events);
     this.dataSource.paginator = this.paginator;
+    this.gateService.getGateEvents(this.gateId).subscribe((res: any) => {
+      console.log(res)
+      this.events = res.data
+    })
   }
 
   ngAfterViewInit(): void {

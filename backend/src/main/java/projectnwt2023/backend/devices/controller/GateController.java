@@ -8,13 +8,15 @@ import org.springframework.web.bind.annotation.*;
 import projectnwt2023.backend.devices.Device;
 import projectnwt2023.backend.devices.Gate;
 import projectnwt2023.backend.devices.Lamp;
-import projectnwt2023.backend.devices.dto.DeviceDTO;
-import projectnwt2023.backend.devices.dto.GateDTO;
-import projectnwt2023.backend.devices.dto.LampDTO;
+import projectnwt2023.backend.devices.dto.*;
 import projectnwt2023.backend.devices.mqtt.Gateway;
 import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
 import projectnwt2023.backend.devices.service.interfaces.IGateService;
 import projectnwt2023.backend.devices.service.interfaces.ILampService;
+import projectnwt2023.backend.helper.ApiResponse;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/gate")
@@ -64,6 +66,17 @@ public class GateController {
             e.printStackTrace();
             return ResponseEntity.ok("Gate Open set failed");
         }
+    }
+
+    @GetMapping(value = "/{deviceId}/recent", produces = "application/json")
+    ResponseEntity<ApiResponse<List<GateEventDTO>>> getRecentGateEvents(@PathVariable Integer deviceId){
+
+        List<GateEventMeasurement> res = gateService.getRecentGateEvents(Long.valueOf(deviceId));
+        List<GateEventDTO> ret = new ArrayList<>();
+        for (GateEventMeasurement measurement : res) {
+            ret.add(new GateEventDTO(measurement.getCaller(), measurement.getValue(), String.valueOf(measurement.getTimestamp().getTime())));
+        }
+        return new ResponseEntity<>(new ApiResponse<List<GateEventDTO>>(200, ret), HttpStatus.OK);
     }
 
 }

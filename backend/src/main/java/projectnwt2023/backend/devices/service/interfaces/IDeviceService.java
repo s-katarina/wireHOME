@@ -15,4 +15,5 @@ public interface IDeviceService {
     public ArrayList<Device> getOutdoorDevicesByProperty(Long propertyId);
     public ArrayList<Device> getElectricalDevicesByProperty(Long propertyId);
 
+    public Device changeDeviceOnOff(long deviceId, boolean b);
 }

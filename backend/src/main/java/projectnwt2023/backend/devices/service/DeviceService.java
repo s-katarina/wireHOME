@@ -1,8 +1,6 @@
 package projectnwt2023.backend.devices.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import projectnwt2023.backend.devices.Device;
 import projectnwt2023.backend.devices.State;
@@ -43,13 +41,14 @@ public class DeviceService implements IDeviceService {
     public Device changeDeviceState(Long id, State state) {
         Device device = getById(id);
         device.setState(state);
+        device.setLastHeartbeat(LocalDateTime.now());
 //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
 //        AppUser sender = appUserService.findByEmail(authentication.getName());
         Map<String, String> values = new HashMap<>();
         values.put("device-id", String.valueOf(device.getId()));
         values.put("user-email", "kata");
-        influxDBService.save("on/off", state.getNumericValue(), new Date(), values);
+        influxDBService.save("online/offline", state.getNumericValue(), new Date(), values);
         return deviceRepository.save(device);
     }
 
@@ -69,6 +68,26 @@ public class DeviceService implements IDeviceService {
     public ArrayList<Device> getElectricalDevicesByProperty(Long propertyId) {
         ArrayList<String> types = new ArrayList<>(Arrays.asList("battery", "charger", "solarPanel"));
         return deviceRepository.findByTopicInAndPropertyId(types, propertyId);
+    }
+
+    @Override
+    public Device changeDeviceOnOff(long deviceId, boolean isOn) {
+        Device device = getById(deviceId);
+        if (device.getState() == State.offline){
+            System.out.println("offline je");
+            return null;
+        }
+        device.setDeviceOn(isOn);
+        device.setLastHeartbeat(LocalDateTime.now());
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+//        AppUser sender = appUserService.findByEmail(authentication.getName());
+        Map<String, String> values = new HashMap<>();
+        values.put("device-id", String.valueOf(device.getId()));
+        values.put("user-email", "kata");
+
+        influxDBService.save("on/off", isOn ? 1 : 0, new Date(), values);
+        return deviceRepository.save(device);
     }
 
 }

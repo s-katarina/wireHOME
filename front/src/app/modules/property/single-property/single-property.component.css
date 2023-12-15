@@ -103,7 +103,7 @@ p {
 .card .img-card {
     width: 13vw;
     height: 8vw;
-    border-radius: 0 0 20px 20px;
+    border-radius: 20px;
 }
 
 p{

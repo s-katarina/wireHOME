@@ -13,6 +13,7 @@ import org.springframework.boot.autoconfigure.influx.InfluxDbProperties;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import projectnwt2023.backend.devices.dto.EnergyDTO;
+import projectnwt2023.backend.devices.dto.GateEventMeasurement;
 import projectnwt2023.backend.devices.dto.Measurement;
 import projectnwt2023.backend.helper.InfluxDbConfiguration;
 
@@ -139,4 +140,31 @@ public class InfluxDBService {
             e.printStackTrace();
         }
     }
+
+    private List<GateEventMeasurement> queryGate(String fluxQuery) {
+        List<GateEventMeasurement> result = new ArrayList<>();
+        QueryApi queryApi = this.influxDbClient.getQueryApi();
+        List<FluxTable> tables = queryApi.query(fluxQuery);
+        for (FluxTable fluxTable : tables) {
+            List<FluxRecord> records = fluxTable.getRecords();
+            for (FluxRecord fluxRecord : records) {
+                String measurementName = fluxRecord.getMeasurement();
+                String value = fluxRecord.getValue() == null ? null : fluxRecord.getValue().toString();
+                Date timestamp = fluxRecord.getTime() == null ? null : Date.from(fluxRecord.getTime());
+                String caller = (String) fluxRecord.getValueByKey("caller");
+
+                result.add(new GateEventMeasurement(measurementName, value, timestamp, caller));
+            }
+        }
+        return result;
+    }
+
+    public List<GateEventMeasurement> findRecentGateEvents(String deviceId) {
+        String fluxQuery = String.format(
+                "from(bucket:\"%s\") |> range(start: -2h, stop: now())" +
+                        "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\\\"device-id\\\"] == \\\"%s\\\")",
+                this.bucket, "gate-event", deviceId);
+        return this.queryGate(fluxQuery);
+    }
+
 }

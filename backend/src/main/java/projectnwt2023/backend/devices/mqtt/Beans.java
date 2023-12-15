@@ -89,19 +89,22 @@ public class Beans {
                 PayloadDTO payloadDTO = getPayload(message, PayloadDTO.class);
                 if (topic == null){
                     System.out.println("null je topic");
-                }
-                else if(topic.equals("KILLED")) {
+                } else if (topic.equals("heartbeat")) {
+                    deviceService.changeDeviceState((long) payloadDTO.getDeviceId(), State.online);
+
+                } else if(topic.equals("KILLED")) {
                     System.out.println("lost connection " + payloadDTO.getDeviceId());
                     deviceService.changeDeviceState((long) payloadDTO.getDeviceId(), State.offline);
                 }
                 else if(topic.equals("ON")) {
                     System.out.println("usao u ukljuci");
-                    deviceService.changeDeviceState((long) payloadDTO.getDeviceId(), State.online);
+                    deviceService.changeDeviceOnOff((long) payloadDTO.getDeviceId(), true);
                 }
                 else if(topic.equals("OFF")) {
-                    deviceService.changeDeviceState((long) payloadDTO.getDeviceId(), State.offline);
-                } else if (topic.contains("lamp")) {
-                    lampService.parseRequest(topic, getPayload(message, PayloadDTO.class));
+                    deviceService.changeDeviceOnOff((long) payloadDTO.getDeviceId(), false);
+                }
+                else if (topic.contains("lamp")) {
+                    lampService.parseRequest(topic, payloadDTO);
                 } else if (topic.contains("gate")) {
                     gateService.parseRequest(topic, message);
                 }

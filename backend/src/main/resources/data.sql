@@ -6,6 +6,8 @@ CREATE TABLE IF NOT EXISTS country (
 CREATE TABLE IF NOT EXISTS city (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
+    latitude DOUBLE PRECISION NOT NULL,
+    longitude DOUBLE PRECISION NOT NULL,
     country_id INT NOT NULL,
     UNIQUE (name, country_id),
     FOREIGN KEY (country_id) REFERENCES country(id)

@@ -89,3 +89,8 @@ export interface GateEvent  {
     eventType: string
     timestamp: string
 }
+
+export interface ApiResponse {
+    status: number,
+    data: any
+}

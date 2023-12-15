@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Gate, Lamp } from 'src/app/model/model';
+import { ApiResponse, Gate, Lamp } from 'src/app/model/model';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -58,5 +58,10 @@ export class OutdoorDeviceService {
 
     return this.http.put<any>(environment.apiHost + `gate/${id}/open`, {}, {params})
   }
+
+  getGateEvents(id:string): Observable<ApiResponse> {
+    return this.http.get<ApiResponse>(environment.apiHost + `gate/${id}/recent`)
+  }
+
 
 }
