@@ -16,6 +16,8 @@ import { LoginComponent } from './modules/auth/login/login.component';
 import { TokenExpirationInterceptor } from './infrastructure/interceptor/token-expiration';
 import { LampComponent } from './modules/devices/outdoor/lamp/lamp.component';
 import { GateComponent } from './modules/devices/outdoor/gate/gate.component';
+import { EnergyOverviewComponent } from './modules/devices/large-energy/energy-overview/energy-overview.component';
+import { SolarPanelComponent } from './modules/devices/large-energy/solar-panel/solar-panel.component';
 
 
 @NgModule({
@@ -26,6 +28,8 @@ import { GateComponent } from './modules/devices/outdoor/gate/gate.component';
     RegisterComponent,
     LampComponent,
     GateComponent,
+    EnergyOverviewComponent,
+    SolarPanelComponent,
   ],
   imports: [
     BrowserModule,

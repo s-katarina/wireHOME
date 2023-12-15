@@ -26,13 +26,13 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 	if (string(msg.Payload()) == "ON"){
 		changed := solarPanel.TurnOn(client, "ON")
 		if (changed){
-			solarPanel.State = true
+			solarPanel.On = true
 		}
 	}
 	if (string(msg.Payload()) == "OFF"){
 		changed := solarPanel.TurnOff(client, "OFF")
 		if (changed){
-			solarPanel.State = false
+			solarPanel.On = false
 		}
 	}
     fmt.Printf("Received message: %s from topic: %s\n", msg.Payload(), msg.Topic())

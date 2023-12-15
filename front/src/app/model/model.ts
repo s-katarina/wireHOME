@@ -40,6 +40,7 @@ export interface DeviceDTO{
     deviceType: string;
     consumptionAmount: number;
     propertyId: number;
+    on: boolean
 }
 
 export interface PropertyDTO {

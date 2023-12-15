@@ -3,6 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { DeviceDTO, PropertyDTO } from 'src/app/model/model';
 import { OutdoorDeviceService } from '../../devices/outdoor/service/outdoor-device-service';
 import { PropertyServiceService } from '../service/property-service.service';
+import { LargeEnergyService } from '../../devices/large-energy/large-energy.service';
 
 @Component({
   selector: 'app-single-property',
@@ -19,6 +20,7 @@ export class SinglePropertyComponent implements OnInit {
 
   constructor(private readonly propertyService: PropertyServiceService,
     private readonly outdoorDeviceService: OutdoorDeviceService,
+    private readonly largeEnergyDeviceService: LargeEnergyService,
     private router: Router) { 
     this.propertyService.currentProperty.subscribe(
       (property: PropertyDTO | undefined) => (this.property = property)
@@ -26,11 +28,12 @@ export class SinglePropertyComponent implements OnInit {
 
     this.propertyService.getApliences(this.property?.id || "0").subscribe((res: any) => {
       this.appliances = res;
-      console.log(res)
     })
 
     this.propertyService.getOutdoor(this.property?.id || "0").subscribe((res: any) => {
       this.outdoor = res;
+      console.log(res)
+
     })
 
     this.propertyService.getEnergyDevices(this.property?.id || "0").subscribe((res: any) => {
@@ -76,6 +79,13 @@ export class SinglePropertyComponent implements OnInit {
         this.router.navigate(['/lamp']);
     } else if (device.deviceType === "gate") {
         this.router.navigate(['/gate'])
+    }
+  }
+
+  navigateToLargeEnergyDevice(device: DeviceDTO) {
+    this.largeEnergyDeviceService.setSelectedDeviceId(device.id);
+    if (device.deviceType === 'solarPanel') {
+        this.router.navigate(['/solarPanel']);
     }
   }
 
