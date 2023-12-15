@@ -23,6 +23,7 @@ type BaseDevice struct {
 	UsesElectricity bool
 	ConsumptionAmount float64
 	PropertyId int
+	On bool
 }
 
 
@@ -66,14 +67,14 @@ func (device BaseDevice) SendHeartBeat(client mqtt.Client) {
 
 func OnObj(device BaseDevice) MessageDTO{
     currentTime:= time.Now()
-	if (device.State) {
+	if (device.On) {
 		return MessageDTO{
 			DeviceId:   device.Id,
 			UsedFor: "Error",
 			TimeStamp: currentTime,
 		}
 	}
-		device.State = true
+		device.On = true
 		return MessageDTO{
 			DeviceId:   device.Id,
 			UsedFor: "ON",
@@ -83,14 +84,14 @@ func OnObj(device BaseDevice) MessageDTO{
 
 func OffObj(device BaseDevice) MessageDTO{
     currentTime:= time.Now()
-	if (!device.State) {
+	if (!device.On) {
 		return MessageDTO{
 			DeviceId:   device.Id,
 			UsedFor: "Error",
 			TimeStamp: currentTime,
 		}
 	}
-		device.State = false
+		device.On = false
 		return MessageDTO{
 			DeviceId:   device.Id,
 			UsedFor: "OFF",

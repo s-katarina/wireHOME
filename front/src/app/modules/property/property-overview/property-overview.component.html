@@ -35,6 +35,10 @@
                     *ngIf="property.propertyStatus!='PENDING'"
                     (click)="selectProperty(property.id)" 
                     [routerLink]="['/create-device']">ADD DEVICE</button>
+                    <button  mat-button 
+                    *ngIf="property.propertyStatus!='PENDING'"
+                    (click)="selectProperty(property.id)" 
+                    [routerLink]="['/energy-overwiev']">ENERGY OWERVIEW</button>
                 </mat-card-actions>
             </mat-card>
         </div>

@@ -45,7 +45,7 @@
                     <mat-divider></mat-divider>
                     <div class="card-container">
                         <div *ngFor="let device of energyDevices">
-                            <div class="card">
+                            <div class="card" (click)="navigateToLargeEnergyDevice(device)">
                                 <p>{{getDeviceTypeDisplayName(device)}}</p>
                                 <img class="img-card" [src]="device.imagePath" alt="{{device.modelName}}">
                             </div>
