@@ -8,17 +8,24 @@ import com.influxdb.client.domain.WritePrecision;
 import com.influxdb.client.write.Point;
 import com.influxdb.query.FluxRecord;
 import com.influxdb.query.FluxTable;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.influx.InfluxDbProperties;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import projectnwt2023.backend.devices.dto.EnergyDTO;
+import projectnwt2023.backend.devices.dto.GraphDTO;
+import projectnwt2023.backend.devices.dto.GraphRequestDTO;
 import projectnwt2023.backend.devices.dto.GateEventMeasurement;
 import projectnwt2023.backend.devices.dto.Measurement;
+import projectnwt2023.backend.helper.Constants;
 import projectnwt2023.backend.helper.InfluxDbConfiguration;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 @Service
 public class InfluxDBService {
@@ -138,6 +145,27 @@ public class InfluxDBService {
         }
     }
 
+    public ArrayList<GraphDTO> findDeviceEnergyForDate(GraphRequestDTO graphRequestDTO) {
+        System.out.println("graphRequestDTO.getFrom()");
+        System.out.println(graphRequestDTO.getFrom());
+        System.out.println(graphRequestDTO.getMeasurement());
+
+        // Print the result
+        String fluxQuery = String.format(
+                "from(bucket:\"%s\") |> range(start: %s, stop: %s)" +
+                        "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"device-id\"] == \"%s\")" +                 // where measurement name (_measurement) equals value measurementName
+                        "|> sort(columns: [\"_time\"], desc: false)", this.bucket,
+                graphRequestDTO.getFrom(), graphRequestDTO.getTo(),
+                graphRequestDTO.getMeasurement(), graphRequestDTO.getId());
+        ArrayList<EnergyDTO> energies = queryForEnergy(fluxQuery);
+        ArrayList<GraphDTO> grapfValue = new ArrayList<>();
+        for (EnergyDTO energyDTO: energies){
+            grapfValue.add(new GraphDTO(energyDTO.getTimestamp().getTime(), energyDTO.getConsumptionAmount()));
+        }
+        return grapfValue;
+    }
+
+
     private List<GateEventMeasurement> queryGate(String fluxQuery) {
         List<GateEventMeasurement> result = new ArrayList<>();
         QueryApi queryApi = this.influxDbClient.getQueryApi();
@@ -177,4 +205,18 @@ public class InfluxDBService {
     }
 
 
+    public ArrayList<GraphDTO> findPropertyEnergyForDate(GraphRequestDTO graphRequestDTO) {
+        String fluxQuery = String.format(
+                "from(bucket:\"%s\") |> range(start: %s, stop: %s)" +
+                        "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"property-id\"] == \"%s\")" +                 // where measurement name (_measurement) equals value measurementName
+                        "|> sort(columns: [\"_time\"], desc: false)", this.bucket,
+                graphRequestDTO.getFrom(), graphRequestDTO.getTo(),
+                graphRequestDTO.getMeasurement(), graphRequestDTO.getId());
+        ArrayList<EnergyDTO> energies = queryForEnergy(fluxQuery);
+        ArrayList<GraphDTO> grapfValue = new ArrayList<>();
+        for (EnergyDTO energyDTO: energies){
+            grapfValue.add(new GraphDTO(energyDTO.getTimestamp().getTime(), energyDTO.getConsumptionAmount()));
+        }
+        return grapfValue;
+    }
 }

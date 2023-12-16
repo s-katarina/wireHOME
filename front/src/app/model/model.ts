@@ -86,6 +86,16 @@ export interface Gate extends DeviceDTO {
     licencePlates: string[]
 }
 
+export interface SolarPanel extends DeviceDTO {
+    surfaceSize: number;
+    efficiency: number;
+}
+
+export interface Battery extends DeviceDTO {
+    capacity: number;
+    currentFill: number;
+}
+
 export interface GateEvent  {
     caller: string,
     eventType: string
@@ -95,4 +105,14 @@ export interface GateEvent  {
 export interface ApiResponse {
     status: number,
     data: any
+}
+
+
+export interface ChartData {
+    data: GraphDTO[]
+} 
+
+export interface GraphDTO {
+    x: number
+    y: number
 }

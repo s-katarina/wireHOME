@@ -19,6 +19,9 @@ import { GateComponent } from './modules/devices/outdoor/gate/gate.component';
 import { EnergyOverviewComponent } from './modules/devices/large-energy/energy-overview/energy-overview.component';
 import { SolarPanelComponent } from './modules/devices/large-energy/solar-panel/solar-panel.component';
 
+import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
+import { DatePipe } from '@angular/common';
+import { BatteryComponent } from './modules/devices/large-energy/battery/battery.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +33,7 @@ import { SolarPanelComponent } from './modules/devices/large-energy/solar-panel/
     GateComponent,
     EnergyOverviewComponent,
     SolarPanelComponent,
+    BatteryComponent,
   ],
   imports: [
     BrowserModule,
@@ -40,7 +44,8 @@ import { SolarPanelComponent } from './modules/devices/large-energy/solar-panel/
     PropertyModule,
     ReactiveFormsModule,
     FormsModule,
-    HttpClientModule
+    HttpClientModule,
+    CanvasJSAngularChartsModule
   ],
   providers: [
     {
@@ -58,7 +63,8 @@ import { SolarPanelComponent } from './modules/devices/large-energy/solar-panel/
       provide: HTTP_INTERCEPTORS,
       useClass: TokenExpirationInterceptor,
       multi: true
-    }
+    },
+    DatePipe
   ],
   bootstrap: [AppComponent]
 })

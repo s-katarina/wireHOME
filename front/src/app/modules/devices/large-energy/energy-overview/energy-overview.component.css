@@ -1,0 +1,7 @@
+.same-row{
+    display: flex;
+    justify-content: flex-start;
+}
+.margin-left{
+    margin-left: 2vw;
+}

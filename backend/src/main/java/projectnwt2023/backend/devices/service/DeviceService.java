@@ -2,7 +2,11 @@ package projectnwt2023.backend.devices.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import projectnwt2023.backend.appUser.AppUser;
+import projectnwt2023.backend.appUser.service.interfaces.IAppUserService;
 import projectnwt2023.backend.devices.Device;
 import projectnwt2023.backend.devices.State;
 import projectnwt2023.backend.devices.dto.GateDTO;
@@ -25,6 +29,10 @@ public class DeviceService implements IDeviceService {
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
 
+    @Autowired
+
+    IAppUserService appUserService;
+
     @Override
     public Device save(Device device) {
         Device saved = deviceRepository.save(device);
@@ -45,18 +53,18 @@ public class DeviceService implements IDeviceService {
     @Override
     public Device changeDeviceState(Long id, State state) {
         Device device = getById(id);
-        device.setState(state);
-        device.setLastHeartbeat(LocalDateTime.now());
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (device.getState() != state) {
+            //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
 //        AppUser sender = appUserService.findByEmail(authentication.getName());
-        Map<String, String> values = new HashMap<>();
-        values.put("device-id", String.valueOf(device.getId()));
-        values.put("user-email", "kata");
-        influxDBService.save("online/offline", state.getNumericValue(), new Date(), values);
-
+            Map<String, String> values = new HashMap<>();
+            values.put("device-id", String.valueOf(device.getId()));
+            values.put("user-email", "kata");
+            influxDBService.save("online/offline", state.getNumericValue(), new Date(), values);
+        }
+        device.setState(state);
+        device.setLastHeartbeat(LocalDateTime.now());
         this.simpMessagingTemplate.convertAndSend("/device/" + id + "/state", state.getNumericValue());
-
         return deviceRepository.save(device);
     }
 
@@ -87,12 +95,17 @@ public class DeviceService implements IDeviceService {
         }
         device.setDeviceOn(isOn);
         device.setLastHeartbeat(LocalDateTime.now());
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-//        AppUser sender = appUserService.findByEmail(authentication.getName());
         Map<String, String> values = new HashMap<>();
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null) {
+            Optional<AppUser> sender = appUserService.findByEmail(authentication.getName());
+            if (!sender.isPresent()) return null;
+            values.put("user-email", sender.get().getEmail());
+        } else {
+            values.put("user-email", "kata");
+        }
         values.put("device-id", String.valueOf(device.getId()));
-        values.put("user-email", "kata");
 
         influxDBService.save("on/off", isOn ? 1 : 0, new Date(), values);
         return deviceRepository.save(device);

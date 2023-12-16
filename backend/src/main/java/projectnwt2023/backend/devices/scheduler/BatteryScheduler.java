@@ -4,9 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import projectnwt2023.backend.devices.Battery;
+import projectnwt2023.backend.devices.Device;
+import projectnwt2023.backend.devices.State;
 import projectnwt2023.backend.devices.dto.EnergyDTO;
 import projectnwt2023.backend.devices.service.InfluxDBService;
 import projectnwt2023.backend.devices.service.interfaces.IBatteryService;
+import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,6 +25,9 @@ public class BatteryScheduler {
     @Autowired
     IBatteryService batteryService;
 
+    @Autowired
+    IDeviceService deviceService;
+
     @Scheduled(fixedRate = 60000) // na min
     public void myScheduledTask() {
         ArrayList<EnergyDTO> energies = influxDBService.findLastMinEnergyOuttake();
@@ -33,7 +39,9 @@ public class BatteryScheduler {
             if (!propertyEnergy.containsKey(propertyId)) {
                 propertyEnergy.put(propertyId, 0.0);
             }
-            propertyEnergy.put(propertyId, propertyEnergy.get(propertyId) + energy.getConsumptionAmount()/60);
+            if (isDeviceOnline(energy.getDeviceId())) {
+                propertyEnergy.put(propertyId, propertyEnergy.get(propertyId) + energy.getConsumptionAmount() / 60);
+            }
         }
 
         for (Map.Entry<Integer, Double> entry : propertyEnergy.entrySet()) {
@@ -41,6 +49,12 @@ public class BatteryScheduler {
         }
 
 
+    }
+
+    private boolean isDeviceOnline(int deviceId) {
+        Device device = deviceService.getById((long) deviceId);
+        if (device.getTopic().equals("solarPanel")) return device.isDeviceOn();
+        return device.getState() == State.online;
     }
 
     private void processProperty(Map.Entry<Integer, Double> entry) {
@@ -57,7 +71,6 @@ public class BatteryScheduler {
             sendToElectroDistibution(propertyId, (float) aggregatedAmount);
             return;
         }
-        processBateruesInProperty(propertyId, aggregatedAmount, batteries);
     }
 
     private void processBateruesInProperty(int propertyId, double aggregatedAmount, ArrayList<Battery> batteries) {
@@ -77,8 +90,10 @@ public class BatteryScheduler {
                 //posalji koliko je poslao
             } else {
                 battery.setCapacity(electrisity);
-                //ne salje se nista distribuciji
             }
+            Map<String, String> values = new HashMap<>();
+            values.put("device-id", String.valueOf(propertyId));
+            influxDBService.save("battery", (float) battery.getCapacity(), new Date(), values);
         }
         sendToElectroDistibution(propertyId, (float) finalElectisity);
     }

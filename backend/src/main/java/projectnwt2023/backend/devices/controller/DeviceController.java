@@ -10,6 +10,7 @@ import projectnwt2023.backend.devices.RegimeAirConditioner;
 import projectnwt2023.backend.devices.RegimeType;
 import projectnwt2023.backend.devices.RegimeWashingMachine;
 import projectnwt2023.backend.devices.dto.DeviceDTO;
+import projectnwt2023.backend.devices.dto.MessageDTO;
 import projectnwt2023.backend.devices.mqtt.Gateway;
 import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
 
@@ -36,16 +37,16 @@ public class DeviceController {
     }
 
     @PostMapping(value = "/on/{deviceId}", produces = "application/json")
-    ResponseEntity<?> turnOn(@PathVariable Integer deviceId){
+    ResponseEntity<MessageDTO> turnOn(@PathVariable Integer deviceId){
         Device device = deviceService.getById(deviceId.longValue());
         try {
             System.out.println(deviceId);
             mqttGateway.sendToMqtt("ON", String.valueOf(deviceId));
-            return ResponseEntity.ok("Success");
+            return new ResponseEntity<>(new MessageDTO("uspeo je", "on"), HttpStatus.OK);
         } catch (Exception e){
             System.out.println("greeeska");
             e.printStackTrace();
-            return ResponseEntity.ok("Nije hteo da posaljke");
+            return new ResponseEntity<>(new MessageDTO("nije uspeo", "on"), HttpStatus.OK);
         }
     }
 
@@ -54,11 +55,11 @@ public class DeviceController {
         Device device = deviceService.getById(deviceId.longValue());
         try {
             mqttGateway.sendToMqtt("OFF", String.valueOf(deviceId));
-            return ResponseEntity.ok("Success");
+            return new ResponseEntity<>(new MessageDTO("uspeo je", "off"), HttpStatus.OK);
         } catch (Exception e){
             System.out.println("greeeska");
             e.printStackTrace();
-            return ResponseEntity.ok("Nije hteo da posaljke");
+            return new ResponseEntity<>(new MessageDTO("nije uspeo", "off"), HttpStatus.OK);
         }
     }
 
