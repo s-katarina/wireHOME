@@ -5,6 +5,7 @@ import (
 	"fmt"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"io"
+	"io/ioutil"
 	"log"
 	"math/rand"
 	"net/http"
@@ -118,6 +119,7 @@ func RunAmbientSensor() {
 	ambientSensor.Sub(client)
 	go pubAmbientSensorValue(client)
 	go ambientSensor.TakesElectisity(client)
+	go getFromApi()
 	ambientSensor.SendHeartBeat(client)
 }
 
@@ -129,6 +131,52 @@ func getTemp() float32 {
 func getHum() float32 {
 	var diff = rand.Intn(5 + 5) - 5
 	return ambientSensor.CurrentHum + float32(diff)
+}
+
+type WeatherData struct {
+	CurrentConditions struct {
+		Temp float32 `json:"temp"`
+		Humidity float32 `json:"humidity"`
+	} `json:"currentConditions"`
+}
+
+func getFromApi() {
+	// URL adresa zahteva
+	url := "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/novi%20sad?unitGroup=metric&include=current&key=HZ7K9SQFRN4GPVHKKAAQMN7DB&contentType=json"
+
+	for {
+		// Izvrši HTTP GET zahtev
+		resp, err := http.Get(url)
+		if err != nil {
+			fmt.Println("Greška prilikom izvršavanja HTTP zahteva:", err)
+			return
+		}
+		defer resp.Body.Close()
+
+		// Pročitaj odgovor kao bajtove
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			fmt.Println("Greška prilikom čitanja odgovora:", err)
+			return
+		}
+
+		// Dekodiraj JSON podatke
+		var weatherData WeatherData
+		err = json.Unmarshal(body, &weatherData)
+		if err != nil {
+			fmt.Println("Greška prilikom dekodiranja JSON-a:", err)
+			return
+		}
+
+		// Ispisi temperaturu i vlažnost
+		//fmt.Printf("Trenutna temperatura: %f", weatherData.CurrentConditions.Temp)
+		//fmt.Printf("Trenutna vlažnost: %f", weatherData.CurrentConditions.Humidity)
+
+		ambientSensor.CurrentTemp = weatherData.CurrentConditions.Temp
+		ambientSensor.CurrentHum = weatherData.CurrentConditions.Humidity
+
+		time.Sleep(time.Second * 10)
+	}
 }
 
 func pubAmbientSensorValue(client mqtt.Client) {
