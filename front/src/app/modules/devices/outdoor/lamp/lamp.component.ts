@@ -163,6 +163,7 @@ export class LampComponent implements OnInit, AfterViewInit, OnDestroy {
 
   dateFrom = ""
   dateTo = ""
+  rangeOver30Days = false
 
   // Updates dateFrom and dateTo
   onDropdownChange() {
@@ -191,6 +192,20 @@ export class LampComponent implements OnInit, AfterViewInit, OnDestroy {
         && this.range.controls.start.valid && this.range.controls.end.valid) {
           this.dateFrom = (this.range.value.start!.getTime()).toString();
           this.dateTo = (this.range.value.end!.getTime()).toString();
+
+          const dateFromTimestamp = parseInt(this.dateFrom, 10);
+          const dateToTimestamp = parseInt(this.dateTo, 10);
+          const timeDifference = Math.abs(dateToTimestamp - dateFromTimestamp);
+          const daysDifference = timeDifference / (1000 * 60 * 60 * 24);
+          if (daysDifference > 30) {
+            console.log("Date range is more than 30 days apart");
+            this.rangeOver30Days = true
+            return;
+          } else {
+            console.log("Date range is within 30 days");
+            this.rangeOver30Days = false
+          }
+
         }
     }
 
