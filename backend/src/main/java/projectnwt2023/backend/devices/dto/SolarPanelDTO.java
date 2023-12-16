@@ -13,17 +13,6 @@ import projectnwt2023.backend.devices.State;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SolarPanelDTO extends DeviceDTO{
-    private int id;
-
-    private boolean state;
-
-    private String modelName;
-
-    private boolean usesElectricity;
-
-    private double consumptionAmount;
-
-    private int propertyId;
 
     private double surfaceSize;
 
@@ -34,15 +23,10 @@ public class SolarPanelDTO extends DeviceDTO{
     private double longitude;
 
     public SolarPanelDTO(SolarPanel device) {
-        this.id = Math.toIntExact(device.getId());
-        this.state = device.getState() == State.online;
-        this.modelName = device.getModelName();
-        this.usesElectricity = device.isUsesElectricity();
-        this.consumptionAmount = device.getConsumptionAmount();
+        super(device);
         this.surfaceSize = device.getSurfaceSize();
         this.efficiency = device.getEfficiency();
         this.latitude = device.getProperty().getCity().getLatitude();
         this.longitude = device.getProperty().getCity().getLongitude();
-        this.propertyId = Math.toIntExact(device.getProperty().getId());
     }
 }

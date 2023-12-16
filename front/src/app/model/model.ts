@@ -85,6 +85,16 @@ export interface Gate extends DeviceDTO {
     public: boolean
 }
 
+export interface SolarPanel extends DeviceDTO {
+    surfaceSize: number;
+    efficiency: number;
+}
+
+export interface Battery extends DeviceDTO {
+    capacity: number;
+    currentFill: number;
+}
+
 export interface GateEvent  {
     caller: string,
     eventType: string

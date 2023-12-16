@@ -44,4 +44,10 @@ public class SolarPanelController {
         return new ResponseEntity<>(grapgData, HttpStatus.OK);
     }
 
+    @PostMapping(value = "/propertyEnergy", produces = "application/json") // koristi i za elektrodistribuciju i za samu potrosnju
+    ResponseEntity<ArrayList<GraphDTO>> getElectoByProperty(@RequestBody GraphRequestDTO graphRequestDTO){
+        ArrayList<GraphDTO> grapgData = influxDBService.findPropertyEnergyForDate(graphRequestDTO);
+        return new ResponseEntity<>(grapgData, HttpStatus.OK);
+    }
+
 }

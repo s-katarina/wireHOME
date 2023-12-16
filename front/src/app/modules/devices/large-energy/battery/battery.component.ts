@@ -1,31 +1,28 @@
 import { Component, OnInit } from '@angular/core';
-import { LargeEnergyService } from '../large-energy.service';
-import { Router } from '@angular/router';
-import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
-import { DatePipe } from '@angular/common';
-import { CanvasJS } from '@canvasjs/angular-charts';
+import { FormControl, FormGroup } from '@angular/forms';
 import { WebsocketService } from 'src/app/infrastructure/socket/websocket.service';
+import { Battery } from 'src/app/model/model';
+import { LargeEnergyService } from '../large-energy.service';
+import { CanvasJS } from '@canvasjs/angular-charts';
 import Swal from 'sweetalert2';
-import { SolarPanel } from 'src/app/model/model';
 
 @Component({
-  selector: 'app-solar-panel',
-  templateUrl: './solar-panel.component.html',
-  styleUrls: ['./solar-panel.component.css']
+  selector: 'app-battery',
+  templateUrl: './battery.component.html',
+  styleUrls: ['./battery.component.css']
 })
-export class SolarPanelComponent implements OnInit {
+export class BatteryComponent implements OnInit {
 
-  panelId: string = ""
+  batteryId: string = ""
   selectedOption: string = ""
   
   range = new FormGroup({
     start: new FormControl<Date | null>(null),
     end: new FormControl<Date | null>(null),
   });
-
-  public panel: SolarPanel = {
-    surfaceSize: 0,
-    efficiency: 0,
+  public battery: Battery = {
+    capacity: 0,
+    currentFill: 0,
     id: '',
     state: false,
     modelName: '',
@@ -35,24 +32,22 @@ export class SolarPanelComponent implements OnInit {
     consumptionAmount: 0,
     propertyId: 0,
     on: false
-  };
-  public surfaceSize: string = "On"
-  public efficiency: string = "On"
+  }
+  public capacity: string = "On"
+  public currentFill: string = "On"
   public online: string = "Online"
   public charging: string = "Battery"
 
   isButtonHovered: boolean = false;
   chart: any;
-	
-  constructor( private readonly largeEnergyDeviceService: LargeEnergyService,
+
+  constructor(private readonly largeEnergyDeviceService: LargeEnergyService,
     private socketService: WebsocketService,) { 
       this.largeEnergyDeviceService.selectedDeviceId$.subscribe((res: string) => {
-        this.panelId = res;
-        console.log(this.panelId)
+        this.batteryId = res;
+        console.log(this.batteryId)
       })
-
-
- }
+    }
 
   ngOnInit(): void {
     this.chart = new CanvasJS.Chart("chartContainer", 
@@ -61,7 +56,7 @@ export class SolarPanelComponent implements OnInit {
       exportEnabled: true,
       theme: "light2",
       title: {
-      text: "Energy produced"
+      text: "Battery state"
       },
       data: [{
       type: "line",
@@ -70,30 +65,31 @@ export class SolarPanelComponent implements OnInit {
       }]
     })
     this.chart.render();
-    this.largeEnergyDeviceService.getSolarPanel(this.panelId).subscribe((res: any) => {
-      this.panel = res;
-      this.surfaceSize = (this.panel?.surfaceSize || 0).toString()  
+    this.largeEnergyDeviceService.getBattery(this.batteryId).subscribe((res: any) => {
+      this.battery = res;
+      this.capacity = (this.battery?.capacity || 0).toString()  
       const newLocal = this;
-      newLocal.efficiency = (this.panel?.efficiency || 0).toString()
-      this.online = this.panel?.state ? "Online" : "Offline"
-      this.charging = this.panel?.usesElectricity ? "House/Autonom" : "Battery"
+      newLocal.currentFill = (this.battery?.currentFill || 0).toString()
+      this.online = this.battery?.state ? "Online" : "Offline"
+      this.charging = this.battery?.usesElectricity ? "House/Autonom" : "Battery"
     })
   }
+
   ngAfterViewInit(): void {
     const stompClient: any = this.socketService.initWebSocket()
 
     stompClient.connect({}, () => {
-      stompClient.subscribe(`/panel/${this.panel!.id}`, (message: { body: string }) => {
+      stompClient.subscribe(`/battery/${this.battery!.id}`, (message: { body: string }) => {
         console.log(message)
         try {
-          const parsedData : SolarPanel = JSON.parse(message.body);
+          const parsedData : Battery = JSON.parse(message.body);
           console.log(parsedData)
-          this.panel = parsedData
+          this.battery = parsedData
           this.fireSwalToast(true, "Lamp updated")
-          this.surfaceSize = (this.panel?.surfaceSize || 0).toString()
-          this.efficiency = (this.panel?.efficiency || 0).toString()
-          this.online = this.panel?.state ? "Online" : "Offline"
-          return this.panel;
+          this.capacity = (this.battery?.capacity || 0).toString()
+          this.currentFill = (this.battery?.currentFill || 0).toString()
+          this.online = this.battery?.state ? "Online" : "Offline"
+          return this.battery;
         } catch (error) {
           console.error('Error parsing JSON string:', error);
           return null;
@@ -101,38 +97,6 @@ export class SolarPanelComponent implements OnInit {
       })
     })
   }
-
-  onOffClick(): void {
-    if (this.panel?.on) {
-      this.largeEnergyDeviceService.postOff(this.panel.id).subscribe((res: any) => {
-        console.log(res);
-        this.panel.on = false
-      });
-    } else this.largeEnergyDeviceService.postOn(this.panel!.id).subscribe((res: any) => {
-      console.log(res);
-      this.panel.on = true
-    });
-  }
-
-  // onBulbOnOffClick(): void {
-  //   if (this.panel?.bulbState) {
-  //     this.lampService.postBulbOff(this.panel.id).subscribe((res: any) => {
-  //       console.log(res);
-  //     });
-  //   } else this.lampService.postBulbOn(this.panel!.id).subscribe((res: any) => {
-  //     console.log(res);
-  //   });
-  // }
-
-  // onAutomaticOnOffClick(): void {
-  //   if (this.panel?.automatic) {
-  //     this.lampService.postAutomaticOnOff(this.panel.id, false).subscribe((res: any) => {
-  //       console.log(res);
-  //     });
-  //   } else this.lampService.postAutomaticOnOff(this.panel!.id, true).subscribe((res: any) => {
-  //     console.log(res);
-  //   });
-  // }
 
   private fireSwalToast(success: boolean, title: string): void {
     const Toast = Swal.mixin({
@@ -158,7 +122,7 @@ export class SolarPanelComponent implements OnInit {
     const dateTo = (this.range.value.end!.getTime()/1000).toString();
     console.log('Date Range:', dateFrom, dateTo);
     //date range u milisekundama
-    this.largeEnergyDeviceService.getSolarPlatformReadingFrom(this.panelId, dateFrom, dateTo, "energy-maintaining").subscribe((res: any) => {
+    this.largeEnergyDeviceService.getSolarPlatformReadingFrom(this.batteryId, dateFrom, dateTo, "battery").subscribe((res: any) => {
       this.chart.options.data[0].dataPoints = res;
       console.log(res)
       this.chart.render();
@@ -199,11 +163,12 @@ export class SolarPanelComponent implements OnInit {
     const dateTo = (Math.floor(currentDate.getTime()/1000)).toString();
     console.log('Date Range:', dateFrom, dateTo);
     //date range u milisekundama
-    this.largeEnergyDeviceService.getSolarPlatformReadingFrom(this.panelId, dateFrom, dateTo, "energy-maintaining").subscribe((res: any) => {
+    this.largeEnergyDeviceService.getSolarPlatformReadingFrom(this.batteryId, dateFrom, dateTo, "energy-maintaining").subscribe((res: any) => {
       this.chart.options.data[0].dataPoints = res;
       console.log(res)
       this.chart.render();
 
     })
   }
+
 }

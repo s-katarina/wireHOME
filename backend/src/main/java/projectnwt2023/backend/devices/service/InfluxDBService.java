@@ -146,13 +146,9 @@ public class InfluxDBService {
     }
 
     public ArrayList<GraphDTO> findDeviceEnergyForDate(GraphRequestDTO graphRequestDTO) {
-        DateTimeFormatter inputFormatter = Constants.dateTimeFormatterWithSeconds;
-
-//        String fromString = graphRequestDTO.getFrom();
-//        String toString = getStringDateForINflux(graphRequestDTO.getTo(), inputFormatter);
         System.out.println("graphRequestDTO.getFrom()");
         System.out.println(graphRequestDTO.getFrom());
-        System.out.println(graphRequestDTO.getFrom().getClass());
+        System.out.println(graphRequestDTO.getMeasurement());
 
         // Print the result
         String fluxQuery = String.format(
@@ -160,7 +156,7 @@ public class InfluxDBService {
                         "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"device-id\"] == \"%s\")" +                 // where measurement name (_measurement) equals value measurementName
                         "|> sort(columns: [\"_time\"], desc: false)", this.bucket,
                 graphRequestDTO.getFrom(), graphRequestDTO.getTo(),
-                        "energy-maintaining", graphRequestDTO.getId());
+                graphRequestDTO.getMeasurement(), graphRequestDTO.getId());
         ArrayList<EnergyDTO> energies = queryForEnergy(fluxQuery);
         ArrayList<GraphDTO> grapfValue = new ArrayList<>();
         for (EnergyDTO energyDTO: energies){
@@ -169,15 +165,7 @@ public class InfluxDBService {
         return grapfValue;
     }
 
-    @NotNull
-    private static String getStringDateForINflux(String date, DateTimeFormatter inputFormatter) {
-        LocalDateTime localDateStart = LocalDateTime.parse(date, inputFormatter);
-        // Convert LocalDateTime to ZonedDateTime with ZoneOffset.UTC
-        ZonedDateTime zonedDateTime = localDateStart.atZone(ZoneOffset.UTC);
-        // Format the ZonedDateTime in the desired format
-        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        return zonedDateTime.format(outputFormatter);
-    }
+
     private List<GateEventMeasurement> queryGate(String fluxQuery) {
         List<GateEventMeasurement> result = new ArrayList<>();
         QueryApi queryApi = this.influxDbClient.getQueryApi();
@@ -220,4 +208,18 @@ public class InfluxDBService {
     }
 
 
+    public ArrayList<GraphDTO> findPropertyEnergyForDate(GraphRequestDTO graphRequestDTO) {
+        String fluxQuery = String.format(
+                "from(bucket:\"%s\") |> range(start: %s, stop: %s)" +
+                        "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"property-id\"] == \"%s\")" +                 // where measurement name (_measurement) equals value measurementName
+                        "|> sort(columns: [\"_time\"], desc: false)", this.bucket,
+                graphRequestDTO.getFrom(), graphRequestDTO.getTo(),
+                graphRequestDTO.getMeasurement(), graphRequestDTO.getId());
+        ArrayList<EnergyDTO> energies = queryForEnergy(fluxQuery);
+        ArrayList<GraphDTO> grapfValue = new ArrayList<>();
+        for (EnergyDTO energyDTO: energies){
+            grapfValue.add(new GraphDTO(energyDTO.getTimestamp().getTime(), energyDTO.getConsumptionAmount()));
+        }
+        return grapfValue;
+    }
 }

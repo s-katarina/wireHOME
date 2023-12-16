@@ -21,6 +21,7 @@ import { SolarPanelComponent } from './modules/devices/large-energy/solar-panel/
 
 import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
 import { DatePipe } from '@angular/common';
+import { BatteryComponent } from './modules/devices/large-energy/battery/battery.component';
 
 @NgModule({
   declarations: [
@@ -32,6 +33,7 @@ import { DatePipe } from '@angular/common';
     GateComponent,
     EnergyOverviewComponent,
     SolarPanelComponent,
+    BatteryComponent,
   ],
   imports: [
     BrowserModule,

@@ -1,10 +1,60 @@
-<p>solar-panel works!</p>
+<div class="page">
+
+  <h2>{{panel!.modelName}}</h2>
+    <h3>Solar Panel</h3>
+    <mat-divider></mat-divider>
+    <div class="cols">
+        <div class="left-column">
+            <div class="settings-group">
+                <button  mat-button 
+                    (mouseenter)="isButtonHovered = true"
+                    (mouseleave)="isButtonHovered = false">
+                        <mat-icon *ngIf="!isButtonHovered && panel!.state">check_circle</mat-icon>
+                        <mat-icon *ngIf="!isButtonHovered && !panel!.state">cloud_off</mat-icon>
+                        <mat-icon *ngIf="isButtonHovered">settings_power</mat-icon>
+                </button>
+                <button class="placeholder-btn" mat-button>Device is {{online}}</button>
+            </div>
+
+            <div  class="changeable-section" [ngClass]="{'disabled-section': !panel!.state}">
+                <div class="settings-group">
+                    <button  mat-button 
+                     [ngClass]="{'disabled-button': !panel!.state}"
+                     (click)="onOffClick()">
+                     <mat-icon *ngIf="!isButtonHovered && !panel!.on">offline_bolt</mat-icon>
+                     <mat-icon *ngIf="!isButtonHovered && panel!.on">brightness_medium</mat-icon></button>
+                    <button class="placeholder-btn" mat-button >Panel is on {{panel!.on}}</button>
+                </div>
+    
+               
+            </div>
+
+            <div class="settings-group">
+                <button class="placeholder-btn"  mat-button><mat-icon>view_comfy</mat-icon></button>
+                <button  class="placeholder-btn" mat-button>Surface:</button>
+                <button  class="placeholder-btn" mat-button>{{panel!.surfaceSize}} </button>
+            </div>
+
+            <div class="settings-group">
+                <button class="placeholder-btn"  mat-button><mat-icon>wb_sunny</mat-icon></button>
+                <button  class="placeholder-btn" mat-button>Efficiency:</button>
+                <button  class="placeholder-btn" mat-button>{{panel!.efficiency}} %</button>
+            </div>
+
+        </div>
+        
+        <div class="right-column">
+        <img class="img-card" [src]="panel!.imagePath" alt="Panel Image">
+        </div>
+    </div>
+
 <div>
     <div id="chartContainer" style="height: 370px; width: 100%; margin:auto;"></div>    
 </div>    
-<mat-form-field>
+<div class="same-row">
+  <mat-form-field class="margin-left">
     <mat-label>Select time range</mat-label>
-    <mat-select [(ngModel)]="selectedOption">
+    <mat-select [(ngModel)]="selectedOption" (selectionChange)="onDropdownChange($event)">
       <mat-option value="6h">Last 6h</mat-option>
       <mat-option value="12h">Last 12h</mat-option>
       <mat-option value="24h">Last 24h</mat-option>
@@ -14,7 +64,7 @@
     </mat-select>
   </mat-form-field>
 
-  
+  <div *ngIf="selectedOption == 'range'" class="margin-left">
   <mat-form-field>
       <mat-label>Enter a date range</mat-label>
       <mat-date-range-input [formGroup]="range" [rangePicker]="picker">
@@ -29,5 +79,6 @@
       <mat-error *ngIf="range.controls.end.hasError('matEndDateInvalid')">Invalid end date</mat-error>
   </mat-form-field>
   <button (click)="onSubmit()"></button>
-
-  
+</div>
+</div>
+</div>

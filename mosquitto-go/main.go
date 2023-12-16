@@ -1,18 +1,18 @@
 package main
 
 import (
-    // solarPanel "tim10/mqtt/solarPanel"
+    solarPanel "tim10/mqtt/solarPanel"
 	// ambientSensore "tim10/mqtt/ambientSensore"
-	"tim10/mqtt/gate"
+	// "tim10/mqtt/gate"
 	// lamp "tim10/mqtt/lamp"
 )
 
 
 func main() {
     // ambientSensore.RunAmbientSensore();
-    // go solarPanel.RunSolarPanel();
+    solarPanel.RunSolarPanel();
 
-    gate.RunGate()
+    // gate.RunGate()
     // lamp.RunLamp()
 }
 
