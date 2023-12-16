@@ -1,9 +1,11 @@
 package projectnwt2023.backend.devices.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import projectnwt2023.backend.devices.Device;
 import projectnwt2023.backend.devices.State;
+import projectnwt2023.backend.devices.dto.GateDTO;
 import projectnwt2023.backend.devices.repository.DeviceRepository;
 import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
 import projectnwt2023.backend.exceptions.EntityNotFoundException;
@@ -19,6 +21,9 @@ public class DeviceService implements IDeviceService {
 
     @Autowired
     InfluxDBService influxDBService;
+
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     @Override
     public Device save(Device device) {
@@ -49,6 +54,9 @@ public class DeviceService implements IDeviceService {
         values.put("device-id", String.valueOf(device.getId()));
         values.put("user-email", "kata");
         influxDBService.save("online/offline", state.getNumericValue(), new Date(), values);
+
+        this.simpMessagingTemplate.convertAndSend("/device/" + id + "/state", state.getNumericValue());
+
         return deviceRepository.save(device);
     }
 

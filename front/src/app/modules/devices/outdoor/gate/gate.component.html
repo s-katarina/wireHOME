@@ -48,7 +48,9 @@
                 <mat-form-field>
                     <input matInput placeholder="Licence plate to add" [(ngModel)]="licencePlate">
                   </mat-form-field>
-                <button mat-raised-button (click)="addLicencePlate()">Add</button>
+                <button *ngIf="gate!.state" mat-raised-button (click)="addLicencePlate()">Add</button>
+                <button *ngIf="!gate!.state" mat-raised-button [disabled]="!gate!.state"  
+                matTooltip="Device has to be online">Add</button>
             </div>
 
             <div class="settings-group">

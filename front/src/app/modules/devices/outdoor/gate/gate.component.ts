@@ -128,6 +128,13 @@ export class GateComponent implements OnInit, AfterViewInit, OnDestroy {
           return null;
         }
       })
+
+      stompClient.subscribe(`/device/${this.gate!.id}/state`, (message: { body: string }) => {
+        console.log(message)
+        if(message.body === "0") this.gate!.state = false;
+        else if (message.body === "1") this.gate!.state = true;
+        this.online = this.gate?.state ? "Online" : "Offline"
+      })
     })
   }
 

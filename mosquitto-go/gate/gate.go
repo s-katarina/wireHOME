@@ -400,6 +400,7 @@ func processVehicleEvent(client mqtt.Client, licencePlate string, entrance bool)
 	// Gate is in PRIVATE regime and licence plate is not among the allowed
 	if !gate.IsPublic && !containsLicencePlate(licencePlate, gate.AllowedLicencePlates) {
 		fmt.Println("Vehicle not allowed")
+		pubGateEvent(client, "TRY ENTER", licencePlate)
 		return
 	}
 

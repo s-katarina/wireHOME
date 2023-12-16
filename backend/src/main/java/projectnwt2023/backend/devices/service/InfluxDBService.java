@@ -149,9 +149,6 @@ public class InfluxDBService {
                 String value = fluxRecord.getValueByKey("value") == null ? null : fluxRecord.getValueByKey("value").toString();
                 String caller = fluxRecord.getValueByKey("caller") == null ? null : fluxRecord.getValueByKey("caller").toString();
                 Date timestamp = fluxRecord.getTime() == null ? null : Date.from(fluxRecord.getTime());
-                System.out.println(value);
-                System.out.println(caller);
-                System.out.println(timestamp.getTime());
                 result.add(new GateEventMeasurement(measurementName, value, timestamp, caller));
             }
         }
