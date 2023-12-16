@@ -24,6 +24,7 @@ import projectnwt2023.backend.devices.State;
 import projectnwt2023.backend.devices.dto.GateEventPayloadDTO;
 import projectnwt2023.backend.devices.dto.PayloadDTO;
 import projectnwt2023.backend.devices.dto.TelemetryPayloadDTO;
+import projectnwt2023.backend.devices.service.interfaces.IAmbientSensorService;
 import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
 import projectnwt2023.backend.devices.service.interfaces.IGateService;
 import projectnwt2023.backend.devices.service.interfaces.ILampService;
@@ -40,6 +41,9 @@ public class Beans {
 
     @Autowired
     IGateService gateService;
+
+    @Autowired
+    IAmbientSensorService ambientSensorService;
 
     @Value("${mosquitto.username}")
     private String username;
@@ -107,7 +111,10 @@ public class Beans {
                     lampService.parseRequest(topic, payloadDTO);
                 } else if (topic.contains("gate")) {
                     gateService.parseRequest(topic, message);
+                } else if (topic.contains("ambientSensor")) {
+                    ambientSensorService.parseRequest(topic, message);
                 }
+
 //                System.out.println(message.getPayload());
             }
         };

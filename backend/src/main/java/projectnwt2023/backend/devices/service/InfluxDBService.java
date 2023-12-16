@@ -168,7 +168,7 @@ public class InfluxDBService {
                 ret.getValues().add((Double) fluxRecord.getValueByKey("_value"));
                 ret.getDates().add(String.valueOf(fluxRecord.getValueByKey("_time")));
 
-                System.out.println(fluxRecord.getValues());
+//                System.out.println(fluxRecord.getValues());
             }
         }
 
@@ -200,7 +200,7 @@ public class InfluxDBService {
                 ret.getValues().add((Double) fluxRecord.getValueByKey("_value"));
                 ret.getDates().add(String.valueOf(fluxRecord.getValueByKey("_time")));
 
-                System.out.println(fluxRecord.getValues());
+//                System.out.println(fluxRecord.getValues());
             }
         }
 
