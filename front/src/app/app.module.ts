@@ -18,6 +18,7 @@ import { LampComponent } from './modules/devices/outdoor/lamp/lamp.component';
 import { GateComponent } from './modules/devices/outdoor/gate/gate.component';
 import { EnergyOverviewComponent } from './modules/devices/large-energy/energy-overview/energy-overview.component';
 import { SolarPanelComponent } from './modules/devices/large-energy/solar-panel/solar-panel.component';
+import { AmbientSensorComponent } from './modules/devices/ambient-sensor/ambient-sensor.component';
 
 
 @NgModule({
@@ -30,6 +31,7 @@ import { SolarPanelComponent } from './modules/devices/large-energy/solar-panel/
     GateComponent,
     EnergyOverviewComponent,
     SolarPanelComponent,
+    AmbientSensorComponent
   ],
   imports: [
     BrowserModule,

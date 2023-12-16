@@ -15,6 +15,7 @@ import { LampComponent } from '../modules/devices/outdoor/lamp/lamp.component';
 import { GateComponent } from '../modules/devices/outdoor/gate/gate.component';
 import { EnergyOverviewComponent } from '../modules/devices/large-energy/energy-overview/energy-overview.component';
 import { SolarPanelComponent } from '../modules/devices/large-energy/solar-panel/solar-panel.component';
+import { AmbientSensorComponent } from '../modules/devices/ambient-sensor/ambient-sensor.component';
 
 const routes: Routes = [
   { path: 'properties', component: PropertyOverviewComponent, canActivate: [TokenGuard, RoleGuard ], data: {roles: ["AUTH_USER"]}  },
@@ -29,7 +30,8 @@ const routes: Routes = [
   { path: 'gate', component: GateComponent },
   { path: 'energy-overwiev', component:EnergyOverviewComponent},
   { path: 'solarPanel', component:SolarPanelComponent},
-  { path: '**', component: GateComponent }
+  { path: 'ambient-sensor', component: AmbientSensorComponent},
+  { path: '**', component: LandingComponent }
 ];
 
 @NgModule({

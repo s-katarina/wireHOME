@@ -89,3 +89,14 @@ export interface GateEvent  {
     caller: String,
     eventType: String
 }
+
+export interface AmbientSensorDateValueDTO {
+    dates: string[],
+    values: number[]
+}
+
+export interface AmbientSensorTempHumDTO {
+    temp: AmbientSensorDateValueDTO,
+    hum: AmbientSensorDateValueDTO,
+    length: number
+}
