@@ -8,23 +8,16 @@ import com.influxdb.client.domain.WritePrecision;
 import com.influxdb.client.write.Point;
 import com.influxdb.query.FluxRecord;
 import com.influxdb.query.FluxTable;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.influx.InfluxDbProperties;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
+import projectnwt2023.backend.devices.Measurement.BulbOnOffMeasurement;
 import projectnwt2023.backend.devices.dto.EnergyDTO;
 import projectnwt2023.backend.devices.dto.GraphDTO;
 import projectnwt2023.backend.devices.dto.GraphRequestDTO;
 import projectnwt2023.backend.devices.dto.GateEventMeasurement;
 import projectnwt2023.backend.devices.dto.Measurement;
-import projectnwt2023.backend.helper.Constants;
-import projectnwt2023.backend.helper.InfluxDbConfiguration;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -146,7 +139,10 @@ public class InfluxDBService {
     }
 
     public ArrayList<GraphDTO> findDeviceEnergyForDate(GraphRequestDTO graphRequestDTO) {
-        System.out.println(graphRequestDTO);
+        System.out.println("graphRequestDTO.getFrom()");
+        System.out.println(graphRequestDTO.getFrom());
+        System.out.println(graphRequestDTO.getMeasurement());
+
         // Print the result
         String fluxQuery = String.format(
                 "from(bucket:\"%s\") |> range(start: %s, stop: %s)" +
@@ -174,9 +170,6 @@ public class InfluxDBService {
                 String value = fluxRecord.getValueByKey("value") == null ? null : fluxRecord.getValueByKey("value").toString();
                 String caller = fluxRecord.getValueByKey("caller") == null ? null : fluxRecord.getValueByKey("caller").toString();
                 Date timestamp = fluxRecord.getTime() == null ? null : Date.from(fluxRecord.getTime());
-                System.out.println(value);
-                System.out.println(caller);
-                System.out.println(timestamp.getTime());
                 result.add(new GateEventMeasurement(measurementName, value, timestamp, caller));
             }
         }
@@ -206,7 +199,6 @@ public class InfluxDBService {
 
 
     public ArrayList<GraphDTO> findPropertyEnergyForDate(GraphRequestDTO graphRequestDTO) {
-        System.out.println(graphRequestDTO);
         String fluxQuery = String.format(
                 "from(bucket:\"%s\") |> range(start: %s, stop: %s)" +
                         "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"property-id\"] == \"%s\")" +                 // where measurement name (_measurement) equals value measurementName
@@ -221,8 +213,64 @@ public class InfluxDBService {
         return grapfValue;
     }
 
+    private List<Measurement> queryLightSensor(String fluxQuery) {
+        List<Measurement> result = new ArrayList<>();
+        QueryApi queryApi = this.influxDbClient.getQueryApi();
+        List<FluxTable> tables = queryApi.query(fluxQuery);
+        for (FluxTable fluxTable : tables) {
+            List<FluxRecord> records = fluxTable.getRecords();
+            for (FluxRecord fluxRecord : records) {
+                String measurementName = fluxRecord.getMeasurement();
+                Double value = fluxRecord.getValueByKey("value") == null ? null : (Double) fluxRecord.getValueByKey("value");
+                Date timestamp = fluxRecord.getTime() == null ? null : Date.from(fluxRecord.getTime());
+                result.add(new Measurement(measurementName, value, timestamp));
+            }
+        }
+        return result;
+    }
 
+    public List<Measurement> findDateRangeLightSensor(String deviceId, Long startTimestamp, Long endTimestamp) {
+        System.out.println(deviceId);
+        System.out.println(startTimestamp);
+        System.out.println(endTimestamp);
+        String fluxQuery = String.format(
+                "from(bucket:\"%s\") |> range(start: %d, stop: %d)" +
+                        "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"device-id\"] == \"%s\")" +
+                        "|> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")",
+                this.bucket, startTimestamp/1000, endTimestamp/1000, "light-sensor", deviceId);
+        return this.queryLightSensor(fluxQuery);
+    }
 
+    private List<BulbOnOffMeasurement> queryBulbOn(String fluxQuery) {
+        List<BulbOnOffMeasurement> result = new ArrayList<>();
+        QueryApi queryApi = this.influxDbClient.getQueryApi();
+        List<FluxTable> tables = queryApi.query(fluxQuery);
+
+        for (FluxTable fluxTable : tables) {
+            List<FluxRecord> records = fluxTable.getRecords();
+            for (FluxRecord fluxRecord : records) {
+                Date timestamp = fluxRecord.getTime() == null ? null : Date.from(fluxRecord.getTime());
+                Double value = fluxRecord.getValueByKey("value") == null ? null : (Double) fluxRecord.getValueByKey("value");
+                result.add(new BulbOnOffMeasurement(String.valueOf(value), String.valueOf(timestamp.getTime())));
+            }
+        }
+
+        return result;
+
+    }
+
+    public List<BulbOnOffMeasurement> findDateRangeBulb(String deviceId, Long startTimestamp, Long endTimestamp) {
+        System.out.println(deviceId);
+        System.out.println(startTimestamp);
+        System.out.println(endTimestamp);
+        String fluxQuery = String.format(
+                "from(bucket: \"%s\")" +
+                        "  |> range(start: %d, stop: %d)" +
+                        "  |> filter(fn: (r) => r[\"_measurement\"] == \"bulb\" and r[\"device-id\"] == \"%s\")" +
+                        "  |> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")",
+                this.bucket, startTimestamp/1000, endTimestamp/1000, deviceId);
+        return this.queryBulbOn(fluxQuery);
+    }
 
     public List<GateEventMeasurement> findRecentEvents(String deviceId, String measurement) {
         String fluxQuery = String.format(
@@ -244,4 +292,6 @@ public class InfluxDBService {
                 this.bucket, startTimestamp/1000, endTimestamp/1000, measurement, deviceId);
         return this.queryGate(fluxQuery);
     }
+
+
 }

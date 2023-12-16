@@ -3,10 +3,9 @@ package projectnwt2023.backend.devices;
 import lombok.*;
 import projectnwt2023.backend.devices.dto.DeviceRequestDTO;
 
-import javax.persistence.Entity;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,6 +20,10 @@ public class Gate extends Device{
 
     private boolean isOpen;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Column(name = "licence_plates")
+    private List<String> licencePlates = new ArrayList<>();
+
     public Gate(DeviceRequestDTO deviceRequestDTO) {
         super(deviceRequestDTO);
         this.isPublic = true;
@@ -28,5 +31,8 @@ public class Gate extends Device{
         this.setTopic("gate");
 
     }
-    //mogao bi u bazi eventualno da ima i spisak vozila ali necemo to sebi raditi
+
+    public void addLicencePlate(String licencePlate) {
+        this.licencePlates.add(licencePlate);
+    }
 }

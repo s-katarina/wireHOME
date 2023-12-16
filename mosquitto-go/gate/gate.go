@@ -19,7 +19,8 @@ type Gate struct {
 	device.BaseDevice
 	IsPublic             bool `json:"public"`
 	IsOpen               bool `json:"open"`
-	AllowedLicencePlates []string
+	AllowedLicencePlates []string `json:"licencePlates"`
+	VehiclesInside		 []string
 }
 
 type Caller string
@@ -69,7 +70,6 @@ func setToPrivateRegime(gate Gate) device.MessageDTO {
 }
 
 func (gate Gate) setToOpen(caller Caller) GateEventMessageDTO {
-	fmt.Printf("IN SET TO OPEN, before set: %t\n", gate.IsOpen)
 	
 	currentTime := time.Now()
 	if gate.IsOpen {
@@ -84,7 +84,6 @@ func (gate Gate) setToOpen(caller Caller) GateEventMessageDTO {
 		}
 	}
 	gate.IsOpen = true
-	fmt.Printf("IN SET TO OPEN, after set: %t\n", gate.IsOpen)
 	message := device.MessageDTO{
 		DeviceId:  gate.Id,
 		UsedFor:   "OPEN",
@@ -97,7 +96,6 @@ func (gate Gate) setToOpen(caller Caller) GateEventMessageDTO {
 }
 
 func (gate Gate) setToClosed(caller Caller) GateEventMessageDTO {
-	fmt.Printf("IN SET TO CLOSED, before set: %t\n", gate.IsOpen)
 	currentTime := time.Now()
 	if !gate.IsOpen {
 		message := device.MessageDTO{
@@ -111,7 +109,6 @@ func (gate Gate) setToClosed(caller Caller) GateEventMessageDTO {
 		}
 	}
 	gate.IsOpen = false
-	fmt.Printf("IN SET TO CLOSED, after set: %t\n", gate.IsOpen)
 	message := device.MessageDTO{
 		DeviceId:  gate.Id,
 		UsedFor:   "CLOSE",
@@ -132,6 +129,13 @@ func (gate Gate) SubToRegimeSet(client mqtt.Client) {
 
 func (gate Gate) SubToOpenSet(client mqtt.Client) {
 	topic := fmt.Sprintf("gate/%d/%s", gate.Id, "open/set")
+	token := client.Subscribe(topic, 1, nil)
+	token.Wait()
+	fmt.Printf("Subscribed to topic: %s", topic)
+}
+
+func (gate Gate) SubToLicencePlateSet(client mqtt.Client) {
+	topic := fmt.Sprintf("gate/%d/%s", gate.Id, "licencePlate/set")
 	token := client.Subscribe(topic, 1, nil)
 	token.Wait()
 	fmt.Printf("Subscribed to topic: %s", topic)
@@ -175,6 +179,7 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 	patternOn := "\\d+"
 	patternRegime := "gate/\\d+/regime/set" // \\d+ matches one or more digits
 	patternOpen := "gate/\\d+/open/set"
+	patternAddLicencePlate := "gate/\\d+/licencePlate/set"
 
 	if helper.IsTopicMatch(patternOn, msg.Topic()) {
 		if string(msg.Payload()) == "ON" {
@@ -224,6 +229,11 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 
 	}
 
+	if helper.IsTopicMatch(patternAddLicencePlate, msg.Topic()) {
+		gate.AllowedLicencePlates = append(gate.AllowedLicencePlates, string(msg.Payload()))
+		fmt.Println("Added licence plate ", string(msg.Payload()), gate.AllowedLicencePlates)
+	}
+
 }
 
 var connectHandler mqtt.OnConnectHandler = func(client mqtt.Client) {
@@ -264,13 +274,9 @@ func RunGate() {
 	gate.Sub(client)
 	gate.SubToRegimeSet(client)
 	gate.SubToOpenSet(client)
+	gate.SubToLicencePlateSet(client)
 	go simulateGate(client)
 	gate.SendHeartBeat(client)
-}
-
-func pubDistanceSensorValue(client mqtt.Client) {
-	topic := fmt.Sprintf("gate/%d/%s", gate.Id, "distance-sensor")
-	fmt.Println("Topic for pub " + topic)
 }
 
 func (gate Gate) ChangeRegime(client mqtt.Client, topic string, public bool) bool {
@@ -292,7 +298,6 @@ func (gate Gate) ChangeRegime(client mqtt.Client, topic string, public bool) boo
 }
 
 func (gate Gate) ChangeOpen(client mqtt.Client, open bool, caller Caller) bool {
-	fmt.Printf("IN CHANGE OPEN, before call: %t, wanted to be %t\n", gate.IsOpen, open)
 
 	topic := fmt.Sprintf("gate/%d/%s", gate.Id, "open")
 	var messageDTO GateEventMessageDTO
@@ -302,7 +307,6 @@ func (gate Gate) ChangeOpen(client mqtt.Client, open bool, caller Caller) bool {
 		messageDTO = gate.setToClosed(caller)
 	}
 
-	fmt.Printf("IN CHANGE OPEN, after call: %t, should be %t\n", gate.IsOpen, open)
 
 	jsonData, err := json.Marshal(messageDTO)
 	if err != nil {
@@ -340,6 +344,10 @@ func simulateLicencePlateRead() string {
 	if rand.Intn(101) < 60 && len(gate.AllowedLicencePlates) > 0 {
 		return gate.AllowedLicencePlates[rand.Intn(len(gate.AllowedLicencePlates))]
 	}
+	// 60% chance that vehicle is inside
+	if rand.Intn(101) < 60 && len(gate.VehiclesInside) > 0 {
+		return gate.VehiclesInside[rand.Intn(len(gate.VehiclesInside))]
+	}
 
 	i := 0
 	licenceChars := ""
@@ -370,12 +378,16 @@ func simulateGate(client mqtt.Client) {
 			fmt.Println("Licence plate ", licencePlate)
 
 			entrance := true
-			if rand.Intn(2) == 0 {
+			// Vehicle is inside and it is leaving
+			if containsLicencePlate(licencePlate, gate.VehiclesInside) {
 				entrance = false
 			}
-			fmt.Println("Gate event type entrance is ", entrance)
 
+			fmt.Println("Gate event type entrance is ", entrance)
+			fmt.Println("Vehicles inside before processing", gate.VehiclesInside)
 			processVehicleEvent(client, licencePlate, entrance)
+			fmt.Println("Vehicles inside after processing", gate.VehiclesInside)
+
 
 		}
 
@@ -386,8 +398,9 @@ func simulateGate(client mqtt.Client) {
 func processVehicleEvent(client mqtt.Client, licencePlate string, entrance bool) {
 
 	// Gate is in PRIVATE regime and licence plate is not among the allowed
-	if !gate.IsPublic && !containsLicencePlate(licencePlate) {
+	if !gate.IsPublic && !containsLicencePlate(licencePlate, gate.AllowedLicencePlates) {
 		fmt.Println("Vehicle not allowed")
+		pubGateEvent(client, "TRY ENTER", licencePlate)
 		return
 	}
 
@@ -401,25 +414,26 @@ func processVehicleEvent(client mqtt.Client, licencePlate string, entrance bool)
 			gate.IsOpen = true
 		}
 		time.Sleep(time.Second)
-		fmt.Println("Gate open after sending to open GATE_EVENT ", gate.IsOpen)
 	}
 
 	pubGateEvent(client, event, licencePlate)
-	time.Sleep(time.Second * 30)
+	time.Sleep(time.Second * constants.GateOpenForVehiclePeriod)
+
+	if (entrance) {
+		gate.VehiclesInside = append(gate.VehiclesInside, licencePlate)
+	} else {
+		gate.VehiclesInside = removeLicencePlate(licencePlate, gate.VehiclesInside)
+	}
 
 	if (gate.ChangeOpen(client, false, GateEvent)) {
 		gate.IsOpen = false
 	}
-	fmt.Println("Gate open after sending to close GATE_EVENT ", gate.IsOpen)
-
-	
-	// Publish event type (enterance or leaving), vehicle licence plate, timestamp
 
 }
 
 func pubGateEvent(client mqtt.Client, event string, caller string) {
 	topic := fmt.Sprintf("gate/%d/%s", gate.Id, "event")
-	fmt.Println("Topic for pub " + topic)
+	// fmt.Println("Topic for pub " + topic)
 	data := fmt.Sprintf("gate-event,device-id=%d value=\"%s\",caller=\"%s\"", gate.Id, event, caller)
 	// gate-event,8 value=OPEN or CLOSE,caller=USER
 	// gate-event,8 value=ENTER or LEAVE,caller=WR-131
@@ -430,14 +444,23 @@ func pubGateEvent(client mqtt.Client, event string, caller string) {
 		fmt.Println("Gate event publish token error")
 	}
 
-	fmt.Println("Message for gate event published successfully")
 }
 
-func containsLicencePlate(licencePlate string) bool {
-	for _, element := range gate.AllowedLicencePlates {
+func containsLicencePlate(licencePlate string, list []string) bool {
+	for _, element := range list {
 		if element == licencePlate {
 			return true
 		}
 	}
 	return false
+}
+
+func removeLicencePlate(licencePlate string, list []string) []string {
+    for i := 0; i < len(list); i++ {
+        if list[i] == licencePlate {
+            list = append(list[:i], list[i+1:]...)
+            break 
+        }
+    }
+    return list
 }

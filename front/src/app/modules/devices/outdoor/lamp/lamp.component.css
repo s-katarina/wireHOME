@@ -1,5 +1,6 @@
 .page {
     margin: 5%;
+    padding-bottom: 20vh !important;
 }
 
 h2 {
@@ -13,6 +14,21 @@ h3 {
     line-height: 1.1em;
     font-family: 'Sora-regular', Roboto, "Helvetica Neue", sans-serif !important; 
     color: rgb(0, 0, 0);
+}
+
+h4 {
+    font-size: 1.5em;
+    line-height: 1.3em;
+    font-family: 'Sora-semibold', Roboto, "Helvetica Neue", sans-serif !important; 
+    color: rgb(0, 0, 0);
+    cursor: default;
+}
+h5 {
+    font-size: 1.3em;
+    line-height: 1.1em;
+    font-family: 'Sora-regular', Roboto, "Helvetica Neue", sans-serif !important; 
+    color: rgb(0, 0, 0);
+    cursor: default;
 }
 
 .mat-divider {
@@ -59,5 +75,20 @@ img {
     border-radius: 20px;
     padding: 15px;
     margin-left: 30px;
+    margin-bottom: 40px;
+}
+
+.view-data {
+    margin-left: 20px;
+}
+
+.mat-tooltip {
+    font-family: 'Heebo-regular', Roboto, "Helvetica Neue", sans-serif !important; 
+    padding: 0 !important;
+    font-size: medium;
+}
+
+.chart-div {
+    margin-top: 40px;
     margin-bottom: 40px;
 }

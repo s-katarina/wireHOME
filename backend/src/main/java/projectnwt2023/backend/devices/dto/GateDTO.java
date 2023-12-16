@@ -7,6 +7,8 @@ import lombok.Setter;
 import projectnwt2023.backend.devices.Gate;
 import projectnwt2023.backend.devices.State;
 
+import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -15,6 +17,7 @@ public class GateDTO extends DeviceDTO {
 
     private boolean isOpen;
     private boolean isPublic;
+    private List<String> licencePlates;
 
     public GateDTO(Gate gate) {
         this.setId(Math.toIntExact(gate.getId()));
@@ -27,6 +30,7 @@ public class GateDTO extends DeviceDTO {
         this.setDeviceType(gate.getTopic());
         this.setOpen(gate.isOpen());
         this.setPublic(gate.isPublic());
+        this.setLicencePlates(gate.getLicencePlates());
     }
 
 

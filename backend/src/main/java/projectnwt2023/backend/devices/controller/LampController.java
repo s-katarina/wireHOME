@@ -5,14 +5,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import projectnwt2023.backend.devices.Device;
 import projectnwt2023.backend.devices.Lamp;
+import projectnwt2023.backend.devices.Measurement.BulbOnOffMeasurement;
+import projectnwt2023.backend.devices.mqtt.Gateway;
 import projectnwt2023.backend.devices.dto.DeviceDTO;
 import projectnwt2023.backend.devices.dto.LampDTO;
-import projectnwt2023.backend.devices.mqtt.Gateway;
+import projectnwt2023.backend.devices.dto.LightSensorDTO;
+import projectnwt2023.backend.devices.dto.Measurement;
 import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
 import projectnwt2023.backend.devices.service.interfaces.ILampService;
-import projectnwt2023.backend.property.dto.PropertyResponseDTO;
+import projectnwt2023.backend.helper.ApiResponse;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/lamp")
@@ -69,6 +74,34 @@ public class LampController {
             e.printStackTrace();
             return ResponseEntity.ok("Lamp Bulb Turn off failed");
         }
+    }
+
+    @GetMapping(value = "/{deviceId}/range", produces = "application/json")
+    ResponseEntity<ApiResponse<List<LightSensorDTO>>> getRangeLightSensor(@PathVariable Integer deviceId,
+                                                                         @RequestParam String start,
+                                                                         @RequestParam String end){
+
+        List<Measurement> res = lampService.getDateRangeLightSensor(Long.valueOf(deviceId), start, end);
+        List<LightSensorDTO> ret = new ArrayList<>();
+        if (res != null) {
+            for (Measurement measurement : res) {
+                ret.add(new LightSensorDTO(String.valueOf(measurement.getValue()), String.valueOf(measurement.getTimestamp().getTime())));
+            }
+            return new ResponseEntity<>(new ApiResponse<>(200, ret), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new ApiResponse<>(400, new ArrayList<>()), HttpStatus.BAD_REQUEST);
+    }
+
+    @GetMapping(value = "/{deviceId}/range/bulb", produces = "application/json")
+    ResponseEntity<ApiResponse<List<BulbOnOffMeasurement>>> getDateRangeBulb(@PathVariable Integer deviceId,
+                                                                             @RequestParam String start,
+                                                                             @RequestParam String end){
+
+        List<BulbOnOffMeasurement> res = lampService.getDateRangeBulb(Long.valueOf(deviceId), start, end);
+        if (res != null) {
+            return new ResponseEntity<>(new ApiResponse<>(200, res), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new ApiResponse<>(400, new ArrayList<>()), HttpStatus.BAD_REQUEST);
     }
 
 }

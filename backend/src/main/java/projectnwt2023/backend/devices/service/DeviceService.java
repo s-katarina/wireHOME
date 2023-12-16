@@ -1,6 +1,7 @@
 package projectnwt2023.backend.devices.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,10 @@ public class DeviceService implements IDeviceService {
     InfluxDBService influxDBService;
 
     @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
+
+    @Autowired
+
     IAppUserService appUserService;
 
     @Override
@@ -60,7 +65,7 @@ public class DeviceService implements IDeviceService {
         }
         device.setState(state);
         device.setLastHeartbeat(LocalDateTime.now());
-
+        this.simpMessagingTemplate.convertAndSend("/device/" + id + "/state", state.getNumericValue());
         return deviceRepository.save(device);
     }
 
@@ -131,5 +136,6 @@ public class DeviceService implements IDeviceService {
 
         return influxDBService.findRecentEvents(id.toString(), "on/off");
     }
+
 
 }

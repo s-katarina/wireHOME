@@ -12,4 +12,5 @@ const Password = "1234"
 
 const LightSensorReadPeriod = 15
 
-const ProximitySensorReadPeriod = 10
+const ProximitySensorReadPeriod = 20
+const GateOpenForVehiclePeriod = 30

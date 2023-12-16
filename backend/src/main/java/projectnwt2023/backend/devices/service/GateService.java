@@ -128,4 +128,17 @@ public class GateService implements IGateService {
         }
 
     }
+
+    @Override
+    public Gate addLicencePlate(Long gateId, String licencePlate) {
+        Optional<Device> device = deviceRepository.findById(gateId);
+        if (!device.isPresent()) {
+            throw new EntityNotFoundException(Lamp.class);
+        }
+        Gate gate = (Gate) device.get();
+        if (!gate.getLicencePlates().contains(licencePlate)) {
+            gate.addLicencePlate(licencePlate);
+        }
+        return deviceRepository.save(gate);
+    }
 }
