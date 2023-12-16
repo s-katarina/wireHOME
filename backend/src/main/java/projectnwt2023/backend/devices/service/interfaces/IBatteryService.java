@@ -6,4 +6,6 @@ import java.util.ArrayList;
 
 public interface IBatteryService {
     public ArrayList<Battery> getBatteriesByPropertyId(Long propertyId);
+
+    ArrayList<Battery> getAllBatteries();
 }

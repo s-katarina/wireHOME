@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { LargeEnergyService } from '../large-energy.service';
 import { Router } from '@angular/router';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
@@ -6,7 +6,10 @@ import { DatePipe } from '@angular/common';
 import { CanvasJS } from '@canvasjs/angular-charts';
 import { WebsocketService } from 'src/app/infrastructure/socket/websocket.service';
 import Swal from 'sweetalert2';
-import { SolarPanel } from 'src/app/model/model';
+import { ApiResponse, GateEvent, SolarPanel } from 'src/app/model/model';
+import { MatTable, MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
 
 @Component({
   selector: 'app-solar-panel',
@@ -17,6 +20,25 @@ export class SolarPanelComponent implements OnInit {
 
   panelId: string = ""
   selectedOption: string = ""
+
+  displayedColumns : string[] = ['eventType', 'caller', 'timestamp'];
+  dataSource!: MatTableDataSource<GateEvent>;
+  events : GateEvent[] = [];
+  recentEvents: GateEvent[] = [];
+
+  @ViewChild(MatPaginator) paginator! : MatPaginator;
+  @ViewChild(MatSort) sort! : MatSort;
+  @ViewChild(MatTable) eventTable!: MatTable<any>;
+
+  public currentPage : number = 0;
+  public pageSize : number = 10;
+  public length : number = 0;
+
+  public filterApplied : boolean = false;
+  range2 = new FormGroup({
+    start: new FormControl<Date | null>(null),
+    end: new FormControl<Date | null>(null),
+  });
   
   range = new FormGroup({
     start: new FormControl<Date | null>(null),
@@ -78,6 +100,18 @@ export class SolarPanelComponent implements OnInit {
       this.online = this.panel?.state ? "Online" : "Offline"
       this.charging = this.panel?.usesElectricity ? "House/Autonom" : "Battery"
     })
+    this.dataSource = new MatTableDataSource<GateEvent>(this.events);
+    this.dataSource.paginator = this.paginator;
+    this.largeEnergyDeviceService.getGateEvents(this.panelId).subscribe((res: any) => {
+      console.log(res)
+      this.recentEvents = res.data
+      this.events = this.recentEvents
+      this.dataSource = new MatTableDataSource<GateEvent>(this.events);          
+      this.eventTable.renderRows();   
+      this.dataSource.sort = this.sort;
+      this.dataSource.paginator = this.paginator;
+      this.length = this.events.length;
+    })
   }
   ngAfterViewInit(): void {
     const stompClient: any = this.socketService.initWebSocket()
@@ -90,8 +124,6 @@ export class SolarPanelComponent implements OnInit {
           console.log(parsedData)
           this.panel = parsedData
           this.fireSwalToast(true, "Lamp updated")
-          this.surfaceSize = (this.panel?.surfaceSize || 0).toString()
-          this.efficiency = (this.panel?.efficiency || 0).toString()
           this.online = this.panel?.state ? "Online" : "Offline"
           return this.panel;
         } catch (error) {
@@ -99,8 +131,39 @@ export class SolarPanelComponent implements OnInit {
           return null;
         }
       })
+
+      stompClient.subscribe(`/gate/${this.panel!.id}/event`, (message: { body: string }) => {
+        console.log(message)
+        try {
+          const parsedData : GateEvent = JSON.parse(message.body);
+          console.log(parsedData)
+          this.recentEvents.push(parsedData)
+          this.events = this.recentEvents
+          const end = (this.currentPage + 1) * this.pageSize;
+          const start = this.currentPage * this.pageSize;
+          const part = this.events.slice(start, end);
+          // Stop table rerendering if filter is applied
+          if (!this.filterApplied) {
+            this.dataSource = new MatTableDataSource<GateEvent>(part);          
+            this.eventTable.renderRows();   
+            this.dataSource.sort = this.sort;
+            this.dataSource.paginator = this.paginator;
+            this.length = this.events.length;
+          } 
+          return ""
+        } catch (error) {
+          console.error('Error parsing JSON string:', error);
+          return null;
+        }
+      })
     })
   }
+
+  ngOnDestroy(): void {
+    // Close the socket connection when the component is destroyed
+    this.socketService.closeWebSocket();
+  }
+
 
   onOffClick(): void {
     if (this.panel?.on) {
@@ -114,25 +177,104 @@ export class SolarPanelComponent implements OnInit {
     });
   }
 
-  // onBulbOnOffClick(): void {
-  //   if (this.panel?.bulbState) {
-  //     this.lampService.postBulbOff(this.panel.id).subscribe((res: any) => {
-  //       console.log(res);
-  //     });
-  //   } else this.lampService.postBulbOn(this.panel!.id).subscribe((res: any) => {
-  //     console.log(res);
-  //   });
-  // }
+  
+  public handlePage(event?:any) {
+    this.currentPage = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.pageIteration();
+    this.dataSource.sort = this.sort;
+  }
+  
+  private pageIteration() {
+    const end = (this.currentPage + 1) * this.pageSize;
+    const start = this.currentPage * this.pageSize;
+    const part = this.events.slice(start, end);
+    this.dataSource = new MatTableDataSource<GateEvent>(part);
 
-  // onAutomaticOnOffClick(): void {
-  //   if (this.panel?.automatic) {
-  //     this.lampService.postAutomaticOnOff(this.panel.id, false).subscribe((res: any) => {
-  //       console.log(res);
-  //     });
-  //   } else this.lampService.postAutomaticOnOff(this.panel!.id, true).subscribe((res: any) => {
-  //     console.log(res);
-  //   });
-  // }
+    this.dataSource.data = part;
+    this.length = this.events.length;
+  }
+
+  displayCaller(caller: string): string {
+    switch (caller) {
+      case "GATE_EVENT":
+        return "Gate"
+      case "USER":
+        return "User"
+      default: return caller
+    }
+  }
+
+  displayTimestamp(timestamp: string): string {
+    const unixTimestamp = parseInt(timestamp, 10);
+  
+    if (isNaN(unixTimestamp)) {
+      return 'Invalid timestamp';
+    }
+  
+    const date = new Date(unixTimestamp);
+    const options: Intl.DateTimeFormatOptions = {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+  };
+    return new Intl.DateTimeFormat('en-GB', options).format(date);
+  }
+
+  filterInitiator: string = '';
+  filterEvent: string = 'on/off';
+
+  applyFilter(): void {
+    this.filterApplied = true;
+
+    let filteredEvents: GateEvent[] = [];
+
+    // Date range filter
+    if ((this.range2.value.start != null && this.range2.value.start != null) 
+        && this.range2.controls.start.valid && this.range2.controls.end.valid) { 
+        this.largeEnergyDeviceService.getRangeGateEvents(this.panel!.id, Math.floor(this.range2.value.start!.getTime()).toString(), Math.floor(this.range2.value.end!.getTime()).toString()).subscribe((res: ApiResponse) => {
+          if (res.status == 200) {
+            console.log(res.data)
+            filteredEvents = res.data.filter((event: { caller: string; eventType: string; }) =>
+            ((event.caller?.toLowerCase()) || "").includes(this.filterInitiator.toLowerCase()));
+            this.events = filteredEvents
+            this.dataSource = new MatTableDataSource<GateEvent>(this.events);
+            console.log(this.events)
+            this.dataSource.sort = this.sort;
+            this.dataSource.paginator = this.paginator;
+            this.length = this.events.length;
+          }
+        });
+    } else {
+      // Initiator and event type filter
+      filteredEvents = this.recentEvents.filter(event =>
+        event.caller.toLowerCase().includes(this.filterInitiator.toLowerCase()) &&
+        event.eventType.toLowerCase().includes(this.filterEvent.toLowerCase())
+      );
+      this.events = filteredEvents
+      this.dataSource = new MatTableDataSource<GateEvent>(this.events);
+      this.dataSource.sort = this.sort;
+      this.dataSource.paginator = this.paginator;
+      this.length = this.events.length;
+    }
+    
+  }
+
+  clearFilter(): void {
+    this.filterApplied = false;
+    this.filterInitiator = '';
+    this.filterEvent = '';
+    this.range2.reset();
+    this.events = this.recentEvents
+    this.dataSource = new MatTableDataSource<GateEvent>(this.events);
+    this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
+    this.length = this.events.length;
+  }
+  
 
   private fireSwalToast(success: boolean, title: string): void {
     const Toast = Swal.mixin({

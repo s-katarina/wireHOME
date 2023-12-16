@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 import projectnwt2023.backend.appUser.AppUser;
 import projectnwt2023.backend.appUser.service.interfaces.IAppUserService;
 import projectnwt2023.backend.devices.Device;
+import projectnwt2023.backend.devices.Lamp;
 import projectnwt2023.backend.devices.State;
+import projectnwt2023.backend.devices.dto.GateEventMeasurement;
 import projectnwt2023.backend.devices.repository.DeviceRepository;
 import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
 import projectnwt2023.backend.exceptions.EntityNotFoundException;
@@ -53,7 +55,7 @@ public class DeviceService implements IDeviceService {
 //        AppUser sender = appUserService.findByEmail(authentication.getName());
             Map<String, String> values = new HashMap<>();
             values.put("device-id", String.valueOf(device.getId()));
-            values.put("user-email", "kata");
+            values.put("caller", "kata");
             influxDBService.save("online/offline", state.getNumericValue(), new Date(), values);
         }
         device.setState(state);
@@ -95,14 +97,39 @@ public class DeviceService implements IDeviceService {
         if (authentication != null) {
             Optional<AppUser> sender = appUserService.findByEmail(authentication.getName());
             if (!sender.isPresent()) return null;
-            values.put("user-email", sender.get().getEmail());
+            values.put("caller", sender.get().getEmail());
         } else {
-            values.put("user-email", "kata");
+            values.put("caller", "kata");
         }
         values.put("device-id", String.valueOf(device.getId()));
 
         influxDBService.save("on/off", isOn ? 1 : 0, new Date(), values);
         return deviceRepository.save(device);
+    }
+
+    @Override
+    public List<GateEventMeasurement> getDateRangeEvents(Long id, String start, String end) {
+        Optional<Device> device = deviceRepository.findById(id);
+        if (!device.isPresent()) {
+            throw new EntityNotFoundException(Lamp.class);
+        }
+
+        try {
+            List<GateEventMeasurement> res = influxDBService.findDateRangeEvents(String.valueOf(id), Long.parseLong(start), Long.parseLong(end), "on/off");
+            return res;
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public List<GateEventMeasurement> getRecentEvents(Long id) {
+        Optional<Device> device = deviceRepository.findById(id);
+        if (!device.isPresent()) {
+            throw new EntityNotFoundException(Lamp.class);
+        }
+
+        return influxDBService.findRecentEvents(id.toString(), "on/off");
     }
 
 }

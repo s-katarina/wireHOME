@@ -3,6 +3,8 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { CanvasJS } from '@canvasjs/angular-charts';
 import { PropertyServiceService } from 'src/app/modules/property/service/property-service.service';
 import { LargeEnergyService } from '../large-energy.service';
+import { WebsocketService } from 'src/app/infrastructure/socket/websocket.service';
+import { GraphDTO } from 'src/app/model/model';
 
 @Component({
   selector: 'app-energy-overview',
@@ -22,7 +24,8 @@ export class EnergyOverviewComponent implements OnInit {
   socketChart:any
   electrodistChart:any
 
-  constructor(private readonly propertyService: PropertyServiceService,
+  constructor(private socketService: WebsocketService,
+    private readonly propertyService: PropertyServiceService,
     private readonly largeEnergyDeviceService: LargeEnergyService,) { }
 
   ngOnInit(): void {
@@ -78,6 +81,32 @@ export class EnergyOverviewComponent implements OnInit {
     })
     this.chart.render();
     
+  }
+
+  ngAfterViewInit(): void {
+
+    const stompClient: any = this.socketService.initWebSocket()
+
+    stompClient.connect({}, () => {
+      stompClient.subscribe(`/gate/${this.propertyId}`, (message: { body: string }) => {
+        console.log(message)
+        try {
+          const parsedData : GraphDTO = JSON.parse(message.body);
+          console.log(parsedData)
+          // this.fireSwalToast(true, "Gate updated")
+          return parsedData;
+        } catch (error) {
+          console.error('Error parsing JSON string:', error);
+          return null;
+        }
+      })
+
+    })
+  }
+
+  ngOnDestroy(): void {
+    // Close the socket connection when the component is destroyed
+    this.socketService.closeWebSocket();
   }
 
 
@@ -152,8 +181,18 @@ export class EnergyOverviewComponent implements OnInit {
   }
 
   getSocketData() {
-    this.socketChart.render();
-    return []
+    const currentDate = new Date();
+
+      // Subtract 3 hours
+    const dateBefore = (new Date()).setHours(currentDate.getHours() - 1);
+    const dateFrom = (Math.floor(dateBefore/1000)).toString();
+    const dateTo = (Math.floor(currentDate.getTime()/1000)).toString();
+    console.log('Date Range:', dateFrom, dateTo);;
+    this.largeEnergyDeviceService.getPropertyReadingFrom(this.propertyId, dateFrom, dateTo, 'property-electricity').subscribe((res: any) => {
+      this.socketChart.options.data[0].dataPoints = res;
+      this.socketChart.render();
+
+    })
   }
 
 }

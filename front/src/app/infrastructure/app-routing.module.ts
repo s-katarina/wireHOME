@@ -15,6 +15,7 @@ import { LampComponent } from '../modules/devices/outdoor/lamp/lamp.component';
 import { GateComponent } from '../modules/devices/outdoor/gate/gate.component';
 import { EnergyOverviewComponent } from '../modules/devices/large-energy/energy-overview/energy-overview.component';
 import { SolarPanelComponent } from '../modules/devices/large-energy/solar-panel/solar-panel.component';
+import { BatteryComponent } from '../modules/devices/large-energy/battery/battery.component';
 
 const routes: Routes = [
   { path: 'properties', component: PropertyOverviewComponent, canActivate: [TokenGuard, RoleGuard ], data: {roles: ["AUTH_USER"]}  },
@@ -29,6 +30,7 @@ const routes: Routes = [
   { path: 'gate', component: GateComponent },
   { path: 'energy-overwiev', component:EnergyOverviewComponent},
   { path: 'solarPanel', component:SolarPanelComponent},
+  { path: 'battery', component: BatteryComponent},
   { path: '**', component: GateComponent }
 ];
 

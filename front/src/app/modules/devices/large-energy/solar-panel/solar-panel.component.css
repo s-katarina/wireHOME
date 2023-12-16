@@ -69,3 +69,60 @@ img {
     margin-left: 30px;
     margin-bottom: 40px;
 }
+
+.table-div {
+    width: 80%;
+    display: block;
+    margin-top: 5vh !important;
+}
+
+::ng-deep .mat-table {
+    width: 100% !important;
+}
+
+.mat-form-field {
+    margin: 20px !important;
+    width: 30% !important;
+}
+  
+  
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+    color: rgb(57, 57, 57) !important;
+}
+
+::ng-deep .mat-form-field.mat-focused .mat-form-field-label {
+    color: black !important ;
+}
+
+.mat-raised-button {
+    margin: 20px;
+    height: 2.8em;
+    min-width: 160px;
+    width: 6vw;
+}
+
+.mat-tooltip {
+    font-family: 'Heebo-regular', Roboto, "Helvetica Neue", sans-serif !important; 
+    /* padding: 15px 28px !important;  */
+    padding: 0 !important;
+    font-size: medium;
+}
+
+.filter-section {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.filter-section .mat-form-field {
+    flex: 1; 
+}
+
+.filter-section-button {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+  

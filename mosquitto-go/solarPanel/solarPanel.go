@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"time"
-	"github.com/sixdouglas/suncalc"
 	"math"
+	"strconv"
+	"time"
+
 	mqtt "github.com/eclipse/paho.mqtt.golang"
+	"github.com/sixdouglas/suncalc"
 
 	// "log"
 	"net/http"
@@ -46,8 +48,8 @@ var connectLostHandler mqtt.ConnectionLostHandler = func(client mqtt.Client, err
     fmt.Printf("Connect lost: %v", err)
 }
 
-func MakeSolarPanel() SolarPanel {
-	apiURL := "http://localhost:8081/api/device/solar/1"
+func MakeSolarPanel(id int32) SolarPanel {
+	apiURL := "http://localhost:8081/api/device/largeEnergy/solar/" + strconv.Itoa(int(id))
 
 	// Make an HTTP GET request
 	response, err := http.Get(apiURL)
@@ -74,10 +76,10 @@ func MakeSolarPanel() SolarPanel {
 	return PanelData
 }
 
-var solarPanel SolarPanel = MakeSolarPanel();
+var solarPanel SolarPanel = SolarPanel{};
 
-func RunSolarPanel() {
-	
+func RunSolarPanel(id int32) {
+	solarPanel = MakeSolarPanel(id)
 	fmt.Println("Response:", solarPanel.BaseDevice.Id)
     var broker = "localhost"
     var port = 1883

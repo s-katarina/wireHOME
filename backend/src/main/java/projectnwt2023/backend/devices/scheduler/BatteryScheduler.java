@@ -32,6 +32,9 @@ public class BatteryScheduler {
     public void myScheduledTask() {
         ArrayList<EnergyDTO> energies = influxDBService.findLastMinEnergyOuttake();
         HashMap<Integer, Double> propertyEnergy = new HashMap<>();
+        if (energies.size() == 0) {
+            justSendBatteryState();
+        }
         for (EnergyDTO energy:
              energies) {
             int propertyId = energy.getPropertyId();
@@ -49,6 +52,15 @@ public class BatteryScheduler {
         }
 
 
+    }
+
+    private void justSendBatteryState() {
+        ArrayList<Battery> batteries = batteryService.getAllBatteries();
+        for (Battery battery: batteries) {
+            Map<String, String> values = new HashMap<>();
+            values.put("device-id", String.valueOf(battery.getId()));
+            influxDBService.save("battery", (float) battery.getCurrentFill(), new Date(), values);
+        }
     }
 
     private boolean isDeviceOnline(int deviceId) {
@@ -71,6 +83,7 @@ public class BatteryScheduler {
             sendToElectroDistibution(propertyId, (float) aggregatedAmount);
             return;
         }
+        processBateruesInProperty(propertyId, aggregatedAmount, batteries);
     }
 
     private void processBateruesInProperty(int propertyId, double aggregatedAmount, ArrayList<Battery> batteries) {
@@ -92,10 +105,10 @@ public class BatteryScheduler {
                 battery.setCapacity(electrisity);
             }
             Map<String, String> values = new HashMap<>();
-            values.put("device-id", String.valueOf(propertyId));
-            influxDBService.save("battery", (float) battery.getCapacity(), new Date(), values);
+            values.put("device-id", String.valueOf(battery.getId()));
+            influxDBService.save("battery", (float) battery.getCurrentFill(), new Date(), values);
+            sendToElectroDistibution(propertyId, (float) finalElectisity);
         }
-        sendToElectroDistibution(propertyId, (float) finalElectisity);
     }
 
 

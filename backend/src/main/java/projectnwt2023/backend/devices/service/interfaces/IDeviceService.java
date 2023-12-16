@@ -2,8 +2,10 @@ package projectnwt2023.backend.devices.service.interfaces;
 
 import projectnwt2023.backend.devices.Device;
 import projectnwt2023.backend.devices.State;
+import projectnwt2023.backend.devices.dto.GateEventMeasurement;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface IDeviceService {
     public Device save(Device device);
@@ -16,4 +18,8 @@ public interface IDeviceService {
     public ArrayList<Device> getElectricalDevicesByProperty(Long propertyId);
 
     public Device changeDeviceOnOff(long deviceId, boolean b);
+
+    List<GateEventMeasurement> getDateRangeEvents(Long valueOf, String start, String end);
+
+    List<GateEventMeasurement> getRecentEvents(Long valueOf);
 }

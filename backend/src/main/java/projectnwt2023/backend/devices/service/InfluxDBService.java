@@ -146,10 +146,7 @@ public class InfluxDBService {
     }
 
     public ArrayList<GraphDTO> findDeviceEnergyForDate(GraphRequestDTO graphRequestDTO) {
-        System.out.println("graphRequestDTO.getFrom()");
-        System.out.println(graphRequestDTO.getFrom());
-        System.out.println(graphRequestDTO.getMeasurement());
-
+        System.out.println(graphRequestDTO);
         // Print the result
         String fluxQuery = String.format(
                 "from(bucket:\"%s\") |> range(start: %s, stop: %s)" +
@@ -209,6 +206,7 @@ public class InfluxDBService {
 
 
     public ArrayList<GraphDTO> findPropertyEnergyForDate(GraphRequestDTO graphRequestDTO) {
+        System.out.println(graphRequestDTO);
         String fluxQuery = String.format(
                 "from(bucket:\"%s\") |> range(start: %s, stop: %s)" +
                         "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"property-id\"] == \"%s\")" +                 // where measurement name (_measurement) equals value measurementName
@@ -221,5 +219,29 @@ public class InfluxDBService {
             grapfValue.add(new GraphDTO(energyDTO.getTimestamp().getTime(), energyDTO.getConsumptionAmount()));
         }
         return grapfValue;
+    }
+
+
+
+
+    public List<GateEventMeasurement> findRecentEvents(String deviceId, String measurement) {
+        String fluxQuery = String.format(
+                "from(bucket:\"%s\") |> range(start: -2h, stop: now())" +
+                        "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"device-id\"] == \"%s\")" +
+                        "|> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")",
+                this.bucket, measurement, deviceId);
+        return this.queryGate(fluxQuery);
+    }
+
+    public List<GateEventMeasurement> findDateRangeEvents(String deviceId, Long startTimestamp, Long endTimestamp,  String measurement) {
+        System.out.println(deviceId);
+        System.out.println(startTimestamp);
+        System.out.println(endTimestamp);
+        String fluxQuery = String.format(
+                "from(bucket:\"%s\") |> range(start: %d, stop: %d)" +
+                        "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"device-id\"] == \"%s\")" +
+                        "|> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")",
+                this.bucket, startTimestamp/1000, endTimestamp/1000, measurement, deviceId);
+        return this.queryGate(fluxQuery);
     }
 }

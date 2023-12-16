@@ -18,4 +18,10 @@ public class BatteryService implements IBatteryService {
     public ArrayList<Battery> getBatteriesByPropertyId(Long propertyId) {
         return deviceRepository.findByTopicAndPropertyId("battery", propertyId);
     }
+
+    @Override
+    public ArrayList<Battery> getAllBatteries() {
+        return deviceRepository.findByTopic("battery");
+
+    }
 }

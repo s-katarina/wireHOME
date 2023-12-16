@@ -87,6 +87,9 @@ export class SinglePropertyComponent implements OnInit {
     if (device.deviceType === 'solarPanel') {
         this.router.navigate(['/solarPanel']);
     }
+    else if (device.deviceType == 'battery') {
+      this.router.navigate(['/battery'])
+    }
   }
 
 }

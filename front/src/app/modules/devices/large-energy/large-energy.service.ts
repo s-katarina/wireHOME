@@ -1,16 +1,29 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { Battery, ChartData, GraphDTO, SolarPanel } from 'src/app/model/model';
+import { ApiResponse, Battery, ChartData, GraphDTO, SolarPanel } from 'src/app/model/model';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LargeEnergyService {
-  getBattery(batteryId: string): Observable<Battery[]> {
-    throw new Error('Method not implemented.');
+  
+  getGateEvents(id: string): Observable<ApiResponse> {
+    return this.http.get<ApiResponse>(environment.apiHost + `device/largeEnergy/${id}/recent`)
   }
+
+  getRangeGateEvents(id: string, start: string, end: string): Observable<ApiResponse> {
+    const params = new HttpParams().set('start', start)
+                                    .set('end', end);
+
+    return this.http.get<ApiResponse>(environment.apiHost + `device/largeEnergy/${id}/range`, {params})
+  }
+  
+  getBattery(id: string): Observable<Battery> {
+    return this.http.get<Battery>(environment.apiHost + `device/largeEnergy/battery/${id}`)
+  }
+
   postOn(id:string): Observable<any> {
     const options: any = {
       responseType: 'string'
@@ -24,14 +37,14 @@ export class LargeEnergyService {
     return this.http.post<any>(environment.apiHost + `device/off/${id}`, options)
   }
   getSolarPanel(id: string) : Observable<SolarPanel[]> {
-    return this.http.get<SolarPanel[]>(environment.apiHost + `device/solar/${id}`)
+    return this.http.get<SolarPanel[]>(environment.apiHost + `device/largeEnergy/solar/${id}`)
   }
   getPropertyReadingFrom(propertyId: string, dateFrom: string, dateTo: string, measurment: string) {
     const options: any = {
       responseType: 'json'
     }
     
-    return this.http.post<GraphDTO[]>(environment.apiHost + 'device/solar/propertyEnergy', 
+    return this.http.post<GraphDTO[]>(environment.apiHost + 'device/largeEnergy/propertyEnergy', 
     {
       id: propertyId,
       from: dateFrom,
@@ -45,7 +58,7 @@ export class LargeEnergyService {
       responseType: 'json'
     }
     
-    return this.http.post<GraphDTO[]>(environment.apiHost + 'device/solar/panelReadings', 
+    return this.http.post<GraphDTO[]>(environment.apiHost + 'device/largeEnergy/panelReadings', 
     {
       id: panelId,
       from: dateFrom,

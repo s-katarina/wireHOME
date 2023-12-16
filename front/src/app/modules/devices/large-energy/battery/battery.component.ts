@@ -163,7 +163,7 @@ export class BatteryComponent implements OnInit {
     const dateTo = (Math.floor(currentDate.getTime()/1000)).toString();
     console.log('Date Range:', dateFrom, dateTo);
     //date range u milisekundama
-    this.largeEnergyDeviceService.getSolarPlatformReadingFrom(this.batteryId, dateFrom, dateTo, "energy-maintaining").subscribe((res: any) => {
+    this.largeEnergyDeviceService.getSolarPlatformReadingFrom(this.batteryId, dateFrom, dateTo, "battery").subscribe((res: any) => {
       this.chart.options.data[0].dataPoints = res;
       console.log(res)
       this.chart.render();
