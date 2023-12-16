@@ -38,6 +38,7 @@ export class LampComponent implements OnInit, AfterViewInit, OnDestroy {
   });
 
   chart: any;
+  chartBulb: any;
 
   ngOnInit(): void {
     this.chart = new CanvasJS.Chart("chartContainer", 
@@ -47,6 +48,21 @@ export class LampComponent implements OnInit, AfterViewInit, OnDestroy {
       theme: "light2",
       title: {
       text: "Light sensor values"
+      },
+      data: [{
+      type: "line",
+      xValueType: "dateTime",
+      dataPoints: []
+      }]
+    })
+
+    this.chartBulb = new CanvasJS.Chart("chartBulbContainer", 
+    {
+      zoomEnabled: true,
+      exportEnabled: true,
+      theme: "light2",
+      title: {
+      text: "Bulb usage in last 24 hours"
       },
       data: [{
       type: "line",
@@ -92,6 +108,23 @@ export class LampComponent implements OnInit, AfterViewInit, OnDestroy {
         this.online = this.lamp?.state ? "Online" : "Offline"
       })
     })
+
+
+    let current = new Date()
+    let start = (new Date()).setDate((current).getDate() - 1)
+    this.lampService.getRangeBulb(this.lamp!.id, (Math.floor(start)).toString(), (Math.floor(current.getTime())).toString()).subscribe((res: ApiResponse) => {
+      if (res.status == 200) {
+        console.log(res.data)
+        const dataPoints = res.data.map((item: { timestamp: string; value: string; }) => ({
+          x: parseInt(item.timestamp),
+          y: parseInt(item.value)
+        }));
+        console.log(dataPoints)
+        this.chartBulb.options.data[0].dataPoints = dataPoints;
+        this.chartBulb.render();
+      }
+    });
+
   }
 
   ngOnDestroy(): void {

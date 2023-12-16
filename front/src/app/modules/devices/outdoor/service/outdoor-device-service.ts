@@ -83,5 +83,12 @@ export class OutdoorDeviceService {
     return this.http.get<ApiResponse>(environment.apiHost + `lamp/${id}/range`, {params})
   }
 
+  getRangeBulb(id: string, start: string, end: string): Observable<ApiResponse> {
+    const params = new HttpParams().set('start', start)
+                                    .set('end', end);
+
+    return this.http.get<ApiResponse>(environment.apiHost + `lamp/${id}/range/bulb`, {params})
+  }
+
 
 }

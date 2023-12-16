@@ -21,14 +21,10 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.MessagingException;
 import projectnwt2023.backend.devices.State;
-import projectnwt2023.backend.devices.dto.GateEventPayloadDTO;
 import projectnwt2023.backend.devices.dto.PayloadDTO;
-import projectnwt2023.backend.devices.dto.TelemetryPayloadDTO;
 import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
 import projectnwt2023.backend.devices.service.interfaces.IGateService;
 import projectnwt2023.backend.devices.service.interfaces.ILampService;
-
-import static projectnwt2023.backend.helper.RegexPattern.isStringMatchingPattern;
 
 @Configuration
 public class Beans {
@@ -104,7 +100,7 @@ public class Beans {
                     deviceService.changeDeviceOnOff((long) payloadDTO.getDeviceId(), false);
                 }
                 else if (topic.contains("lamp")) {
-                    lampService.parseRequest(topic, payloadDTO);
+                    lampService.parseRequest(topic, getPayload(message, PayloadDTO.class));
                 } else if (topic.contains("gate")) {
                     gateService.parseRequest(topic, message);
                 }

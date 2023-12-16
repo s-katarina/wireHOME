@@ -9,7 +9,6 @@ import projectnwt2023.backend.appUser.AppUser;
 import projectnwt2023.backend.appUser.service.interfaces.IAppUserService;
 import projectnwt2023.backend.devices.Device;
 import projectnwt2023.backend.devices.State;
-import projectnwt2023.backend.devices.dto.GateDTO;
 import projectnwt2023.backend.devices.repository.DeviceRepository;
 import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
 import projectnwt2023.backend.exceptions.EntityNotFoundException;

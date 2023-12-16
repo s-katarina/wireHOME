@@ -3,8 +3,6 @@ import lombok.*;
 import projectnwt2023.backend.devices.dto.DeviceRequestDTO;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collection;
 
 @NoArgsConstructor
 @AllArgsConstructor

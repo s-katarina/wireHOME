@@ -3,8 +3,6 @@ package projectnwt2023.backend.devices.service.interfaces;
 import org.springframework.messaging.Message;
 import projectnwt2023.backend.devices.Gate;
 import projectnwt2023.backend.devices.dto.GateEventMeasurement;
-import projectnwt2023.backend.devices.dto.GateEventPayloadDTO;
-import projectnwt2023.backend.devices.dto.PayloadDTO;
 
 import java.util.List;
 

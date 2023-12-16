@@ -1,7 +1,7 @@
 package projectnwt2023.backend.devices.service.interfaces;
 
 import projectnwt2023.backend.devices.Lamp;
-import projectnwt2023.backend.devices.dto.GateEventMeasurement;
+import projectnwt2023.backend.devices.Measurement.BulbOnOffMeasurement;
 import projectnwt2023.backend.devices.dto.Measurement;
 import projectnwt2023.backend.devices.dto.PayloadDTO;
 
@@ -16,4 +16,5 @@ public interface ILampService {
     public List<Measurement> getDateRangeLightSensor(Long gateId, String start, String end);
 
 
+    List<BulbOnOffMeasurement> getDateRangeBulb(Long gateId, String start, String end);
 }

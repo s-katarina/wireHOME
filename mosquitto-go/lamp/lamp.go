@@ -282,17 +282,6 @@ func pubLightSensorValue(client mqtt.Client) {
 	topic := fmt.Sprintf("lamp/%d/%s", lamp.Id, "light-sensor")
 	fmt.Println("Topic for pub " + topic)
 	for {
-		// ts := time.Now().UnixNano() / int64(time.Millisecond)
-		// data := lightSensorValue{
-		// 	Id:        strconv.Itoa(lamp.Id),
-		// 	Val:       strconv.Itoa(simulateLightSensor()),
-		// 	TimeStamp: strconv.FormatInt(ts, 10),
-		// }
-		// jsonData, err := json.Marshal(data)
-		// if err != nil {
-		// 	log.Fatal(err)
-		// }
-		// token := client.Publish(topic, 0, false, jsonData)
 		data := fmt.Sprintf("light-sensor,device-id=%d value=%d", lamp.Id, simulateLightSensor())
 		token := client.Publish(topic, 0, false, data)
 		token.Wait()
@@ -307,6 +296,24 @@ func pubLightSensorValue(client mqtt.Client) {
 	}
 }
 
+func pubBulbOnOff(client mqtt.Client, onOff bool) {
+	topic := fmt.Sprintf("lamp/%d/%s", lamp.Id, "bulb-telemetry")
+	fmt.Println("Topic for pub " + topic)
+	val := 1;
+	if (!onOff) {
+		val = 0
+	}
+	data := fmt.Sprintf("bulb,device-id=%d value=%d", lamp.Id, val)
+	token := client.Publish(topic, 0, false, data)
+	token.Wait()
+
+	if token.Error() != nil {
+		log.Fatal(token.Error())
+	}
+
+	fmt.Println("Message from bulb published successfully")
+}
+
 func (lamp Lamp) TurnBulbOn(client mqtt.Client) bool {
 	myObj := bulbOn(lamp)
 	topic := fmt.Sprintf("lamp/%d/%s", lamp.Id, "bulb")
@@ -318,6 +325,7 @@ func (lamp Lamp) TurnBulbOn(client mqtt.Client) bool {
 	fmt.Println(myObj)
 	token := client.Publish(topic, 0, false, jsonData)
 	token.Wait()
+	go pubBulbOnOff(client, true)
 	return myObj.UsedFor != "Error"
 }
 
@@ -331,6 +339,7 @@ func (lamp Lamp) TurnBulbOff(client mqtt.Client) bool {
 	}
 	token := client.Publish(topic, 0, false, jsonData)
 	token.Wait()
+	go pubBulbOnOff(client, false)
 	return myObj.UsedFor != "Error"
 }
 
