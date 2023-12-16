@@ -96,6 +96,7 @@ public class GateController {
     ResponseEntity<GateDTO> addLicencePlate(@PathVariable Integer deviceId,
                                             @RequestParam("val") String licencePlate){
         Gate gate = gateService.addLicencePlate(Long.valueOf(deviceId), licencePlate);
+        mqttGateway.sendToMqtt(licencePlate, "gate/"+String.valueOf(deviceId)+"/licencePlate/set");
         return new ResponseEntity<>(new GateDTO((gate)), HttpStatus.OK);
     }
 

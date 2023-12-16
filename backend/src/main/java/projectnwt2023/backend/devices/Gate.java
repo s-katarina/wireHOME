@@ -20,7 +20,7 @@ public class Gate extends Device{
 
     private boolean isOpen;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @Column(name = "licence_plates")
     private List<String> licencePlates = new ArrayList<>();
 

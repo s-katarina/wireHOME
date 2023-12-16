@@ -134,6 +134,13 @@ func (gate Gate) SubToOpenSet(client mqtt.Client) {
 	fmt.Printf("Subscribed to topic: %s", topic)
 }
 
+func (gate Gate) SubToLicencePlateSet(client mqtt.Client) {
+	topic := fmt.Sprintf("gate/%d/%s", gate.Id, "licencePlate/set")
+	token := client.Subscribe(topic, 1, nil)
+	token.Wait()
+	fmt.Printf("Subscribed to topic: %s", topic)
+}
+
 func getGate(deviceId int) Gate {
 
 	apiUrl := fmt.Sprintf("%s/gate/%d", constants.ApiUrl, deviceId)
@@ -172,6 +179,7 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 	patternOn := "\\d+"
 	patternRegime := "gate/\\d+/regime/set" // \\d+ matches one or more digits
 	patternOpen := "gate/\\d+/open/set"
+	patternAddLicencePlate := "gate/\\d+/licencePlate/set"
 
 	if helper.IsTopicMatch(patternOn, msg.Topic()) {
 		if string(msg.Payload()) == "ON" {
@@ -221,6 +229,11 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 
 	}
 
+	if helper.IsTopicMatch(patternAddLicencePlate, msg.Topic()) {
+		gate.AllowedLicencePlates = append(gate.AllowedLicencePlates, string(msg.Payload()))
+		fmt.Println("Added licence plate ", string(msg.Payload()), gate.AllowedLicencePlates)
+	}
+
 }
 
 var connectHandler mqtt.OnConnectHandler = func(client mqtt.Client) {
@@ -261,6 +274,7 @@ func RunGate() {
 	gate.Sub(client)
 	gate.SubToRegimeSet(client)
 	gate.SubToOpenSet(client)
+	gate.SubToLicencePlateSet(client)
 	go simulateGate(client)
 	gate.SendHeartBeat(client)
 }

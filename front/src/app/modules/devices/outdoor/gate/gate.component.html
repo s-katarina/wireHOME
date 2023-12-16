@@ -38,6 +38,20 @@
             </div>
 
             <div class="settings-group">
+                <button class="placeholder-btn"  mat-button><mat-icon>supervisor_account</mat-icon></button>
+                <button  class="placeholder-btn" mat-button>Allowed licence plate numbers:</button>
+                <div class="licence-plates" >
+                    <button  *ngFor="let licencePlate of gate!.licencePlates" class="placeholder-btn" mat-button>{{licencePlate}}</button>
+                </div>
+            </div>
+            <div class="settings-group licence-plates"> 
+                <mat-form-field>
+                    <input matInput placeholder="Licence plate to add" [(ngModel)]="licencePlate">
+                  </mat-form-field>
+                <button mat-raised-button (click)="addLicencePlate()">Add</button>
+            </div>
+
+            <div class="settings-group">
                 <button class="placeholder-btn"  mat-button><mat-icon>battery_charging_full</mat-icon></button>
                 <button  class="placeholder-btn" mat-button>Charging:</button>
                 <button  class="placeholder-btn" mat-button>{{charging}} </button>
@@ -48,7 +62,6 @@
                 <button  class="placeholder-btn" mat-button>Consumption:</button>
                 <button  class="placeholder-btn" mat-button>{{gate!.consumptionAmount}} Watts</button>
             </div>
-
         </div>
         
         <div class="right-column">

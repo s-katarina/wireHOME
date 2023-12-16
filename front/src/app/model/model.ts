@@ -83,6 +83,7 @@ export interface Lamp extends DeviceDTO {
 export interface Gate extends DeviceDTO {
     open: boolean,
     public: boolean
+    licencePlates: string[]
 }
 
 export interface GateEvent  {

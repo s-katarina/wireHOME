@@ -55,6 +55,8 @@ export class GateComponent implements OnInit, AfterViewInit, OnDestroy {
     end: new FormControl<Date | null>(null),
   });
 
+
+
   ngOnInit(): void {
     this.gateService.getGate(this.gateId).subscribe((res: any) => {
       this.gate = res;
@@ -267,6 +269,18 @@ export class GateComponent implements OnInit, AfterViewInit, OnDestroy {
   //     return eventDate >= startDate && eventDate <= endDate;
   //   });
   // }
+
+  licencePlate: string = '';
+
+  public addLicencePlate() {
+    this.gateService.putLicencePlate(this.gate!.id, this.licencePlate).subscribe((res: Gate) => {
+      this.gate = res;
+      this.fireSwalToast(true, "Successfully added!")
+    }, (error) => {
+      console.error('Error', error);
+      this.fireSwalToast(false, "Oops. Something went wrong.")
+    })
+  }
 
 
   private fireSwalToast(success: boolean, title: string): void {

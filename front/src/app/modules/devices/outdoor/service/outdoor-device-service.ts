@@ -70,5 +70,11 @@ export class OutdoorDeviceService {
     return this.http.get<ApiResponse>(environment.apiHost + `gate/${id}/range`, {params})
   }
 
+  putLicencePlate(id:string, licencePlate: string): Observable<any> {
+    const params = new HttpParams().set('val', licencePlate);
+
+    return this.http.put<any>(environment.apiHost + `gate/${id}/licencePlate`, {}, {params})
+  }
+
 
 }
