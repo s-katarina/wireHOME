@@ -219,4 +219,33 @@ public class InfluxDBService {
         }
         return grapfValue;
     }
+
+    private List<Measurement> queryLightSensor(String fluxQuery) {
+        List<Measurement> result = new ArrayList<>();
+        QueryApi queryApi = this.influxDbClient.getQueryApi();
+        List<FluxTable> tables = queryApi.query(fluxQuery);
+        for (FluxTable fluxTable : tables) {
+            List<FluxRecord> records = fluxTable.getRecords();
+            for (FluxRecord fluxRecord : records) {
+                String measurementName = fluxRecord.getMeasurement();
+                Double value = fluxRecord.getValueByKey("value") == null ? null : (Double) fluxRecord.getValueByKey("value");
+                Date timestamp = fluxRecord.getTime() == null ? null : Date.from(fluxRecord.getTime());
+                result.add(new Measurement(measurementName, value, timestamp));
+            }
+        }
+        return result;
+    }
+
+    public List<Measurement> findDateRangeLightSensor(String deviceId, Long startTimestamp, Long endTimestamp) {
+        System.out.println(deviceId);
+        System.out.println(startTimestamp);
+        System.out.println(endTimestamp);
+        String fluxQuery = String.format(
+                "from(bucket:\"%s\") |> range(start: %d, stop: %d)" +
+                        "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"device-id\"] == \"%s\")" +
+                        "|> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")",
+                this.bucket, startTimestamp/1000, endTimestamp/1000, "light-sensor", deviceId);
+        return this.queryLightSensor(fluxQuery);
+    }
+
 }

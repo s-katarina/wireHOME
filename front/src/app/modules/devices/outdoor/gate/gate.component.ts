@@ -139,7 +139,6 @@ export class GateComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    // Close the socket connection when the component is destroyed
     this.socketService.closeWebSocket();
   }
   

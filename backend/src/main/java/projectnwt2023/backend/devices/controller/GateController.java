@@ -82,17 +82,20 @@ public class GateController {
     @GetMapping(value = "/{deviceId}/range", produces = "application/json")
     ResponseEntity<ApiResponse<List<GateEventDTO>>> getRangeGateEvents(@PathVariable Integer deviceId,
                                                                        @RequestParam String start,
-                                                                       @RequestParam String end){
+                                                                       @RequestParam String end) {
 
         List<GateEventMeasurement> res = gateService.getDateRangeGateEvents(Long.valueOf(deviceId), start, end);
         List<GateEventDTO> ret = new ArrayList<>();
-        for (GateEventMeasurement measurement : res) {
-            ret.add(new GateEventDTO(measurement.getCaller(), measurement.getValue(), String.valueOf(measurement.getTimestamp().getTime())));
+        if (res != null) {
+            for (GateEventMeasurement measurement : res) {
+                ret.add(new GateEventDTO(measurement.getCaller(), measurement.getValue(), String.valueOf(measurement.getTimestamp().getTime())));
+            }
+            return new ResponseEntity<>(new ApiResponse<>(200, ret), HttpStatus.OK);
         }
-        return new ResponseEntity<>(new ApiResponse<>(200, ret), HttpStatus.OK);
+        return new ResponseEntity<>(new ApiResponse<>(400, new ArrayList<>()), HttpStatus.BAD_REQUEST);
     }
 
-    @PutMapping(value = "/{deviceId}/licencePlate", produces = "application/json")
+        @PutMapping(value = "/{deviceId}/licencePlate", produces = "application/json")
     ResponseEntity<GateDTO> addLicencePlate(@PathVariable Integer deviceId,
                                             @RequestParam("val") String licencePlate){
         Gate gate = gateService.addLicencePlate(Long.valueOf(deviceId), licencePlate);

@@ -116,3 +116,8 @@ export interface GraphDTO {
     x: number
     y: number
 }
+
+export interface LightSensorDTO {
+    value: number
+    timestamp: number
+}
