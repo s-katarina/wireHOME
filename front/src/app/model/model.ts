@@ -100,3 +100,8 @@ export interface AmbientSensorTempHumDTO {
     hum: AmbientSensorDateValueDTO,
     length: number
 }
+
+export interface GraphPoint {
+    x: string,
+    y: number
+}
