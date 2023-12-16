@@ -17,4 +17,6 @@ public interface IGateService {
 
     public List<GateEventMeasurement> getRecentGateEvents(Long gateId);
     public List<GateEventMeasurement> getDateRangeGateEvents(Long gateId, String start, String end);
+
+    public Gate addLicencePlate(Long gateId, String licencePlate);
 }

@@ -92,4 +92,11 @@ public class GateController {
         return new ResponseEntity<>(new ApiResponse<>(200, ret), HttpStatus.OK);
     }
 
+    @PutMapping(value = "/{deviceId}/licencePlate", produces = "application/json")
+    ResponseEntity<GateDTO> addLicencePlate(@PathVariable Integer deviceId,
+                                            @RequestParam("val") String licencePlate){
+        Gate gate = gateService.addLicencePlate(Long.valueOf(deviceId), licencePlate);
+        return new ResponseEntity<>(new GateDTO((gate)), HttpStatus.OK);
+    }
+
 }
