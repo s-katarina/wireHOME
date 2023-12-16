@@ -86,8 +86,14 @@ export interface Gate extends DeviceDTO {
 }
 
 export interface GateEvent  {
-    caller: String,
-    eventType: String
+    caller: string,
+    eventType: string
+    timestamp: string
+}
+
+export interface ApiResponse {
+    status: number,
+    data: any
 }
 
 

@@ -1,5 +1,6 @@
 .page {
     margin: 5%;
+    padding-bottom: 20vh !important;
 }
 
 h2 {
@@ -7,12 +8,29 @@ h2 {
     line-height: 1.3em;
     font-family: 'Sora-semibold', Roboto, "Helvetica Neue", sans-serif !important; 
     color: rgb(0, 0, 0);
+    cursor: default;
 }
 h3 {
     font-size: 1.6em;
     line-height: 1.1em;
     font-family: 'Sora-regular', Roboto, "Helvetica Neue", sans-serif !important; 
     color: rgb(0, 0, 0);
+    cursor: default;
+}
+
+h4 {
+    font-size: 1.5em;
+    line-height: 1.3em;
+    font-family: 'Sora-semibold', Roboto, "Helvetica Neue", sans-serif !important; 
+    color: rgb(0, 0, 0);
+    cursor: default;
+}
+h5 {
+    font-size: 1.3em;
+    line-height: 1.1em;
+    font-family: 'Sora-regular', Roboto, "Helvetica Neue", sans-serif !important; 
+    color: rgb(0, 0, 0);
+    cursor: default;
 }
 
 .mat-divider {
@@ -61,3 +79,60 @@ img {
     margin-left: 30px;
     margin-bottom: 40px;
 }
+
+.table-div {
+    width: 80%;
+    display: block;
+    margin-top: 5vh !important;
+}
+
+::ng-deep .mat-table {
+    width: 100% !important;
+}
+
+.mat-form-field {
+    margin: 20px !important;
+    width: 30% !important;
+}
+  
+  
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+    color: rgb(57, 57, 57) !important;
+}
+
+::ng-deep .mat-form-field.mat-focused .mat-form-field-label {
+    color: black !important ;
+}
+
+.mat-raised-button {
+    margin: 20px;
+    height: 2.8em;
+    min-width: 160px;
+    width: 6vw;
+}
+
+.mat-tooltip {
+    font-family: 'Heebo-regular', Roboto, "Helvetica Neue", sans-serif !important; 
+    /* padding: 15px 28px !important;  */
+    padding: 0 !important;
+    font-size: medium;
+}
+
+.filter-section {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.filter-section .mat-form-field {
+    flex: 1; 
+}
+
+.filter-section-button {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+  
