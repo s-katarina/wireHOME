@@ -152,7 +152,14 @@ export class AirConditionerComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   filterPeriod(): void {
-    
+    let startDate: Date = new Date(this.dateForm.value.startDate)
+    let endDate: Date = new Date(this.dateForm.value.endDate)
+
+    this.ELEMENT_DATA = this.ELEMENT_DATA.filter((record: AirConditionActionDTO) =>
+      (new Date(record.date)).getTime() >= startDate.getTime() && (new Date(record.date)).getTime() <= endDate.getTime()
+    )
+    this.dataSource = new MatTableDataSource<AirConditionActionDTO>(this.ELEMENT_DATA)
+    this.dataSource.paginator = this.paginator;
   }
 
 }
