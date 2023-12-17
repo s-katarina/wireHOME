@@ -121,3 +121,8 @@ export interface LightSensorDTO {
     value: number
     timestamp: number
 }
+
+export interface PyChartDTO {
+    indexLabel: string
+    y: number
+}

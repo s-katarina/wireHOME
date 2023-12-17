@@ -9,8 +9,7 @@ import projectnwt2023.backend.devices.Device;
 import projectnwt2023.backend.devices.RegimeAirConditioner;
 import projectnwt2023.backend.devices.RegimeType;
 import projectnwt2023.backend.devices.RegimeWashingMachine;
-import projectnwt2023.backend.devices.dto.DeviceDTO;
-import projectnwt2023.backend.devices.dto.MessageDTO;
+import projectnwt2023.backend.devices.dto.*;
 import projectnwt2023.backend.devices.mqtt.Gateway;
 import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
 
@@ -118,6 +117,14 @@ public class DeviceController {
             devicedtos.add(new DeviceDTO(device));
         }
         return new ResponseEntity<>(devicedtos, HttpStatus.OK);
+    }
+
+
+
+    @GetMapping(value = "/onlinePercent/{deviceId}", produces = "application/json") // koristi i za elektrodistribuciju i za samu potrosnju
+    ResponseEntity<ArrayList<PyChartDTO>> getElectoByProperty(@PathVariable Integer deviceId){
+        ArrayList<PyChartDTO> grapgData = deviceService.getOnlineOfflineTime(deviceId);
+        return new ResponseEntity<>(grapgData, HttpStatus.OK);
     }
 
 }

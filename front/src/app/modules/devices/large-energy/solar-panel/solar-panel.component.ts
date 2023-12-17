@@ -112,6 +112,8 @@ export class SolarPanelComponent implements OnInit {
       this.dataSource.paginator = this.paginator;
       this.length = this.events.length;
     })
+
+   
   }
   ngAfterViewInit(): void {
     const stompClient: any = this.socketService.initWebSocket()

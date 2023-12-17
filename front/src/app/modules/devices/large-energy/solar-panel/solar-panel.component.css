@@ -126,3 +126,8 @@ img {
     align-items: center;
 }
   
+
+.chart {
+    height: 370px; width: 100%; margin:auto;
+    margin-top: 3vh;
+}

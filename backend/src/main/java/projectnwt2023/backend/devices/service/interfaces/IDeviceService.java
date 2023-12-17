@@ -3,6 +3,7 @@ package projectnwt2023.backend.devices.service.interfaces;
 import projectnwt2023.backend.devices.Device;
 import projectnwt2023.backend.devices.State;
 import projectnwt2023.backend.devices.dto.GateEventMeasurement;
+import projectnwt2023.backend.devices.dto.PyChartDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,4 +23,6 @@ public interface IDeviceService {
     List<GateEventMeasurement> getDateRangeEvents(Long valueOf, String start, String end);
 
     List<GateEventMeasurement> getRecentEvents(Long valueOf);
+
+    ArrayList<PyChartDTO> getOnlineOfflineTime(Integer deviceId);
 }

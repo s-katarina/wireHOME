@@ -45,9 +45,10 @@
           <img class="img-card" [src]="battery!.imagePath" alt="Panel Image">
           </div>
       </div>
+      <app-online-offline-chart class="chart" [deviceId]="batteryId"></app-online-offline-chart>
   
   <div>
-      <div id="chartContainer" style="height: 370px; width: 100%; margin:auto;"></div>    
+      <div id="chartContainer" class="chart"></div>    
   </div>    
   <div class="same-row">
     <mat-form-field class="margin-left">

@@ -1,6 +1,7 @@
 package projectnwt2023.backend.devices.scheduler;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import projectnwt2023.backend.devices.Battery;
@@ -27,6 +28,9 @@ public class BatteryScheduler {
 
     @Autowired
     IDeviceService deviceService;
+
+    @Autowired
+    private SimpMessagingTemplate simpMessagingTemplate;
 
     @Scheduled(fixedRate = 60000) // na min
     public void myScheduledTask() {
@@ -76,6 +80,7 @@ public class BatteryScheduler {
         Map<String, String> values = new HashMap<>();
         values.put("property-id", String.valueOf(propertyId));
         influxDBService.save("property-electricity", (float) aggregatedAmount, new Date(), values);
+        this.simpMessagingTemplate.convertAndSend("/energy/" + propertyId, aggregatedAmount);
 
         ArrayList<Battery> batteries = batteryService.getBatteriesByPropertyId((long) propertyId); //TODO samo online baterija
         System.out.println(batteries.size());

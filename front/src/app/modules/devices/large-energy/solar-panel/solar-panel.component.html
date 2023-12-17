@@ -122,9 +122,10 @@
         ></mat-paginator>
     
     </div>
+    <app-online-offline-chart class="chart" [deviceId]="panelId"></app-online-offline-chart>
 
 <div>
-    <div id="chartContainer" style="height: 370px; width: 100%; margin:auto;"></div>    
+    <div class="chart" id="chartContainer"></div>    
 </div>    
 <div class="same-row">
   <mat-form-field class="margin-left">

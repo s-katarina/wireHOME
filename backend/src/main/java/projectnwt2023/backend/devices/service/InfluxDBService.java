@@ -12,11 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import projectnwt2023.backend.devices.Measurement.BulbOnOffMeasurement;
-import projectnwt2023.backend.devices.dto.EnergyDTO;
-import projectnwt2023.backend.devices.dto.GraphDTO;
-import projectnwt2023.backend.devices.dto.GraphRequestDTO;
-import projectnwt2023.backend.devices.dto.GateEventMeasurement;
-import projectnwt2023.backend.devices.dto.Measurement;
+import projectnwt2023.backend.devices.dto.*;
 
 import java.util.*;
 
@@ -294,4 +290,14 @@ public class InfluxDBService {
     }
 
 
+    public List<GateEventMeasurement> getOnlineOfflineData(Integer deviceId) {
+        String fluxQuery = String.format(
+                "from(bucket:\"%s\") |> range(start: -30d, stop: now())" +
+                        "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"device-id\"] == \"%s\")" +
+                        "|> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")"+                 // where measurement name (_measurement) equals value measurementName
+                        "|> sort(columns: [\"_time\"], desc: false)",
+                this.bucket, "online/offline", deviceId);
+        return this.queryGate(fluxQuery);
+
+    }
 }

@@ -1,6 +1,8 @@
 package projectnwt2023.backend.devices.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -11,6 +13,7 @@ import projectnwt2023.backend.devices.Device;
 import projectnwt2023.backend.devices.Lamp;
 import projectnwt2023.backend.devices.State;
 import projectnwt2023.backend.devices.dto.GateEventMeasurement;
+import projectnwt2023.backend.devices.dto.PyChartDTO;
 import projectnwt2023.backend.devices.repository.DeviceRepository;
 import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
 import projectnwt2023.backend.exceptions.EntityNotFoundException;
@@ -135,6 +138,47 @@ public class DeviceService implements IDeviceService {
         }
 
         return influxDBService.findRecentEvents(id.toString(), "on/off");
+    }
+
+    @Override
+    public ArrayList<PyChartDTO> getOnlineOfflineTime(Integer deviceId) {
+        Optional<Device> device = deviceRepository.findById(Long.valueOf(deviceId));
+        if (!device.isPresent()) {
+            throw new EntityNotFoundException(Device.class);
+        }
+
+        List<GateEventMeasurement> data = influxDBService.getOnlineOfflineData(deviceId);
+        System.out.println(data.size());
+        PyChartDTO on = new PyChartDTO("online", 0);
+        PyChartDTO off = new PyChartDTO("offline", 0);
+        for (int i = 0; i < data.size() - 1; i++) {
+            if (data.get(i).getValue().equals("0.0") && data.get(i + 1).getValue().equals("1.0")) {
+                double dateDistance = data.get(i + 1).getTimestamp().getTime() - data.get(i).getTimestamp().getTime();
+                off.setY(off.getY() + dateDistance);
+            }
+            if (data.get(i).getValue().equals("1.0") && data.get(i + 1).getValue().equals("0.0")) {
+                double dateDistance = data.get(i + 1).getTimestamp().getTime() - data.get(i).getTimestamp().getTime();
+                on.setY(on.getY() + dateDistance);
+            }
+        }
+        if (data.size() == 0) {
+            off.setY(100);
+        }else{
+            if (data.get(data.size()-1).getValue().equals("0.0")) {
+                double dateDistance = (new Date()).getTime() - data.get(data.size()-1).getTimestamp().getTime();
+                off.setY(off.getY() + dateDistance);
+            }
+            if (data.get(data.size()-1).getValue().equals("1.0")) {
+                double dateDistance = (new Date()).getTime() - data.get(data.size()-1).getTimestamp().getTime();
+                on.setY(on.getY() + dateDistance);
+            }
+        }
+
+        ArrayList<PyChartDTO> pyChartDTOS = new ArrayList<>();
+        pyChartDTOS.add(on);
+        pyChartDTOS.add(off);
+        return pyChartDTOS;
+
     }
 
 

@@ -1,7 +1,35 @@
+
 .same-row{
     display: flex;
     justify-content: flex-start;
 }
 .margin-left{
     margin-left: 2vw;
+}
+
+
+.chart {
+    height: 370px; width: 100%; margin:auto;
+    margin-top: 3vh;
+}
+
+h2 {
+    font-size: 2em;
+    line-height: 1.3em;
+    font-family: 'Sora-semibold', Roboto, "Helvetica Neue", sans-serif !important; 
+    color: rgb(0, 0, 0);
+}
+h3 {
+    font-size: 1.6em;
+    line-height: 1.1em;
+    font-family: 'Sora-regular', Roboto, "Helvetica Neue", sans-serif !important; 
+    color: rgb(0, 0, 0);
+}
+
+.mat-divider {
+    border-top: 2px solid rgb(190, 190, 190);
+    margin-bottom: 10px;
+}
+.page {
+    margin: 5%;
 }

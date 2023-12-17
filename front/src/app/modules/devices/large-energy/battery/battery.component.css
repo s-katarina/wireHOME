@@ -69,3 +69,9 @@ img {
     margin-left: 30px;
     margin-bottom: 40px;
 }
+
+
+.chart {
+    height: 370px; width: 100%; margin:auto;
+    margin-top: 3vh;
+}

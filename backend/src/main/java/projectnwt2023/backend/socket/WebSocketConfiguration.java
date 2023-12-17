@@ -28,7 +28,8 @@ public class WebSocketConfiguration implements WebSocketMessageBrokerConfigurer 
                 "/battery",
                 "/charger",
                 "/solar-panel",
-                "/device"
+                "/device",
+                "/energy"
                 );
     }
 

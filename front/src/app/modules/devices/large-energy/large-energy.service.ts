@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { ApiResponse, Battery, ChartData, GraphDTO, SolarPanel } from 'src/app/model/model';
+import { ApiResponse, Battery, ChartData, GraphDTO, PyChartDTO, SolarPanel } from 'src/app/model/model';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -65,6 +65,11 @@ export class LargeEnergyService {
       to: dateTo,
       measurement: measurment,
     }, options)  
+  }
+
+
+  getDeviceOnlineOfflinePyChart(id: string) : Observable<PyChartDTO[]> {
+    return this.http.get<PyChartDTO[]>(environment.apiHost + `device/onlinePercent/${id}`)
   }
   
   constructor(private readonly http: HttpClient) { }

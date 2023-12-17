@@ -79,7 +79,7 @@ export class EnergyOverviewComponent implements OnInit {
       dataPoints: []
       }]
     })
-    this.chart.render();
+    this.electrodistChart.render();
     
   }
 
@@ -88,12 +88,13 @@ export class EnergyOverviewComponent implements OnInit {
     const stompClient: any = this.socketService.initWebSocket()
 
     stompClient.connect({}, () => {
-      stompClient.subscribe(`/gate/${this.propertyId}`, (message: { body: string }) => {
+      stompClient.subscribe(`/energy/${this.propertyId}`, (message: { body: string }) => {
         console.log(message)
         try {
           const parsedData : GraphDTO = JSON.parse(message.body);
           console.log(parsedData)
-          // this.fireSwalToast(true, "Gate updated")
+          this.socketChart.options.data[0].dataPoints.push({x:(new Date).getTime(), y:parsedData});
+          this.socketChart.render();
           return parsedData;
         } catch (error) {
           console.error('Error parsing JSON string:', error);
