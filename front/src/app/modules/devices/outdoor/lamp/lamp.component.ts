@@ -55,7 +55,6 @@ export class LampComponent implements OnInit, AfterViewInit, OnDestroy {
       dataPoints: []
       }]
     })
-
     this.chartBulb = new CanvasJS.Chart("chartBulbContainer", 
     {
       zoomEnabled: true,

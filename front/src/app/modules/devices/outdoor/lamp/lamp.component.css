@@ -1,6 +1,7 @@
 .page {
     margin: 5%;
-    padding-bottom: 20vh !important;
+    margin-bottom: 10vh;
+    padding-bottom: 30vh !important;
 }
 
 h2 {
@@ -91,4 +92,15 @@ img {
 .chart-div {
     margin-top: 40px;
     margin-bottom: 40px;
+}
+
+#chartOnlineContainer > * {
+    color: rgb(190, 19, 19) !important;
+    font: 400 16px/24px 'Sora-semibold', sans-serif !important;
+}
+
+.chart-div-online {
+    display: block;
+    padding-top: 40px;
+    padding-bottom: 200px;
 }

@@ -15,14 +15,27 @@ export class OnlineOfflineChartComponent implements OnInit {
     { }
 
   ngOnInit(): void {
-    this.pyChart = new CanvasJS.Chart("chartContainer",
+	CanvasJS.addColorSet("appColors",
+	[
+	"#8da3b9",
+	"#7f91bc92",
+	"#acacbe	"
+	]);
+    this.pyChart = new CanvasJS.Chart("chartOnlineContainer",
 	{
+		colorSet: "appColors",
+
 		title:{
-			text: "How much has your device been online"
+			text: "How much has your device been online in last 24 hours",
+			fontFamily: 'Sora-semibold'
 		},
+		
 		legend: {
 			maxWidth: 350,
 			itemWidth: 120
+		},
+		toolTip: {
+			enabled: false 
 		},
 		data: [
 		{
@@ -33,7 +46,6 @@ export class OnlineOfflineChartComponent implements OnInit {
 		}
 		]
 	});
-  console.log("alobre" + this.deviceId)
   
   this.largeEnergyDeviceService.getDeviceOnlineOfflinePyChart(this.deviceId).subscribe((res: any) => {
     console.log(res);
