@@ -22,6 +22,8 @@
     "@angular/router": "^14.2.0",
     "@auth0/angular-jwt": "^5.1.1",
     "@canvasjs/angular-charts": "^1.0.3",
+    "@types/chart.js": "^2.9.30",
+    "chart.js": "^2.9.4",
     "leaflet": "^1.9.4",
     "net": "^1.0.2",
     "rxjs": "~7.5.0",

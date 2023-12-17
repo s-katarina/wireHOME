@@ -1,5 +1,5 @@
 package projectnwt2023.backend.devices;
 
 public enum RegimeAirConditioner {
-    colling, heating, automatic
+    colling, heating, ventilation, automatic
 }

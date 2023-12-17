@@ -126,3 +126,31 @@ export interface PyChartDTO {
     indexLabel: string
     y: number
 }
+
+
+export interface AmbientSensorDateValueDTO {
+    dates: string[],
+    values: number[]
+}
+
+export interface AmbientSensorTempHumDTO {
+    temp: AmbientSensorDateValueDTO,
+    hum: AmbientSensorDateValueDTO,
+    length: number
+}
+
+export interface GraphPoint {
+    x: string,
+    y: number
+}
+
+export interface AirConditionerActionRequest {
+    action: string,
+    userEmail: string
+}
+
+export interface AirConditionActionDTO {
+    action: string,
+    email: string,
+    date: string
+}

@@ -26,6 +26,12 @@
     <button mat-button [routerLink]="['/properties']" *ngIf="this.user.email != null  && this.user.role == 'AUTH_USER'">
       Properties
     </button>
+    <button mat-button [routerLink]="['/ambient-sensor']" *ngIf="this.user.email != null  && this.user.role == 'AUTH_USER'">
+      Ambient sensor
+    </button>
+    <button mat-button [routerLink]="['/air-conditioner']" *ngIf="this.user.email != null  && this.user.role == 'AUTH_USER'">
+      Air conditioner
+    </button>
     <button mat-button [routerLink]="['/property-requests']" *ngIf="this.user.email != null && (this.user.role == 'SUPER_ADMIN' || this.user.role == 'ADMIN')">
       Property requests
     </button>

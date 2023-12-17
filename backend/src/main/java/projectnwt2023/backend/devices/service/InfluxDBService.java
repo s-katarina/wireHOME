@@ -300,4 +300,107 @@ public class InfluxDBService {
         return this.queryGate(fluxQuery);
 
     }
+
+    public AmbientSensorDateValueDTO getAllHumForAmbientSensorInPeriod(int id, Long from, Long to) {
+
+        String fluxQuery = String.format(
+                "from(bucket: \"%s\") " +
+                        "|> range(start: %d, stop: %d) " +
+                        "|> filter(fn: (r) => r[\"_measurement\"] == \"hum\") " +
+                        "|> filter(fn: (r) => r[\"device-id\"] == \"%d\") " +
+                        "|> filter(fn: (r) => r[\"_field\"] == \"value\") " +
+                        "|> yield(name: \"value\")",
+                bucket, from, to, id
+        );
+
+        AmbientSensorDateValueDTO ret = new AmbientSensorDateValueDTO(new ArrayList<>(), new ArrayList<>());
+
+        QueryApi queryApi = influxDbClient.getQueryApi();
+
+        List<FluxTable> tables = queryApi.query(fluxQuery);
+
+        for (FluxTable fluxTable : tables) {
+            List<FluxRecord> records = fluxTable.getRecords();
+            for (FluxRecord fluxRecord : records) {
+
+                ret.getValues().add((Double) fluxRecord.getValueByKey("_value"));
+                ret.getDates().add(String.valueOf(fluxRecord.getValueByKey("_time")));
+
+//                System.out.println(fluxRecord.getValues());
+            }
+        }
+
+        return ret;
+    }
+
+    public ArrayList<AirConditionerActionDTO> getAllAirConditionerActions(int id) {
+
+        String fluxQuery = String.format(
+                "from(bucket: \"%s\") " +
+                        "|> range(start: 0) " +
+                        "|> filter(fn: (r) => r[\"_measurement\"] == \"airEvent\") " +
+                        "|> filter(fn: (r) => r[\"device-id\"] == \"%d\") " +
+                        "|> filter(fn: (r) => r[\"_field\"] == \"value\") " +
+                        "|> yield(name: \"value\")",
+                bucket, id
+        );
+
+        ArrayList<AirConditionerActionDTO> ret = new ArrayList<>();
+
+        QueryApi queryApi = influxDbClient.getQueryApi();
+
+        List<FluxTable> tables = queryApi.query(fluxQuery);
+
+        for (FluxTable fluxTable : tables) {
+            List<FluxRecord> records = fluxTable.getRecords();
+            for (FluxRecord fluxRecord : records) {
+
+                AirConditionerActionDTO dto = new AirConditionerActionDTO();
+
+                dto.setAction(String.valueOf(fluxRecord.getValueByKey("_value")));
+                dto.setDate(String.valueOf(fluxRecord.getValueByKey("_time")));
+                dto.setEmail(String.valueOf(fluxRecord.getValueByKey("email")));
+
+                ret.add(dto);
+
+//                System.out.println(fluxRecord.getValues());
+            }
+        }
+
+        return ret;
+    }
+
+
+    public AmbientSensorDateValueDTO getAllTempForAmbientSensorInPeriod(int id, Long from, Long to) {
+
+        String fluxQuery = String.format(
+                "from(bucket: \"%s\") " +
+                        "|> range(start: %d, stop: %d) " +
+                        "|> filter(fn: (r) => r[\"_measurement\"] == \"temp\") " +
+                        "|> filter(fn: (r) => r[\"device-id\"] == \"%d\") " +
+                        "|> filter(fn: (r) => r[\"_field\"] == \"value\") " +
+                        "|> yield(name: \"value\")",
+                bucket, from, to, id
+        );
+
+        AmbientSensorDateValueDTO ret = new AmbientSensorDateValueDTO(new ArrayList<>(), new ArrayList<>());
+
+        QueryApi queryApi = influxDbClient.getQueryApi();
+
+        List<FluxTable> tables = queryApi.query(fluxQuery);
+
+        for (FluxTable fluxTable : tables) {
+            List<FluxRecord> records = fluxTable.getRecords();
+            for (FluxRecord fluxRecord : records) {
+
+                ret.getValues().add((Double) fluxRecord.getValueByKey("_value"));
+                ret.getDates().add(String.valueOf(fluxRecord.getValueByKey("_time")));
+
+//                System.out.println(fluxRecord.getValues());
+            }
+        }
+
+        return ret;
+    }
+
 }

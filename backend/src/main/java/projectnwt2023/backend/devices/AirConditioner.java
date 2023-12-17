@@ -23,6 +23,7 @@ public class AirConditioner extends Device{
     private Collection<Regime> programedRegimes;
 
     private int temp;
+    private String currentAction;
 
     private int minTemp;
 
@@ -37,6 +38,7 @@ public class AirConditioner extends Device{
         this.availableRegimes = types;
         this.programedRegimes = new ArrayList<>();
         this.temp = deviceRequestDTO.getMinTemp();
+        this.currentAction = "OFF";
         this.maxTemp = deviceRequestDTO.getMaxTemp();
         this.minTemp = deviceRequestDTO.getMinTemp();
         this.setTopic("airConditioner");

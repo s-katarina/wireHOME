@@ -25,6 +25,8 @@ import projectnwt2023.backend.devices.dto.PayloadDTO;
 import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
 import projectnwt2023.backend.devices.service.interfaces.IGateService;
 import projectnwt2023.backend.devices.service.interfaces.ILampService;
+import projectnwt2023.backend.devices.dto.TelemetryPayloadDTO;
+import projectnwt2023.backend.devices.service.interfaces.*;
 
 @Configuration
 public class Beans {
@@ -36,6 +38,12 @@ public class Beans {
 
     @Autowired
     IGateService gateService;
+
+    @Autowired
+    IAmbientSensorService ambientSensorService;
+
+    @Autowired
+    IAirConditionerService airConditionerService;
 
     @Value("${mosquitto.username}")
     private String username;
@@ -104,7 +112,12 @@ public class Beans {
                     lampService.parseRequest(topic, getPayload(message, PayloadDTO.class));
                 } else if (topic.contains("gate")) {
                     gateService.parseRequest(topic, message);
+                } else if (topic.contains("ambientSensor")) {
+                    ambientSensorService.parseRequest(topic, message);
+                } else if (topic.contains("airConditioner")) {
+                    airConditionerService.parseRequest(topic, message);
                 }
+
 //                System.out.println(message.getPayload());
             }
         };
