@@ -99,8 +99,13 @@ export class AirConditionerComponent implements OnInit, AfterViewInit, OnDestroy
 
   }
 
-  turnOff(): void {
-
+  async turnOff(): Promise<void> {
+    let request: AirConditionerActionRequest = {
+      action: "START OFF",
+      userEmail: this.authService.getEmail()
+    }
+    await this.sendAction(request).toPromise()
+    this.actionStatus = "Trying to turn off air conditioner"
   }
 
   

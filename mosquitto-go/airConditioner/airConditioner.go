@@ -121,6 +121,10 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 			}
 		}
 
+		if strings.Contains(action, "off") {
+			supported = true
+		}
+
 		if supported {
 			airConditioner.CurrentAction = action
 			PubAction(action, email, client)
