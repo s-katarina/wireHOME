@@ -140,3 +140,9 @@ img {
     align-items: center;
 }
   
+
+.chart-div {
+    display: block;
+    margin-top: 90px;
+    margin-bottom: 90px;
+}

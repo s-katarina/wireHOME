@@ -70,7 +70,6 @@
         <img class="img-card" [src]="gate!.imagePath" alt="Lamp Image">
         </div>
     </div>
-    <app-online-offline-chart class="chart" [deviceId]="gate!.id"></app-online-offline-chart>
 
 
     <div class="table-div">
@@ -147,6 +146,12 @@
             (page)="handlePage($event)"
         ></mat-paginator>
     
+    </div>
+
+    <div class="chart-div">
+        <h5 matTooltip="Graphical chart displaying of data for true accessibility">Chart insights</h5>
+        <mat-divider></mat-divider>
+        <app-online-offline-chart class="chart" [deviceId]="gate!.id"></app-online-offline-chart>
     </div>
 
 </div>

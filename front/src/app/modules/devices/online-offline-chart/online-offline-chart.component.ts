@@ -17,9 +17,10 @@ export class OnlineOfflineChartComponent implements OnInit {
   ngOnInit(): void {
 	CanvasJS.addColorSet("appColors",
 	[
+	"#556282",
 	"#8da3b9",
 	"#7f91bc92",
-	"#acacbe	"
+	"#acacbe"
 	]);
     this.pyChart = new CanvasJS.Chart("chartOnlineContainer",
 	{
