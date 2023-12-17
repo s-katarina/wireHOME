@@ -346,6 +346,7 @@ export class SolarPanelComponent implements OnInit {
     this.largeEnergyDeviceService.getSolarPlatformReadingFrom(this.panelId, dateFrom, dateTo, "energy-maintaining").subscribe((res: any) => {
       this.chart.options.data[0].dataPoints = res;
       console.log(res)
+      console.log("hahahahahahahahahahaaaaaaaaa")
       this.chart.render();
 
     })

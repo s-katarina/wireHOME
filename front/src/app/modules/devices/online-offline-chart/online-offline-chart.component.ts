@@ -15,7 +15,7 @@ export class OnlineOfflineChartComponent implements OnInit {
     { }
 
   ngOnInit(): void {
-    this.pyChart = new CanvasJS.Chart("chartContainer",
+    this.pyChart = new CanvasJS.Chart("PYCHARTchartContainer",
 	{
 		title:{
 			text: "How much has your device been online"

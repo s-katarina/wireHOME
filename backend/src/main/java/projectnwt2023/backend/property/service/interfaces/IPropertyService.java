@@ -7,6 +7,7 @@ import projectnwt2023.backend.property.Property;
 import projectnwt2023.backend.property.PropertyStatus;
 import projectnwt2023.backend.property.dto.PropertyRequestDTO;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public interface IPropertyService {
@@ -27,4 +28,5 @@ public interface IPropertyService {
     String sendMailApproved(Property property);
     String sendMailRejected(Property property, String reason);
 
+    List<Property> getAllPropertyes();
 }
