@@ -31,7 +31,7 @@ const routes: Routes = [
   { path: 'energy-overwiev', component:EnergyOverviewComponent},
   { path: 'solarPanel', component:SolarPanelComponent},
   { path: 'battery', component: BatteryComponent},
-  { path: '**', component: GateComponent }
+  { path: '**', component: LandingComponent }
 ];
 
 @NgModule({

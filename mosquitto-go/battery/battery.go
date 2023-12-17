@@ -67,7 +67,6 @@ func RunBattery(id int32) {
     var port = 1883
     opts := mqtt.NewClientOptions()
     opts.AddBroker(fmt.Sprintf("tcp://%s:%d", broker, port))
-    opts.SetClientID("go_mqtt_client")
     opts.SetUsername("admin")
     opts.SetPassword("1234")
     opts.SetDefaultPublishHandler(messagePubHandler)

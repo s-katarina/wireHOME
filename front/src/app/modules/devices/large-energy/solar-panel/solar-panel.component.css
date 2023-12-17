@@ -131,3 +131,9 @@ img {
     height: 370px; width: 100%; margin:auto;
     margin-top: 3vh;
 }
+
+.chart-div {
+    display: block;
+    margin-top: 90px;
+    margin-bottom: 90px;
+}
