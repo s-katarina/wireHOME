@@ -60,6 +60,7 @@ public class BatteryScheduler {
 
     private void justSendBatteryState() {
         ArrayList<Battery> batteries = batteryService.getAllBatteries();
+//        ArrayList<Battery> batteries = batteryService.getOnlineAllBatteries();
         for (Battery battery: batteries) {
             Map<String, String> values = new HashMap<>();
             values.put("device-id", String.valueOf(battery.getId()));
@@ -82,7 +83,9 @@ public class BatteryScheduler {
         influxDBService.save("property-electricity", (float) aggregatedAmount, new Date(), values);
         this.simpMessagingTemplate.convertAndSend("/energy/" + propertyId, aggregatedAmount);
 
-        ArrayList<Battery> batteries = batteryService.getBatteriesByPropertyId((long) propertyId); //TODO samo online baterija
+        ArrayList<Battery> batteries = batteryService.getBatteriesByPropertyId((long) propertyId);
+        //ArrayList<Battery> batteries = batteryService.getOnlineBatteriesByPropertyId((long) propertyId); //TODO samo online baterija
+
         System.out.println(batteries.size());
         if (batteries.size() == 0) {
             sendToElectroDistibution(propertyId, (float) aggregatedAmount);
