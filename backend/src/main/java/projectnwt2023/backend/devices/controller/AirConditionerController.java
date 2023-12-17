@@ -2,6 +2,7 @@ package projectnwt2023.backend.devices.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -40,14 +41,11 @@ public class AirConditionerController {
         return new ResponseEntity<>(new AirConditionerDTO(device), HttpStatus.OK);
     }
 
-    @PostMapping(value = "/{deviceId}/action", produces = "application/json")
-    ResponseEntity<String> postActionRequest(@PathVariable Integer deviceId, @RequestBody AirConditionerActionRequest request) {
-        AirConditioner device = (AirConditioner) deviceService.getById(deviceId.longValue());
+    @PostMapping(value = "/{deviceId}/action", produces = "text/plain")
+    void postActionRequest(@PathVariable Integer deviceId, @RequestBody AirConditionerActionRequest request) {
 
-        // posalji mqtt simulatoru   airConditioner/3/action
-        mqttGateway.sendToMqtt(request.getAction() + ";" + request.getUserEmail(), "airConditioner/" + deviceId + "/action");
-
-        return new ResponseEntity<>("Success", HttpStatus.OK);
+        // posalji mqtt simulatoru   airConditioner/3/request   colling;3sparklez.cat@gmail.com
+        mqttGateway.sendToMqtt(request.getAction() + ";" + request.getUserEmail(), "airConditioner/" + deviceId + "/request");
     }
 
 }

@@ -58,11 +58,11 @@ import { AirConditionerComponent } from './modules/devices/air-conditioner/air-c
       useClass: Interceptor,
       multi: true
     },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: TokenExpirationInterceptor,
-      multi: true
-    }
+    // {
+    //   provide: HTTP_INTERCEPTORS,
+    //   useClass: TokenExpirationInterceptor,
+    //   multi: true
+    // }
   ],
   bootstrap: [AppComponent]
 })

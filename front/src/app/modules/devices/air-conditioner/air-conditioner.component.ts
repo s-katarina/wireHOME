@@ -37,22 +37,21 @@ export class AirConditionerComponent implements OnInit, AfterViewInit, OnDestroy
     })
   }
 
-  sendAction(request: AirConditionerActionRequest): Observable<any> {
-    return this.http.post<AirConditionerActionRequest>(environment.apiHost + 'airConditioner/3/action', request)
+  sendAction(request: AirConditionerActionRequest): Observable<string> {
+    return this.http.post<string>(environment.apiHost + 'airConditioner/3/action', request)
   }
 
   ngOnDestroy(): void {
     
   }
 
-  cooling(): void {
+  async cooling(): Promise<void> {
     let request: AirConditionerActionRequest = {
       action: "START COOLING",
       userEmail: this.authService.getEmail()
     }
-    this.sendAction(request).subscribe((res: any) => {
-      this.actionStatus = "Trying to start cooling"
-    })
+    await this.sendAction(request).toPromise()
+    this.actionStatus = "Trying to start cooling"
   }
 
   heating(): void {
