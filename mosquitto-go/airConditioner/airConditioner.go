@@ -143,7 +143,7 @@ func PubAction(action string, email string, client mqtt.Client) {
 		return
 	}
 
-	// posalji na telegraf da se cuva u influx na /event
+	PubEvent(action, email, client)
 }
 
 func PubNewTemp(client mqtt.Client) {
@@ -154,6 +154,17 @@ func PubNewTemp(client mqtt.Client) {
 		log.Fatal(token.Error())
 	}
 	fmt.Printf("Message temp %d published successfully\n", airConditioner.Temp)
+}
+
+func PubEvent(action string, email string, client mqtt.Client) {
+	topic := fmt.Sprintf("airConditioner/%d/event", airConditioner.Id)
+	data := fmt.Sprintf("airEvent,device-id=%d,email=%s value=\"%s\"", airConditioner.Id, email, action)
+	token := client.Publish(topic, 0, false, data)
+	token.Wait()
+	if token.Error() != nil {
+		log.Fatal(token.Error())
+	}
+	fmt.Printf("Message event published successfully\n")
 }
 
 func RunAirConditioner() {
