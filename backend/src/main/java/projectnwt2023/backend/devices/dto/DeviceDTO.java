@@ -10,7 +10,7 @@ import projectnwt2023.backend.devices.State;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class DeviceResponseDTO {
+public class DeviceDTO {
 
     private int id;
 
@@ -24,13 +24,21 @@ public class DeviceResponseDTO {
 
     private int propertyId;
 
-    public DeviceResponseDTO(Device device) {
+    private String imagePath;
+
+    private String deviceType;
+
+    private boolean on;
+
+    public DeviceDTO(Device device) {
         this.id = Math.toIntExact(device.getId());
         this.state = device.getState() == State.online;
         this.modelName = device.getModelName();
         this.usesElectricity = device.isUsesElectricity();
         this.consumptionAmount = device.getConsumptionAmount();
         this.propertyId = Math.toIntExact(device.getProperty().getId());
-
+        this.imagePath = device.getImagePath();
+        this.deviceType = device.getTopic();
+        this.on = device.isDeviceOn();
     }
 }

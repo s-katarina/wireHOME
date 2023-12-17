@@ -1,16 +1,19 @@
 package device
 
 import (
-    "fmt"
-    mqtt "github.com/eclipse/paho.mqtt.golang"
-    "time"
 	"encoding/json"
+	"fmt"
+	"strconv"
+	"time"
+
+	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
 
 type CommonBehavior interface {
-	SendHeartBeat(client mqtt.Client, topic string)
+	SendHeartBeat(client mqtt.Client)
 	TurnOn(client mqtt.Client, topic string)
 	TurnOff(client mqtt.Client, topic string)
+	TakesElectisity(client mqtt.Client)
 }
 
 type BaseDevice struct {
@@ -20,6 +23,7 @@ type BaseDevice struct {
 	UsesElectricity bool
 	ConsumptionAmount float64
 	PropertyId int
+	On bool
 }
 
 
@@ -29,7 +33,16 @@ type MessageDTO struct {
 	TimeStamp time.Time	`json:"timeStamp"`
 }
 
-func (device BaseDevice) SendHeartBeat(client mqtt.Client, topic string) {
+type ElectisityDTO struct {
+	DeviceId int	`json:"deviceId"`
+	ConsumptionAmount float64 	`json:"consumptionAmount"`
+	TimeStamp time.Time	`json:"timeStamp"`
+}
+
+func (device BaseDevice) SendHeartBeat(client mqtt.Client) {
+	// if (!device.State){
+	// 	return
+	// }
     for {
 		currentTime:= time.Now()
 		myObj := MessageDTO{
@@ -46,22 +59,22 @@ func (device BaseDevice) SendHeartBeat(client mqtt.Client, topic string) {
 		}
 	
         // text := fmt.Sprintf("Heartbeat %v", currentTime)
-        token := client.Publish(topic, 0, false, jsonData)
+        token := client.Publish("heartbeat", 0, false, jsonData)
         token.Wait()
-        time.Sleep(time.Second * 25)
+        time.Sleep(time.Second * 15)
     }
 }
 
 func OnObj(device BaseDevice) MessageDTO{
     currentTime:= time.Now()
-	if (device.State) {
+	if (device.On) {
 		return MessageDTO{
 			DeviceId:   device.Id,
 			UsedFor: "Error",
 			TimeStamp: currentTime,
 		}
 	}
-		device.State = true
+		device.On = true
 		return MessageDTO{
 			DeviceId:   device.Id,
 			UsedFor: "ON",
@@ -71,14 +84,14 @@ func OnObj(device BaseDevice) MessageDTO{
 
 func OffObj(device BaseDevice) MessageDTO{
     currentTime:= time.Now()
-	if (!device.State) {
+	if (!device.On) {
 		return MessageDTO{
 			DeviceId:   device.Id,
 			UsedFor: "Error",
 			TimeStamp: currentTime,
 		}
 	}
-		device.State = false
+		device.On = false
 		return MessageDTO{
 			DeviceId:   device.Id,
 			UsedFor: "OFF",
@@ -88,6 +101,7 @@ func OffObj(device BaseDevice) MessageDTO{
 
 func (device BaseDevice) TurnOn(client mqtt.Client, topic string) bool{
 	myObj := OnObj(device)
+	fmt.Println(myObj)
 	
 		// Convert the object to JSON
 	jsonData, err := json.Marshal(myObj)
@@ -112,6 +126,25 @@ func (device BaseDevice) TurnOff(client mqtt.Client, topic string) bool {
     token := client.Publish(topic, 0, false, jsonData)
     token.Wait()
 	return myObj.UsedFor == "OFF"
+}
+func (device BaseDevice) TakesElectisity(client mqtt.Client) {
+	if (!device.UsesElectricity){
+			return
+		}
+	topic := fmt.Sprintf("energy/%d/%s", device.Id, "any-device")
+    for {
+		data := fmt.Sprintf("energy-maintaining,device-id=%d,property-id=%d value=%f", device.Id, device.PropertyId, -device.ConsumptionAmount)
+		token := client.Publish(topic, 0, false, data)
+		token.Wait()
+        time.Sleep(time.Second * 15)
+    }
+}
+
+func (device BaseDevice)Sub(client mqtt.Client) {
+    topic := strconv.Itoa(device.Id)
+    token := client.Subscribe(topic, 1, nil)
+    token.Wait()
+  fmt.Printf("Subscribed to topic: %s", topic)
 }
 
 func main() {

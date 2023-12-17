@@ -54,8 +54,4 @@ public class DeviceRequestDTO {
     private int portNumber;
 
 
-//    @NotBlank(message = "Field property type is required")
-//    @Pattern(regexp = "HOUSE|APARTMENT", message="Field property type has incorrect value")
-//    private String DeviceType;
-
 }

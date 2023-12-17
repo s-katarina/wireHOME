@@ -9,12 +9,9 @@ import projectnwt2023.backend.devices.Device;
 import projectnwt2023.backend.devices.RegimeAirConditioner;
 import projectnwt2023.backend.devices.RegimeType;
 import projectnwt2023.backend.devices.RegimeWashingMachine;
-import projectnwt2023.backend.devices.dto.DeviceResponseDTO;
+import projectnwt2023.backend.devices.dto.*;
 import projectnwt2023.backend.devices.mqtt.Gateway;
 import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
-import projectnwt2023.backend.property.Property;
-import projectnwt2023.backend.property.dto.PropertyResponseDTO;
-import projectnwt2023.backend.property.service.interfaces.IPropertyService;
 
 import java.util.ArrayList;
 
@@ -31,23 +28,24 @@ public class DeviceController {
     Gateway mqttGateway;
 
     @GetMapping(value = "/{deviceId}", produces = "application/json")
-    ResponseEntity<DeviceResponseDTO> getProperty(@PathVariable Integer deviceId){
+    ResponseEntity<DeviceDTO> getDevice(@PathVariable Integer deviceId){
 
         Device device = deviceService.getById(deviceId.longValue());
         System.out.println(deviceId);
-        return new ResponseEntity<>(new DeviceResponseDTO(device), HttpStatus.OK);
+        return new ResponseEntity<>(new DeviceDTO(device), HttpStatus.OK);
     }
 
     @PostMapping(value = "/on/{deviceId}", produces = "application/json")
-    ResponseEntity<?> turnOn(@PathVariable Integer deviceId){
+    ResponseEntity<MessageDTO> turnOn(@PathVariable Integer deviceId){
         Device device = deviceService.getById(deviceId.longValue());
         try {
-            mqttGateway.sendToMqtt("ON", device.getTopic() + deviceId);
-            return ResponseEntity.ok("Success");
+            System.out.println(deviceId);
+            mqttGateway.sendToMqtt("ON", String.valueOf(deviceId));
+            return new ResponseEntity<>(new MessageDTO("uspeo je", "on"), HttpStatus.OK);
         } catch (Exception e){
             System.out.println("greeeska");
             e.printStackTrace();
-            return ResponseEntity.ok("Nije hteo da posaljke");
+            return new ResponseEntity<>(new MessageDTO("nije uspeo", "on"), HttpStatus.OK);
         }
     }
 
@@ -55,12 +53,12 @@ public class DeviceController {
     ResponseEntity<?> turnOff(@PathVariable Integer deviceId){
         Device device = deviceService.getById(deviceId.longValue());
         try {
-            mqttGateway.sendToMqtt("OFF", device.getTopic() + deviceId);
-            return ResponseEntity.ok("Success");
+            mqttGateway.sendToMqtt("OFF", String.valueOf(deviceId));
+            return new ResponseEntity<>(new MessageDTO("uspeo je", "off"), HttpStatus.OK);
         } catch (Exception e){
             System.out.println("greeeska");
             e.printStackTrace();
-            return ResponseEntity.ok("Nije hteo da posaljke");
+            return new ResponseEntity<>(new MessageDTO("nije uspeo", "off"), HttpStatus.OK);
         }
     }
 
@@ -89,6 +87,44 @@ public class DeviceController {
             regimes.add(String.valueOf(regime));
         }
         return new ResponseEntity<>(regimes, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/appliances/{propertyId}", produces = "application/json")
+    public ResponseEntity<ArrayList<DeviceDTO>> getAppliances(@PathVariable Integer propertyId){
+        ArrayList<Device> devices = deviceService.getAppliancesByProperty(Long.valueOf(propertyId));
+        ArrayList<DeviceDTO> devicedtos = new ArrayList<>();
+        for (Device device: devices) {
+            devicedtos.add(new DeviceDTO(device));
+        }
+        return new ResponseEntity<>(devicedtos, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/outdoor/{propertyId}", produces = "application/json")
+    public ResponseEntity<ArrayList<DeviceDTO>> getOutdoor(@PathVariable Integer propertyId){
+        ArrayList<Device> devices = deviceService.getOutdoorDevicesByProperty(Long.valueOf(propertyId));
+        ArrayList<DeviceDTO> devicedtos = new ArrayList<>();
+        for (Device device: devices) {
+            devicedtos.add(new DeviceDTO(device));
+        }
+        return new ResponseEntity<>(devicedtos, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/energyDevices/{propertyId}", produces = "application/json")
+    public ResponseEntity<ArrayList<DeviceDTO>> getEnergyDevices(@PathVariable Integer propertyId){
+        ArrayList<Device> devices = deviceService.getElectricalDevicesByProperty(Long.valueOf(propertyId));
+        ArrayList<DeviceDTO> devicedtos = new ArrayList<>();
+        for (Device device: devices) {
+            devicedtos.add(new DeviceDTO(device));
+        }
+        return new ResponseEntity<>(devicedtos, HttpStatus.OK);
+    }
+
+
+
+    @GetMapping(value = "/onlinePercent/{deviceId}", produces = "application/json") // koristi i za elektrodistribuciju i za samu potrosnju
+    ResponseEntity<ArrayList<PyChartDTO>> getElectoByProperty(@PathVariable Integer deviceId){
+        ArrayList<PyChartDTO> grapgData = deviceService.getOnlineOfflineTime(deviceId);
+        return new ResponseEntity<>(grapgData, HttpStatus.OK);
     }
 
 }

@@ -11,6 +11,13 @@ import { UnregisteredGuard } from './guard/unregistered.guard';
 import { RegisterComponent } from '../modules/auth/register/register.component';
 import { RoleGuard } from './guard/role.guard';
 import { TokenGuard } from './guard/token.guard';
+import { LampComponent } from '../modules/devices/outdoor/lamp/lamp.component';
+import { GateComponent } from '../modules/devices/outdoor/gate/gate.component';
+import { EnergyOverviewComponent } from '../modules/devices/large-energy/energy-overview/energy-overview.component';
+import { SolarPanelComponent } from '../modules/devices/large-energy/solar-panel/solar-panel.component';
+import { BatteryComponent } from '../modules/devices/large-energy/battery/battery.component';
+import { AmbientSensorComponent } from '../modules/devices/ambient-sensor/ambient-sensor.component';
+import { AirConditionerComponent } from '../modules/devices/air-conditioner/air-conditioner.component';
 
 const routes: Routes = [
   { path: 'properties', component: PropertyOverviewComponent, canActivate: [TokenGuard, RoleGuard ], data: {roles: ["AUTH_USER"]}  },
@@ -21,7 +28,14 @@ const routes: Routes = [
   { path: 'register', component: RegisterComponent, canActivate: [UnregisteredGuard] },
   { path: 'property-requests', component: PropertyRequestsComponent, canActivate: [TokenGuard, RoleGuard ], data: {roles: ["SUPER_ADMIN", "ADMIN"]}  },
   { path: 'register-admin', component: RegisterComponent, canActivate: [TokenGuard, RoleGuard ], data: {roles: ["SUPER_ADMIN"]} },
-  { path: '**', component: CreateDeviceComponent }
+  { path: 'lamp', component: LampComponent },
+  { path: 'gate', component: GateComponent },
+  { path: 'energy-overwiev', component:EnergyOverviewComponent},
+  { path: 'solarPanel', component:SolarPanelComponent},
+  { path: 'battery', component: BatteryComponent},
+  { path: 'ambient-sensor', component: AmbientSensorComponent},
+  { path: 'air-conditioner', component: AirConditionerComponent},
+  { path: '**', component: LandingComponent }
 ];
 
 @NgModule({

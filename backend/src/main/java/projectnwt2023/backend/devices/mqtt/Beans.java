@@ -1,6 +1,9 @@
 package projectnwt2023.backend.devices.mqtt;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,9 +20,31 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 import org.springframework.messaging.MessagingException;
+import projectnwt2023.backend.devices.State;
+import projectnwt2023.backend.devices.dto.PayloadDTO;
+import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
+import projectnwt2023.backend.devices.service.interfaces.IGateService;
+import projectnwt2023.backend.devices.service.interfaces.ILampService;
+import projectnwt2023.backend.devices.dto.TelemetryPayloadDTO;
+import projectnwt2023.backend.devices.service.interfaces.*;
 
 @Configuration
 public class Beans {
+    @Autowired
+    IDeviceService deviceService;
+
+    @Autowired
+    ILampService lampService;
+
+    @Autowired
+    IGateService gateService;
+
+    @Autowired
+    IAmbientSensorService ambientSensorService;
+
+    @Autowired
+    IAirConditionerService airConditionerService;
+
     @Value("${mosquitto.username}")
     private String username;
 
@@ -64,16 +89,54 @@ public class Beans {
             @Override
             public void handleMessage(Message<?> message) throws MessagingException {
                 String topic = (String) message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC);
+                System.out.println(message.getPayload());
+                System.out.println(topic);
+                PayloadDTO payloadDTO = getPayload(message, PayloadDTO.class);
                 if (topic == null){
                     System.out.println("null je topic");
+                } else if (topic.equals("heartbeat")) {
+                    deviceService.changeDeviceState((long) payloadDTO.getDeviceId(), State.online);
+
+                } else if(topic.equals("KILLED")) {
+                    System.out.println("lost connection " + payloadDTO.getDeviceId());
+                    deviceService.changeDeviceState((long) payloadDTO.getDeviceId(), State.offline);
                 }
-                else if(topic.equals("simulation/ambientSensor")) {
-                    System.out.println(topic);
-                    System.out.println("topic je uspeo");
+                else if(topic.equals("ON")) {
+                    System.out.println("usao u ukljuci");
+                    deviceService.changeDeviceOnOff((long) payloadDTO.getDeviceId(), true);
                 }
-                System.out.println(message.getPayload());
+                else if(topic.equals("OFF")) {
+                    deviceService.changeDeviceOnOff((long) payloadDTO.getDeviceId(), false);
+                }
+                else if (topic.contains("lamp")) {
+                    lampService.parseRequest(topic, getPayload(message, PayloadDTO.class));
+                } else if (topic.contains("gate")) {
+                    gateService.parseRequest(topic, message);
+                } else if (topic.contains("ambientSensor")) {
+                    ambientSensorService.parseRequest(topic, message);
+                } else if (topic.contains("airConditioner")) {
+                    airConditionerService.parseRequest(topic, message);
+                }
+
+//                System.out.println(message.getPayload());
             }
         };
+    }
+
+    public static <T> T getPayload(Message<?> message, Class<T> dtoClass) {
+        Object payload = message.getPayload();
+        String jsonPayload = (String) payload;
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            return objectMapper.readValue(jsonPayload, dtoClass);
+        } catch (JsonProcessingException e) {
+            try {
+                return dtoClass.getDeclaredConstructor().newInstance();
+            } catch (Exception ex) {
+                throw new RuntimeException("Error creating an instance of " + dtoClass.getSimpleName(), ex);
+            }
+        }
     }
 
     @Bean
