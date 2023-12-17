@@ -6,6 +6,7 @@ import (
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"io"
 	"log"
+	"math/rand"
 	"net/http"
 	"strconv"
 	"strings"
@@ -104,6 +105,21 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 				break
 			}
 		}
+		fmt.Println(action)
+		if strings.Contains(action, "temp") {
+			tokens = strings.Split(action, "#")
+			fmt.Println(tokens)
+			tempStr := tokens[1]
+			fmt.Println(tempStr)
+			temp, _ := strconv.Atoi(tempStr)
+			fmt.Println(temp)
+
+			if int32(temp) >= airConditioner.MinTemp && int32(temp) <= airConditioner.MaxTemp {
+				airConditioner.Temp = int32(temp)
+				supported = true
+				PubNewTemp(client)
+			}
+		}
 
 		if supported {
 			airConditioner.CurrentAction = action
@@ -128,6 +144,16 @@ func PubAction(action string, email string, client mqtt.Client) {
 	}
 
 	// posalji na telegraf da se cuva u influx na /event
+}
+
+func PubNewTemp(client mqtt.Client) {
+	topic := fmt.Sprintf("airConditioner/%d/temp", airConditioner.Id)
+	token := client.Publish(topic, 0, false, strconv.Itoa(int(airConditioner.Temp)) + ";" + strconv.Itoa(airConditioner.Id))
+	token.Wait()
+	if token.Error() != nil {
+		log.Fatal(token.Error())
+	}
+	fmt.Printf("Message temp %d published successfully\n", airConditioner.Temp)
 }
 
 func RunAirConditioner() {
@@ -168,7 +194,33 @@ func RunAirConditioner() {
 }
 
 func RunSim() {
-	// proveri current action i na osnovu nje menjaj temperaturu (posalji na front novu temperaturu preko beka)
+
+	for {
+		rnd := rand.Intn(11)
+		var affect int32 = 0
+
+		if rnd < 4 {
+			affect = 1
+		}
+
+		if airConditioner.CurrentAction == "colling" {
+			newTemp := airConditioner.Temp - 1 * affect
+			if newTemp >= airConditioner.MinTemp && newTemp <= airConditioner.MaxTemp {
+				airConditioner.Temp = newTemp
+				PubNewTemp(airConditioner.Client)
+			}
+		}
+
+		if airConditioner.CurrentAction == "heating" {
+			newTemp := airConditioner.Temp + 1 * affect
+			if newTemp >= airConditioner.MinTemp && newTemp <= airConditioner.MaxTemp {
+				airConditioner.Temp = newTemp
+				PubNewTemp(airConditioner.Client)
+			}
+		}
+
+		time.Sleep(time.Second * 3)
+	}
 
 }
 

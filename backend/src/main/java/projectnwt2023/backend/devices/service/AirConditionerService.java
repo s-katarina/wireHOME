@@ -22,11 +22,16 @@ public class AirConditionerService implements IAirConditionerService {
     public void parseRequest(String topic, Message<?> message) {
         if (isStringMatchingPattern(topic, "airConditioner/\\d+/response")) {
             String payload = (String) message.getPayload();
-            System.out.println("payload: " + payload);
             String response = payload.split(";")[0];
             Integer deviceId = Integer.valueOf(payload.split(";")[1]);
-            System.out.println("/air-conditioner/" + deviceId + "/response");
             simpMessagingTemplate.convertAndSend("/air-conditioner/" + deviceId + "/response", response);
+        }
+
+        if (isStringMatchingPattern(topic, "airConditioner/\\d+/temp")) {
+            String payload = (String) message.getPayload();
+            String temp = payload.split(";")[0];
+            Integer deviceId = Integer.valueOf(payload.split(";")[1]);
+            simpMessagingTemplate.convertAndSend("/air-conditioner/" + deviceId + "/temp", temp);
         }
     }
 

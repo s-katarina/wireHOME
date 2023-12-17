@@ -16,6 +16,7 @@ export class AirConditionerComponent implements OnInit, AfterViewInit, OnDestroy
 
   currentAction: string = ""
   actionStatus: string = ""
+  currentTemp: string = ""
 
   tempForm = new FormGroup({
     temp: new FormControl()
@@ -40,6 +41,12 @@ export class AirConditionerComponent implements OnInit, AfterViewInit, OnDestroy
           this.currentAction = res
         }
 
+      })
+
+      stompClient.subscribe('/air-conditioner/3/temp', (message: { body: string }) => {
+        let res: string = message.body
+        console.log(res)
+        this.currentTemp = res
       })
     })
   }
@@ -72,15 +79,20 @@ export class AirConditionerComponent implements OnInit, AfterViewInit, OnDestroy
 
   async ventilation(): Promise<void> {
     let request: AirConditionerActionRequest = {
-      action: "START as",
+      action: "START VENTILATION",
       userEmail: this.authService.getEmail()
     }
     await this.sendAction(request).toPromise()
     this.actionStatus = "Trying to start ventilation"
   }
 
-  setTemp(): void {
-
+  async setTemp(): Promise<void> {
+    let request: AirConditionerActionRequest = {
+      action: "START TEMP#" + this.tempForm.value.temp,
+      userEmail: this.authService.getEmail()
+    }
+    await this.sendAction(request).toPromise()
+    this.actionStatus = "Trying to set temperature"
   }
 
   turnOn(): void {
