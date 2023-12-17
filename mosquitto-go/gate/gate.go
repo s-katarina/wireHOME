@@ -276,6 +276,7 @@ func RunGate() {
 	gate.SubToOpenSet(client)
 	gate.SubToLicencePlateSet(client)
 	go simulateGate(client)
+	go gate.TakesElectisity(client)
 	gate.SendHeartBeat(client)
 }
 

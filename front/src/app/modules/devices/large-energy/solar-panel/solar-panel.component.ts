@@ -268,7 +268,6 @@ export class SolarPanelComponent implements OnInit {
   clearFilter(): void {
     this.filterApplied = false;
     this.filterInitiator = '';
-    this.filterEvent = '';
     this.range2.reset();
     this.events = this.recentEvents
     this.dataSource = new MatTableDataSource<GateEvent>(this.events);

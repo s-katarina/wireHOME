@@ -65,7 +65,7 @@ func getAirConditioner(deviceId int) AirConditioner {
 
 }
 
-var airConditioner AirConditioner = getAirConditioner(3)
+var airConditioner AirConditioner = getAirConditioner(6)
 
 func SetAirConditioner(id int) {
 	airConditioner = getAirConditioner(id)

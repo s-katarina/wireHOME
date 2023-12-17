@@ -24,6 +24,8 @@ export class EnergyOverviewComponent implements OnInit {
   socketChart:any
   electrodistChart:any
 
+  rangeOver30Days = false
+
   constructor(private socketService: WebsocketService,
     private readonly propertyService: PropertyServiceService,
     private readonly largeEnergyDeviceService: LargeEnergyService,) { }
@@ -112,6 +114,23 @@ export class EnergyOverviewComponent implements OnInit {
 
 
   onSubmit(topic: string) {
+
+    let dateFromX = (this.range.value.start!.getTime()).toString();
+    let dateToX  = (this.range.value.end!.getTime()).toString();
+
+    const dateFromTimestamp = parseInt(dateFromX, 10);
+    const dateToTimestamp = parseInt(dateToX, 10);
+    const timeDifference = Math.abs(dateToTimestamp - dateFromTimestamp);
+    const daysDifference = timeDifference / (1000 * 60 * 60 * 24);
+    if (daysDifference > 30) {
+      console.log("Date range is more than 30 days apart");
+      this.rangeOver30Days = true
+      return;
+    } else {
+      console.log("Date range is within 30 days");
+      this.rangeOver30Days = false
+    }
+
     const dateFrom = (this.range.value.start!.getTime()/1000).toString();
     const dateTo = (this.range.value.end!.getTime()/1000).toString();
     console.log('Date Range:', dateFrom, dateTo);

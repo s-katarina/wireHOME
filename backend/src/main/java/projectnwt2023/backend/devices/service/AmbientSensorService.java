@@ -28,6 +28,7 @@ public class AmbientSensorService implements IAmbientSensorService {
             String payload = (String) message.getPayload();
             Double temp = Double.valueOf(payload.split("value")[1].substring(1));
             Integer deviceId = Integer.valueOf(payload.split("=")[1].split(" ")[0]);
+            System.out.println("asd" + deviceId);
             simpMessagingTemplate.convertAndSend("/ambient-sensor/" + deviceId + "/temp", temp);
         }
         if (isStringMatchingPattern(topic, "ambientSensor/\\d+/hum")) {

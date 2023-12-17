@@ -22,6 +22,8 @@ export class AmbientSensorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   currentTemp: number = NaN
   currentHum: number = NaN
+  deviceId: string = "5"
+
 
   reportTempData: GraphPoint[] = []
   reportHumData: GraphPoint[] = []
@@ -116,7 +118,7 @@ export class AmbientSensorComponent implements OnInit, AfterViewInit, OnDestroy 
     const stompClient: any = this.socketService.initWebSocket()
 
     stompClient.connect({}, () => {
-      stompClient.subscribe('/ambient-sensor/2/temp', (message: { body: number }) => {
+      stompClient.subscribe('/ambient-sensor/' + this.deviceId + '/temp', (message: { body: number }) => {
         let temp: number = message.body
         console.log("temp: " + temp)
 
@@ -137,7 +139,7 @@ export class AmbientSensorComponent implements OnInit, AfterViewInit, OnDestroy 
         this.realtimeChart.update()
       })
 
-      stompClient.subscribe('/ambient-sensor/2/hum', (message: { body: number }) => {
+      stompClient.subscribe('/ambient-sensor/' + this.deviceId + '/hum', (message: { body: number }) => {
         let hum: number = message.body
         console.log("hum: " + hum)
 
@@ -161,11 +163,11 @@ export class AmbientSensorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   getTempAndHum(from: number, to: number): Observable<AmbientSensorTempHumDTO> {
-    return this.http.get<AmbientSensorTempHumDTO>(environment.apiHost + 'ambientSensor/2/values?from=' + from + "&to=" + to)
+    return this.http.get<AmbientSensorTempHumDTO>(environment.apiHost + 'ambientSensor/' + this.deviceId + '/values?from=' + from + "&to=" + to)
   }
 
   ngOnDestroy(): void {
-    
+    this.socketService.closeWebSocket();
   }
 
   report(hours: number): void {

@@ -35,8 +35,9 @@
         <mat-error *ngIf="range.controls.start.hasError('matStartDateInvalid')">Invalid start date</mat-error>
         <mat-error *ngIf="range.controls.end.hasError('matEndDateInvalid')">Invalid end date</mat-error>
     </mat-form-field>
-    <button (click)="onSubmit('property-electricity')"></button>
+    <button mat-raised-button (click)="onSubmit('property-electricity')" class="view-data">View data</button>
   </div>
+    <p *ngIf="rangeOver30Days">Dates must be less than 30 days apart</p>
 </div>
 
   <div>

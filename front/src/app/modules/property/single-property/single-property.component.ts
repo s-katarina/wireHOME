@@ -92,4 +92,13 @@ export class SinglePropertyComponent implements OnInit {
     }
   }
 
+  navigateToIndoorDevice(device: DeviceDTO) {
+    if (device.deviceType === 'ambientSensor') {
+      this.router.navigate(['/ambient-sensor']);
+  }
+  else if (device.deviceType == 'airConditioner') {
+    this.router.navigate(['/air-conditioner'])
+  }
+  }
+
 }

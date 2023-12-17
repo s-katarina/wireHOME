@@ -19,6 +19,7 @@ export class AirConditionerComponent implements OnInit, AfterViewInit, OnDestroy
   currentAction: string = ""
   actionStatus: string = ""
   currentTemp: string = ""
+  deviceId: string = "6"
 
   tempForm = new FormGroup({
     temp: new FormControl()
@@ -42,7 +43,7 @@ export class AirConditionerComponent implements OnInit, AfterViewInit, OnDestroy
   constructor(private socketService: WebsocketService, private readonly http: HttpClient, private authService: AuthService) { }
 
   ngOnInit(): void {
-    this.fetchReport(3).subscribe((res: AirConditionActionDTO[]) => {
+    this.fetchReport(Number(this.deviceId)).subscribe((res: AirConditionActionDTO[]) => {
       console.log(res)
       this.ELEMENT_DATA = res
       this.dataSource = new MatTableDataSource<AirConditionActionDTO>(this.ELEMENT_DATA)
@@ -54,7 +55,7 @@ export class AirConditionerComponent implements OnInit, AfterViewInit, OnDestroy
     const stompClient: any = this.socketService.initWebSocket()
 
     stompClient.connect({}, () => {
-      stompClient.subscribe('/air-conditioner/3/response', (message: { body: string }) => {
+      stompClient.subscribe('/air-conditioner/' + this.deviceId + '/response', (message: { body: string }) => {
         let res: string = message.body
         console.log(res)
         if (res == "Unsupported")
@@ -66,7 +67,7 @@ export class AirConditionerComponent implements OnInit, AfterViewInit, OnDestroy
 
       })
 
-      stompClient.subscribe('/air-conditioner/3/temp', (message: { body: string }) => {
+      stompClient.subscribe('/air-conditioner/' + this.deviceId + '/temp', (message: { body: string }) => {
         let res: string = message.body
         console.log(res)
         this.currentTemp = res
@@ -75,7 +76,7 @@ export class AirConditionerComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   sendAction(request: AirConditionerActionRequest): Observable<string> {
-    return this.http.post<string>(environment.apiHost + 'airConditioner/3/action', request)
+    return this.http.post<string>(environment.apiHost + 'airConditioner/' + this.deviceId + '/action', request)
   }
   
   fetchReport(deviceId: number): Observable<AirConditionActionDTO[]> {
@@ -83,7 +84,7 @@ export class AirConditionerComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   ngOnDestroy(): void {
-    
+    this.socketService.closeWebSocket();
   }
 
   async cooling(): Promise<void> {
@@ -136,7 +137,7 @@ export class AirConditionerComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   fetch(): void {
-    this.fetchReport(3).subscribe((res: AirConditionActionDTO[]) => {
+    this.fetchReport(Number(this.deviceId)).subscribe((res: AirConditionActionDTO[]) => {
       this.ELEMENT_DATA = res
       this.dataSource = new MatTableDataSource<AirConditionActionDTO>(this.ELEMENT_DATA)
       this.dataSource.paginator = this.paginator;

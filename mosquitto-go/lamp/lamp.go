@@ -141,7 +141,7 @@ func getLamp(deviceId int) Lamp {
 
 }
 
-var lamp Lamp = getLamp(1)
+var lamp Lamp = getLamp(2)
 
 func SetLamp(id int) {
 	lamp = getLamp(id)
