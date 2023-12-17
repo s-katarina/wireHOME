@@ -19,6 +19,8 @@ public class AirConditionerDTO extends DeviceDTO {
     private ArrayList<RegimeAirConditioner> regimes;
     private String currentAction;
     private int temp;
+    private int minTemp;
+    private int maxTemp;
 
     public AirConditionerDTO(AirConditioner airConditioner) {
         this.setId(Math.toIntExact(airConditioner.getId()));
@@ -33,6 +35,8 @@ public class AirConditionerDTO extends DeviceDTO {
         this.setRegimes(airConditioner.getAvailableRegimes());
         this.setCurrentAction(airConditioner.getCurrentAction());
         this.setTemp(airConditioner.getTemp());
+        this.setMinTemp(airConditioner.getMinTemp());
+        this.setMaxTemp(airConditioner.getMaxTemp());
     }
 
 }

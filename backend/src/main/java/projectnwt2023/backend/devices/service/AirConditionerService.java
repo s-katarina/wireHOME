@@ -24,7 +24,8 @@ public class AirConditionerService implements IAirConditionerService {
             String payload = (String) message.getPayload();
             System.out.println("payload: " + payload);
             String response = payload.split(";")[0];
-            Double deviceId = Double.valueOf(payload.split(";")[1]);
+            Integer deviceId = Integer.valueOf(payload.split(";")[1]);
+            System.out.println("/air-conditioner/" + deviceId + "/response");
             simpMessagingTemplate.convertAndSend("/air-conditioner/" + deviceId + "/response", response);
         }
     }

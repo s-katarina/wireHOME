@@ -55,7 +55,7 @@ func getAmbientSensor(deviceId int) AmbientSensor {
 		return AmbientSensor{}
 	}
 
-	fmt.Println("Response for GET Lamp:", string(body))
+	fmt.Println("Response for GET AmbientSensor:", string(body))
 	fmt.Println(sensorData)
 	return sensorData
 

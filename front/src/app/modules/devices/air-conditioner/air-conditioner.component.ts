@@ -32,7 +32,14 @@ export class AirConditionerComponent implements OnInit, AfterViewInit, OnDestroy
     stompClient.connect({}, () => {
       stompClient.subscribe('/air-conditioner/3/response', (message: { body: string }) => {
         let res: string = message.body
-        console.log("res: " + res)
+        console.log(res)
+        if (res == "Unsupported")
+          this.actionStatus = "Unsupported"
+        else {
+          this.actionStatus = "Success"
+          this.currentAction = res
+        }
+
       })
     })
   }
@@ -47,19 +54,29 @@ export class AirConditionerComponent implements OnInit, AfterViewInit, OnDestroy
 
   async cooling(): Promise<void> {
     let request: AirConditionerActionRequest = {
-      action: "START COOLING",
+      action: "START COLLING",
       userEmail: this.authService.getEmail()
     }
     await this.sendAction(request).toPromise()
     this.actionStatus = "Trying to start cooling"
   }
 
-  heating(): void {
-
+  async heating(): Promise<void> {
+    let request: AirConditionerActionRequest = {
+      action: "START HEATING",
+      userEmail: this.authService.getEmail()
+    }
+    await this.sendAction(request).toPromise()
+    this.actionStatus = "Trying to start heating"
   }
 
-  ventilation(): void {
-
+  async ventilation(): Promise<void> {
+    let request: AirConditionerActionRequest = {
+      action: "START as",
+      userEmail: this.authService.getEmail()
+    }
+    await this.sendAction(request).toPromise()
+    this.actionStatus = "Trying to start ventilation"
   }
 
   setTemp(): void {

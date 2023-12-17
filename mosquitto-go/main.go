@@ -1,6 +1,6 @@
 package main
 
-import "tim10/mqtt/ambientSensor"
+import "tim10/mqtt/airConditioner"
 
 func main() {
     // ambientSensore.RunAmbientSensore();
@@ -8,8 +8,10 @@ func main() {
 
     //gate.RunGate()
     //lamp.RunLamp()
-	ambientSensor.RunAmbientSensor()
+	//ambientSensor.RunAmbientSensor()
+	airConditioner.RunAirConditioner()
 }
+
 
 
 
