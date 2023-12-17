@@ -9,3 +9,12 @@
   background-color: lightgray;
   cursor: pointer;
 }
+
+.moja-mat-tabela {
+  border-collapse: separate;
+  border-spacing: 10px; /* Postavite željeni razmak između kolona */
+}
+
+.mat-header-cell, .mat-cell {
+  padding: 10px; /* Opciono: Postavite željeni padding za sadržaj ćelija */
+}

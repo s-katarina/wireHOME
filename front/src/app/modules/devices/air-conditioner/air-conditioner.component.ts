@@ -155,11 +155,16 @@ export class AirConditionerComponent implements OnInit, AfterViewInit, OnDestroy
     let startDate: Date = new Date(this.dateForm.value.startDate)
     let endDate: Date = new Date(this.dateForm.value.endDate)
 
-    this.ELEMENT_DATA = this.ELEMENT_DATA.filter((record: AirConditionActionDTO) =>
-      (new Date(record.date)).getTime() >= startDate.getTime() && (new Date(record.date)).getTime() <= endDate.getTime()
-    )
+    let ret: AirConditionActionDTO[] = []
+    for (let i = 0; i < this.ELEMENT_DATA.length; i++) {
+      let date: Date = new Date(this.ELEMENT_DATA[i].date)
+      if (date.getTime() >= startDate.getTime() && date.getTime() <= endDate.getTime())
+        ret.push(this.ELEMENT_DATA[i])
+    }
+
+    this.ELEMENT_DATA = ret
     this.dataSource = new MatTableDataSource<AirConditionActionDTO>(this.ELEMENT_DATA)
-    this.dataSource.paginator = this.paginator;
+    this.dataSource.paginator = this.paginator
   }
 
 }
