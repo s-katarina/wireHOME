@@ -120,7 +120,11 @@ export class AmbientSensorComponent implements OnInit, AfterViewInit, OnDestroy 
         let temp: number = message.body
         console.log("temp: " + temp)
 
-        this.tempData.shift()
+        let now: number = Math.floor(Date.now() / 1000)
+        let firstInChart: number = Math.floor((new Date(this.tempData[0].x)).getTime() / 1000)
+
+        if (firstInChart + 60 * 60 < now)
+          this.tempData.shift()
 
         let point: GraphPoint = {
           x: (new Date()).toISOString(),
@@ -137,7 +141,11 @@ export class AmbientSensorComponent implements OnInit, AfterViewInit, OnDestroy 
         let hum: number = message.body
         console.log("hum: " + hum)
 
-        this.humData.shift()
+        let now: number = Math.floor(Date.now() / 1000)
+        let firstInChart: number = Math.floor((new Date(this.humData[0].x)).getTime() / 1000)
+
+        if (firstInChart + 60 * 60 < now)
+          this.humData.shift()
 
         let point: GraphPoint = {
           x: (new Date()).toISOString(),

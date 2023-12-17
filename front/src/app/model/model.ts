@@ -105,3 +105,8 @@ export interface GraphPoint {
     x: string,
     y: number
 }
+
+export interface AirConditionerActionRequest {
+    action: string,
+    userEmail: string
+}

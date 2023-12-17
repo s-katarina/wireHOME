@@ -1,0 +1,21 @@
+<div>
+
+  <h2>Current action: {{currentAction}}</h2>
+  <h3>Action status: {{actionStatus}}</h3>
+
+  <button class="report-btn" (click)="turnOn()">Turn on</button>
+  <button class="report-btn" (click)="turnOff()">Turn off</button>
+
+  <form [formGroup]="tempForm" (ngSubmit)="setTemp()">
+    <mat-form-field class="oneLine">
+        <mat-label>Set temperature</mat-label>
+        <input  matInput type="number" name="temp" formControlName="temp" />
+    </mat-form-field>
+    <button type="submit" class="report-btn">Set temp</button>
+  </form>
+
+  <button class="report-btn" (click)="cooling()">Cooling</button>
+  <button class="report-btn" (click)="heating()">Heating</button>
+  <button class="report-btn" (click)="ventilation()">Ventilation</button>
+
+</div>
