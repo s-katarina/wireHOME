@@ -10,7 +10,7 @@
   <form [formGroup]="tempForm" (ngSubmit)="setTemp()">
     <mat-form-field class="oneLine">
         <mat-label>Set temperature</mat-label>
-        <input  matInput type="number" name="temp" formControlName="temp" />
+        <input matInput type="number" name="temp" formControlName="temp" />
     </mat-form-field>
     <button type="submit" class="report-btn">Set temp</button>
   </form>
@@ -18,5 +18,59 @@
   <button class="report-btn" (click)="cooling()">Cooling</button>
   <button class="report-btn" (click)="heating()">Heating</button>
   <button class="report-btn" (click)="ventilation()">Ventilation</button>
+
+  <form [formGroup]="emailForm" (ngSubmit)="filterEmail()">
+    <mat-form-field class="oneLine">
+        <mat-label>User email</mat-label>
+        <input matInput type="text" name="email" formControlName="email" />
+    </mat-form-field>
+    <button type="submit" class="report-btn">Filter email</button>
+  </form>
+
+  <form [formGroup]="dateForm" (ngSubmit)="filterPeriod()">
+    <mat-form-field class="oneLine">
+        <mat-label>Start date</mat-label>
+        <input matInput type="datetime-local" name="startDate" formControlName="startDate" />
+    </mat-form-field>
+    <mat-form-field class="oneLine">
+        <mat-label>End Date</mat-label>
+        <input matInput type="datetime-local" name="endDate" formControlName="endDate" />
+    </mat-form-field>
+    <button type="submit" class="report-btn">In period</button>
+  </form>
+
+  <button class="report-btn" (click)="fetch()">Load actions</button>
+
+  <div class="mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource">
+  
+      <!-- Name Column -->
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef> Email </th>
+        <td mat-cell *matCellDef="let element"> {{element.email}} </td>
+      </ng-container>
+  
+      <!-- Weight Column -->
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef> Action </th>
+        <td mat-cell *matCellDef="let element"> {{element.action}} </td>
+      </ng-container>
+  
+      <!-- Symbol Column -->
+      <ng-container matColumnDef="date">
+        <th mat-header-cell *matHeaderCellDef> Date </th>
+        <td mat-cell *matCellDef="let element"> {{element.date}} </td>
+      </ng-container>
+  
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]"
+                   showFirstLastButtons
+                   aria-label="Select page of periodic elements">
+    </mat-paginator>
+  </div>
+  
 
 </div>

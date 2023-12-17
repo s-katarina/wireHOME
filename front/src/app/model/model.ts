@@ -110,3 +110,9 @@ export interface AirConditionerActionRequest {
     action: string,
     userEmail: string
 }
+
+export interface AirConditionActionDTO {
+    action: string,
+    email: string,
+    date: string
+}
