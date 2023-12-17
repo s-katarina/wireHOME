@@ -159,5 +159,10 @@ public class PropertyService implements IPropertyService {
         }
     }
 
+    @Override
+    public List<Property> getAllPropertyes() {
+        return propertyRepository.findAll();
+    }
+
 }
 

@@ -11,11 +11,10 @@ import projectnwt2023.backend.devices.dto.EnergyDTO;
 import projectnwt2023.backend.devices.service.InfluxDBService;
 import projectnwt2023.backend.devices.service.interfaces.IBatteryService;
 import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
+import projectnwt2023.backend.property.Property;
+import projectnwt2023.backend.property.service.interfaces.IPropertyService;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 
 @Component
@@ -32,12 +31,16 @@ public class BatteryScheduler {
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
 
+    @Autowired
+    IPropertyService propertyService;
+
     @Scheduled(fixedRate = 60000) // na min
     public void myScheduledTask() {
         ArrayList<EnergyDTO> energies = influxDBService.findLastMinEnergyOuttake();
         HashMap<Integer, Double> propertyEnergy = new HashMap<>();
         if (energies.size() == 0) {
             justSendBatteryState();
+            sendPropertyConsumption();
         }
         for (EnergyDTO energy:
              energies) {
@@ -58,9 +61,21 @@ public class BatteryScheduler {
 
     }
 
+    private void sendPropertyConsumption() {
+        List<Property> propertyes = propertyService.getAllPropertyes();
+        System.out.println("propertu " + propertyes.size());
+        for (Property property: propertyes) {
+            Map<String, String> values = new HashMap<>();
+            values.put("property-id", String.valueOf(property.getId()));
+            influxDBService.save("property-electricity", 0, new Date(), values);
+            this.simpMessagingTemplate.convertAndSend("/energy/" + property.getId(), 0);
+
+        }
+    }
+
     private void justSendBatteryState() {
-        ArrayList<Battery> batteries = batteryService.getAllBatteries();
-//        ArrayList<Battery> batteries = batteryService.getOnlineAllBatteries();
+//        ArrayList<Battery> batteries = batteryService.getAllBatteries(); //TODO
+        ArrayList<Battery> batteries = batteryService.getOnlineAllBatteries();
         for (Battery battery: batteries) {
             Map<String, String> values = new HashMap<>();
             values.put("device-id", String.valueOf(battery.getId()));
@@ -83,8 +98,8 @@ public class BatteryScheduler {
         influxDBService.save("property-electricity", (float) aggregatedAmount, new Date(), values);
         this.simpMessagingTemplate.convertAndSend("/energy/" + propertyId, aggregatedAmount);
 
-        ArrayList<Battery> batteries = batteryService.getBatteriesByPropertyId((long) propertyId);
-        //ArrayList<Battery> batteries = batteryService.getOnlineBatteriesByPropertyId((long) propertyId); //TODO samo online baterija
+//        ArrayList<Battery> batteries = batteryService.getBatteriesByPropertyId((long) propertyId);
+        ArrayList<Battery> batteries = batteryService.getOnlineBatteriesByPropertyId((long) propertyId); //TODO samo online baterija
 
         System.out.println(batteries.size());
         if (batteries.size() == 0) {
@@ -97,6 +112,7 @@ public class BatteryScheduler {
     private void processBateruesInProperty(int propertyId, double aggregatedAmount, ArrayList<Battery> batteries) {
         double perBattery = aggregatedAmount / batteries.size();
         double finalElectisity = 0;
+        System.out.println("proces aktivnei baterija" + batteries.size());
         for(Battery battery: batteries)
         {
             double electrisity = battery.getCurrentFill() + perBattery;

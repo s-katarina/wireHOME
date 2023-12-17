@@ -22,7 +22,7 @@ export class OnlineOfflineChartComponent implements OnInit {
 	"#7f91bc92",
 	"#acacbe"
 	]);
-    this.pyChart = new CanvasJS.Chart("chartOnlineContainer",
+    this.pyChart = new CanvasJS.Chart("PYCHARTchartContainer",
 	{
 		colorSet: "appColors",
 
