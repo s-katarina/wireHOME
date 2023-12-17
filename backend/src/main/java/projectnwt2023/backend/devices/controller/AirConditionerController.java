@@ -8,14 +8,14 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import projectnwt2023.backend.devices.AirConditioner;
 import projectnwt2023.backend.devices.AmbientSensor;
-import projectnwt2023.backend.devices.dto.AirConditionerActionRequest;
-import projectnwt2023.backend.devices.dto.AirConditionerDTO;
-import projectnwt2023.backend.devices.dto.AmbientSensorDTO;
+import projectnwt2023.backend.devices.dto.*;
 import projectnwt2023.backend.devices.mqtt.Gateway;
 import projectnwt2023.backend.devices.service.InfluxDBService;
 import projectnwt2023.backend.devices.service.interfaces.IAirConditionerService;
 import projectnwt2023.backend.devices.service.interfaces.IAmbientSensorService;
 import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
+
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/api/airConditioner")
@@ -46,6 +46,15 @@ public class AirConditionerController {
 
         // posalji mqtt simulatoru   airConditioner/3/request   colling;3sparklez.cat@gmail.com
         mqttGateway.sendToMqtt(request.getAction() + ";" + request.getUserEmail(), "airConditioner/" + deviceId + "/request");
+    }
+
+    @GetMapping(value = "/{deviceId}/actions", produces = "application/json")
+    ResponseEntity<ArrayList<AirConditionerActionDTO>> getAirConditionerActions(@PathVariable Integer deviceId) {
+
+        ArrayList<AirConditionerActionDTO> ret = influxDBService.getAllAirConditionerActions(deviceId);
+
+        return new ResponseEntity<>(ret, HttpStatus.OK);
+
     }
 
 }
