@@ -61,10 +61,10 @@ export class LampComponent implements OnInit, AfterViewInit, OnDestroy {
       exportEnabled: true,
       theme: "light2",
       title: {
-      text: "Bulb usage in last 24 hours"
+      text: "Bulb on/off in last 24 hours"
       },
       data: [{
-      type: "line",
+      type: "scatter",
       xValueType: "dateTime",
       dataPoints: []
       }]

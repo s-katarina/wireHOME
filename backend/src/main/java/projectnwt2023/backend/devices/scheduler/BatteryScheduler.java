@@ -115,7 +115,7 @@ public class BatteryScheduler {
         System.out.println("proces aktivnei baterija" + batteries.size());
         for(Battery battery: batteries)
         {
-            double electrisity = battery.getCurrentFill() + perBattery;
+            double electrisity = battery.getCurrentFill() - perBattery;
             if (electrisity<0){
                 battery.setCurrentFill(0);
                 finalElectisity += electrisity;
@@ -127,6 +127,7 @@ public class BatteryScheduler {
                 //posalji koliko je poslao
             } else {
                 battery.setCapacity(electrisity);
+                deviceService.save(battery);
             }
             Map<String, String> values = new HashMap<>();
             values.put("device-id", String.valueOf(battery.getId()));
