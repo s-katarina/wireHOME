@@ -25,8 +25,5 @@ public interface IPropertyService {
 
     Property rejectProperty(Long id, String reason);
 
-    String sendMailApproved(Property property);
-    String sendMailRejected(Property property, String reason);
-
     List<Property> getAllPropertyes();
 }
