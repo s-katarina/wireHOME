@@ -79,7 +79,9 @@ export class SinglePropertyComponent implements OnInit {
         this.router.navigate(['/lamp']);
     } else if (device.deviceType === "gate") {
         this.router.navigate(['/gate'])
-    }
+    } else if (device.deviceType === "sprinkler") {
+      this.router.navigate(['/sprinkler'])
+  }
   }
 
   navigateToLargeEnergyDevice(device: DeviceDTO) {

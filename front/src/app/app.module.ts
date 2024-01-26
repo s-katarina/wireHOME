@@ -25,6 +25,7 @@ import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
 import { DatePipe } from '@angular/common';
 import { BatteryComponent } from './modules/devices/large-energy/battery/battery.component';
 import { OnlineOfflineChartComponent } from './modules/devices/online-offline-chart/online-offline-chart.component';
+import { SprinklerComponent } from './modules/devices/outdoor/sprinkler/sprinkler.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import { OnlineOfflineChartComponent } from './modules/devices/online-offline-ch
     BatteryComponent,
     OnlineOfflineChartComponent,
     AmbientSensorComponent,
-    AirConditionerComponent
+    AirConditionerComponent,
+    SprinklerComponent
   ],
   imports: [
     BrowserModule,

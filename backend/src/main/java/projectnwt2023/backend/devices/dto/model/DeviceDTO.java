@@ -1,4 +1,4 @@
-package projectnwt2023.backend.devices.dto;
+package projectnwt2023.backend.devices.dto.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

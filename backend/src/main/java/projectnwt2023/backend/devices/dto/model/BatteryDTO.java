@@ -1,4 +1,4 @@
-package projectnwt2023.backend.devices.dto;
+package projectnwt2023.backend.devices.dto.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,7 +10,7 @@ import projectnwt2023.backend.devices.Battery;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class BatteryDTO extends DeviceDTO{
+public class BatteryDTO extends DeviceDTO {
     private double capacity;
     private double currentFill;
 

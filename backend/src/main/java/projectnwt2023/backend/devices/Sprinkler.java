@@ -15,15 +15,10 @@ import java.util.Collection;
 @Table
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Sprinkler extends Device{
-//    private ArrayList<RegimeType> availableRegimes;
-
-    @OneToMany(fetch = FetchType.LAZY,
-            mappedBy = "device")
-    private Collection<Regime> programedRegimes;
-
+    private boolean isOn;
     public Sprinkler(DeviceRequestDTO deviceRequestDTO) {
         super(deviceRequestDTO);
-        this.programedRegimes = new ArrayList<>();
+        this.isOn = false;
         this.setTopic("sprinkler");
     }
 }

@@ -9,17 +9,15 @@ import projectnwt2023.backend.devices.Battery;
 import projectnwt2023.backend.devices.Device;
 import projectnwt2023.backend.devices.SolarPanel;
 import projectnwt2023.backend.devices.dto.*;
-import projectnwt2023.backend.devices.mqtt.Gateway;
+import projectnwt2023.backend.devices.dto.model.BatteryDTO;
 import projectnwt2023.backend.devices.dto.GraphDTO;
 import projectnwt2023.backend.devices.dto.GraphRequestDTO;
-import projectnwt2023.backend.devices.dto.SolarPanelDTO;
+import projectnwt2023.backend.devices.dto.model.SolarPanelDTO;
 import projectnwt2023.backend.devices.service.InfluxDBService;
 import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
 import projectnwt2023.backend.helper.ApiResponse;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 @RestController

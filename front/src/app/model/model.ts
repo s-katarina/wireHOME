@@ -86,6 +86,7 @@ export interface Gate extends DeviceDTO {
     licencePlates: string[]
 }
 
+
 export interface SolarPanel extends DeviceDTO {
     surfaceSize: number;
     efficiency: number;

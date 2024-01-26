@@ -1,4 +1,4 @@
-package projectnwt2023.backend.devices.dto;
+package projectnwt2023.backend.devices.dto.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import projectnwt2023.backend.devices.Lamp;
 import projectnwt2023.backend.devices.State;
+import projectnwt2023.backend.devices.dto.model.DeviceDTO;
 
 @Getter
 @Setter

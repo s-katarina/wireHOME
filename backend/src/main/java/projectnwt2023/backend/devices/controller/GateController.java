@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import projectnwt2023.backend.devices.Device;
 import projectnwt2023.backend.devices.Gate;
 import projectnwt2023.backend.devices.mqtt.Gateway;
-import projectnwt2023.backend.devices.dto.GateDTO;
+import projectnwt2023.backend.devices.dto.model.GateDTO;
 import projectnwt2023.backend.devices.dto.GateEventDTO;
 import projectnwt2023.backend.devices.dto.GateEventMeasurement;
 import projectnwt2023.backend.devices.service.interfaces.IDeviceService;

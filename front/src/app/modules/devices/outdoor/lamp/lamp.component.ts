@@ -130,16 +130,6 @@ export class LampComponent implements OnInit, AfterViewInit, OnDestroy {
     this.socketService.closeWebSocket();
   }
 
-  onOffClick(): void {
-    if (this.lamp?.state) {
-      this.lampService.postOff(this.lamp.id).subscribe((res: any) => {
-        console.log(res);
-      });
-    } else this.lampService.postOn(this.lamp!.id).subscribe((res: any) => {
-      console.log(res);
-    });
-  }
-
   onBulbOnOffClick(): void {
     if (this.lamp?.bulbState) {
       this.lampService.postBulbOff(this.lamp.id).subscribe((res: any) => {

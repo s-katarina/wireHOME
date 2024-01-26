@@ -18,6 +18,7 @@ import { SolarPanelComponent } from '../modules/devices/large-energy/solar-panel
 import { BatteryComponent } from '../modules/devices/large-energy/battery/battery.component';
 import { AmbientSensorComponent } from '../modules/devices/ambient-sensor/ambient-sensor.component';
 import { AirConditionerComponent } from '../modules/devices/air-conditioner/air-conditioner.component';
+import { SprinklerComponent } from '../modules/devices/outdoor/sprinkler/sprinkler.component';
 
 const routes: Routes = [
   { path: 'properties', component: PropertyOverviewComponent, canActivate: [TokenGuard, RoleGuard ], data: {roles: ["AUTH_USER"]}  },
@@ -30,6 +31,7 @@ const routes: Routes = [
   { path: 'register-admin', component: RegisterComponent, canActivate: [TokenGuard, RoleGuard ], data: {roles: ["SUPER_ADMIN"]} },
   { path: 'lamp', component: LampComponent },
   { path: 'gate', component: GateComponent },
+  { path: 'sprinkler', component: SprinklerComponent },
   { path: 'energy-overwiev', component:EnergyOverviewComponent},
   { path: 'solarPanel', component:SolarPanelComponent},
   { path: 'battery', component: BatteryComponent},

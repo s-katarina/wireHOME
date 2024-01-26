@@ -7,6 +7,6 @@ import lombok.*;
 @Getter
 @Setter
 @ToString
-public class GateEventPayloadDTO extends PayloadDTO {
+public class PayloadWithCallerDTO extends PayloadDTO {
     private String caller;
 }

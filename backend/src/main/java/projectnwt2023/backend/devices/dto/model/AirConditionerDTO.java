@@ -1,11 +1,9 @@
-package projectnwt2023.backend.devices.dto;
+package projectnwt2023.backend.devices.dto.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import projectnwt2023.backend.devices.AirConditioner;
-import projectnwt2023.backend.devices.AmbientSensor;
 import projectnwt2023.backend.devices.RegimeAirConditioner;
 import projectnwt2023.backend.devices.State;
 

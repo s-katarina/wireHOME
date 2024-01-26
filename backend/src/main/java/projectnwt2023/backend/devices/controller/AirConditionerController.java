@@ -2,17 +2,15 @@ package projectnwt2023.backend.devices.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import projectnwt2023.backend.devices.AirConditioner;
-import projectnwt2023.backend.devices.AmbientSensor;
 import projectnwt2023.backend.devices.dto.*;
+import projectnwt2023.backend.devices.dto.model.AirConditionerDTO;
 import projectnwt2023.backend.devices.mqtt.Gateway;
 import projectnwt2023.backend.devices.service.InfluxDBService;
 import projectnwt2023.backend.devices.service.interfaces.IAirConditionerService;
-import projectnwt2023.backend.devices.service.interfaces.IAmbientSensorService;
 import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
 
 import java.util.ArrayList;

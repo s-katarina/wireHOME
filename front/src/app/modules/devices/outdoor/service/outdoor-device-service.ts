@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { ApiResponse, Gate, Lamp } from 'src/app/model/model';
+import { ApiResponse, DeviceDTO, Gate, Lamp } from 'src/app/model/model';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -26,12 +26,13 @@ export class OutdoorDeviceService {
     return this.http.get<Gate[]>(environment.apiHost + `gate/${id}`)
   }
 
-  
-  postOn(id:string): Observable<any> {
-    return this.http.post<any>(environment.apiHost + `device/on/${id}`, {})
+  getSprinkler(id:string): Observable<DeviceDTO[]> {
+    return this.http.get<DeviceDTO[]>(environment.apiHost + `sprinkler/${id}`)
   }
-  postOff(id:string): Observable<any> {
-    return this.http.post<any>(environment.apiHost + `device/off/${id}`, {})
+  
+  putSprinklerOnOff(id: string, newOn: boolean): Observable<any> {
+    const params = new HttpParams().set('val', newOn);
+    return this.http.put<any>(environment.apiHost + `sprinkler/${id}/on`, {}, {params})
   }
 
   postBulbOn(id:string): Observable<any> {

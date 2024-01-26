@@ -6,13 +6,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import projectnwt2023.backend.devices.AmbientSensor;
-import projectnwt2023.backend.devices.Lamp;
 import projectnwt2023.backend.devices.dto.*;
+import projectnwt2023.backend.devices.dto.model.AmbientSensorDTO;
 import projectnwt2023.backend.devices.service.InfluxDBService;
 import projectnwt2023.backend.devices.service.interfaces.IAmbientSensorService;
 import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
-
-import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/api/ambientSensor")
