@@ -19,7 +19,7 @@ import (
 type Sprinkler struct {
 	device.BaseDevice
 	IsOn 				bool `json:"on"`
-	IsAutomatic      	bool `json:"automatic"`
+	ScheduleMode      	bool `json:"scheduleMode"`
 	client           	mqtt.Client
 	Schedule			Schedule
 	cron				*cron.Cron
@@ -40,6 +40,7 @@ type Schedule struct {
 	EndHour 			int 	`json:"endHour"`
 	Weekdays 			[]int 	`json:"weekdays"`
 	Caller				string 	`json:"caller"`
+	Off					bool 	`json:"off"`
 }
 
 type ScheduleForBackend struct {
@@ -76,7 +77,7 @@ func (sprinkler Sprinkler) SubToOnSet(client mqtt.Client) {
 	fmt.Printf("Subscribed to topic: %s", topic)
 }
 
-func (sprinkler Sprinkler) SubToScheduleSet() {
+func (sprinkler Sprinkler) SubToSchedule() {
 	// Subscribe to topic to receive ON/OFF commands
 	topic := fmt.Sprintf("sprinkler/%d/%s", sprinkler.Id, "schedule/set")
 	token := sprinkler.client.Subscribe(topic, 1, nil)
@@ -185,6 +186,37 @@ func (sprinkler Sprinkler) updateSchedule(schedule Schedule) {
 	fmt.Println("payload", payload)
 }
 
+
+func (sprinkler Sprinkler) turnOffSchedule(schedule Schedule) bool {
+
+
+	currentTime := time.Now()
+	message := device.MessageDTO{
+		DeviceId:  sprinkler.Id,
+		UsedFor:   "OFF",
+		TimeStamp: currentTime,
+	} 
+	var msg = SprinklerMessageDTO {
+		MessageDTO: message,
+		Caller:     schedule.Caller,
+	}
+	
+	topic := fmt.Sprintf("sprinkler/%d/%s", sprinkler.Id, "schedule/off")
+
+	jsonData, err := json.Marshal(msg)
+	if err != nil {
+		fmt.Println("JSON convert error - sprinkler on/off")
+		return false
+	}
+
+	// Respond to backend that command is applied
+	token := sprinkler.client.Publish(topic, 0, false, jsonData)
+	token.Wait()
+	fmt.Println("At END OF sprinkler turn off schedule")
+	fmt.Println("msg:", msg)
+	return true
+}
+
 func getSprinkler(deviceId int) Sprinkler {
 
 	apiUrl := fmt.Sprintf("%s/sprinkler/%d", constants.ApiUrl, deviceId)
@@ -266,9 +298,17 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 			log.Printf("Error parsing JSON: %v", err)
 			return
 		}
+		if (payload.Off) {
+			if (sprinkler.turnOffSchedule(payload)) {
+				sprinkler.ScheduleMode = false
+				sprinkler.cron.Stop()
+			}
+			return
+		}
 		sprinkler.updateSchedule(payload)
 		
 	}
+
 }
 
 var connectHandler mqtt.OnConnectHandler = func(client mqtt.Client) {
@@ -310,7 +350,7 @@ func RunSprinkler() {
 
 	sprinkler.Sub(client)
 	sprinkler.SubToOnSet(client)
-	sprinkler.SubToScheduleSet()
+	sprinkler.SubToSchedule()
 
 	go sprinkler.TakesElectisity(client)
 	sprinkler.SendHeartBeat(client)

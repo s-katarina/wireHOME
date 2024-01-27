@@ -9,4 +9,6 @@ public interface ISprinklerService {
     public Sprinkler changeOn(Long sprinklerId, String usedFor);
 
     Sprinkler setSchedule(SprinklerScheduleDTO sprinklerScheduleDTO);
+
+    Sprinkler turnOffSchedule(Integer deviceId);
 }

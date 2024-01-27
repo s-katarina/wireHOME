@@ -77,7 +77,25 @@ public class SprinklerController {
         if (!user.isPresent()) return (ResponseEntity<?>) ResponseEntity.badRequest();
         try {
             ObjectMapper mapper = new ObjectMapper();
-            SetSchedulePayload payload = new SetSchedulePayload(scheduleDTO.getStartHour(), scheduleDTO.getEndHour(), scheduleDTO.getWeekdays(), user.get().getEmail());
+            SetSchedulePayload payload = new SetSchedulePayload(scheduleDTO.getStartHour(), scheduleDTO.getEndHour(), scheduleDTO.getWeekdays(), user.get().getEmail(), null);
+            String jsonString = mapper.writeValueAsString(payload);
+            mqttGateway.sendToMqtt(jsonString, "sprinkler/"+String.valueOf(deviceId)+"/schedule/set");
+            return ResponseEntity.ok("Success");
+        } catch (Exception e){
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("Sprinkler on/off set failed");
+        }
+    }
+
+    @PutMapping(value = "/{deviceId}/schedule/off", produces = "application/json")
+    ResponseEntity<?> turnOffSchedule(@PathVariable Integer deviceId){
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        Optional<AppUser> user = appUserService.findByEmail(userDetails.getUsername());
+        if (!user.isPresent()) return (ResponseEntity<?>) ResponseEntity.badRequest();
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            SetSchedulePayload payload = new SetSchedulePayload(null, null, new int[0], user.get().getEmail(), true);
             String jsonString = mapper.writeValueAsString(payload);
             mqttGateway.sendToMqtt(jsonString, "sprinkler/"+String.valueOf(deviceId)+"/schedule/set");
             return ResponseEntity.ok("Success");
@@ -105,11 +123,13 @@ class SetOnPayload {
 @AllArgsConstructor
 class SetSchedulePayload {
     @JsonProperty("startHour")
-    private int startHour;
+    private Integer startHour;
     @JsonProperty("endHour")
-    private int endHour;
+    private Integer endHour;
     @JsonProperty("weekdays")
     private int[] weekdays;
     @JsonProperty("caller")
     private String caller;
+    @JsonProperty("off")
+    private Boolean off;
 }

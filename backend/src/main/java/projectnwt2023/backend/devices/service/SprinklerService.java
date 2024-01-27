@@ -38,6 +38,9 @@ public class SprinklerService implements ISprinklerService {
         } else if (isStringMatchingPattern(topic, "sprinkler/\\d+/schedule")) {
             SprinklerScheduleDTO payloadDTO = Beans.getPayload(request, SprinklerScheduleDTO.class);
             setSchedule(payloadDTO);
+        } else if (isStringMatchingPattern(topic, "sprinkler/\\d+/schedule/off")) {
+            PayloadDTO payloadDTO = Beans.getPayload(request, PayloadWithCallerDTO.class);
+            turnOffSchedule(payloadDTO.getDeviceId());
         }
     }
 
@@ -75,10 +78,27 @@ public class SprinklerService implements ISprinklerService {
                 sprinklerScheduleDTO.getEndHour(),
                 sprinklerScheduleDTO.getWeekdays());
         System.out.println("Changed sprinkler schedule " );
-        // Update web sockets for frontend
         Sprinkler s = deviceRepository.save(sprinkler);
         System.out.println(sprinkler.getScheduleWeekdays());
+        // Update web sockets for frontend
         this.simpMessagingTemplate.convertAndSend("/sprinkler/" + sprinkler.getId(), new SprinklerDTO(sprinkler));
         return s;
     }
+
+    @Override
+    public Sprinkler turnOffSchedule(Integer deviceId) {
+        Optional<Device> device = deviceRepository.findById(deviceId.longValue());
+        if (!device.isPresent()) {
+            throw new EntityNotFoundException(Lamp.class);
+        }
+
+        Sprinkler sprinkler = (Sprinkler) device.get();
+        sprinkler.setScheduleMode(false);
+
+        Sprinkler s = deviceRepository.save(sprinkler);
+        this.simpMessagingTemplate.convertAndSend("/sprinkler/" + sprinkler.getId(), new SprinklerDTO(sprinkler));
+        System.out.println("Changed sprinkler schedule mode to " + sprinkler.isScheduleMode() );
+        return s;
+    }
+
 }

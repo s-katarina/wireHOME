@@ -58,7 +58,7 @@ export class SprinklerComponent implements OnInit, AfterViewInit {
       this.sprinkler = res;
       if (this.sprinkler!.scheduleMode) {
         this.updateScheduleView()
-      }
+      } else this.resetScheduleView()
     })
   }
 
@@ -103,7 +103,12 @@ export class SprinklerComponent implements OnInit, AfterViewInit {
   }
 
   onScheduleOnOffClick(): void {
-
+    if (this.sprinkler!.scheduleMode) {
+      this.sprinklerService.putSprinklerTurnOffSchedule(this.sprinklerId).subscribe((res:any) => {
+        console.log(res)
+      })
+      this.resetScheduleView()
+    }
   }
 
 
@@ -121,6 +126,17 @@ export class SprinklerComponent implements OnInit, AfterViewInit {
     let weekdayNames = Object.entries(this.days).map(([key, value]) => key);
     for (let dayInt of this.sprinkler!.scheduleDTO!.weekdays) {
       this.daysClicked[weekdayNames[dayInt]] = true
+    }
+  }
+
+  resetScheduleView() {
+    this.startHour = 23
+    this.endHour = 7
+    this.startHourDisplayValue = String(this.startHour) + ":00"
+    this.endHourDisplayValue = String(this.endHour) + ":00"
+
+    for (let key in this.daysClicked) {
+      this.daysClicked[key] = true;
     }
   }
 

@@ -43,6 +43,10 @@ export class OutdoorDeviceService {
     }, {})
   }
 
+  putSprinklerTurnOffSchedule(id: string): Observable<any> {
+    return this.http.put<any>(environment.apiHost + `sprinkler/${id}/schedule/off`, {}, {})
+  }
+
   postBulbOn(id:string): Observable<any> {
     return this.http.put<any>(environment.apiHost + `lamp/${id}/bulb-on`, {})
   }

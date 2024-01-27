@@ -22,11 +22,11 @@
     
                 <div class="settings-group">
                     <button   mat-button [ngClass]="{'disabled-button': !sprinkler!.state}"
-                    (click)="makeSchedule=!makeSchedule"><mat-icon>autorenew</mat-icon></button>
+                    (click)="onScheduleOnOffClick();"><mat-icon>autorenew</mat-icon></button>
                     <button class="placeholder-btn" mat-button >Schedule mode is {{this.sprinkler?.scheduleMode ? "On" : "Off"}}</button>
                     <div *ngIf="this.sprinkler!.state" class="make-schedule">
-                        <h5 *ngIf="makeSchedule">Make schedule</h5>
-                        <h5 *ngIf="!makeSchedule && this.sprinkler!.scheduleMode">Current schedule</h5>
+                        <h5 *ngIf="!this.sprinkler!.scheduleMode">Make schedule</h5>
+                        <h5 *ngIf="this.sprinkler!.scheduleMode">Current schedule</h5>
                         <div style="display: flex; flex-direction:row;">
                             <p>Time to turn on:</p>
                             <div class="timepicker">
