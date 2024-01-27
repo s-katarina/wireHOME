@@ -1,6 +1,7 @@
 package projectnwt2023.backend.devices;
 
 import lombok.*;
+import org.springframework.transaction.annotation.Transactional;
 import projectnwt2023.backend.devices.dto.DeviceRequestDTO;
 
 import javax.persistence.*;
@@ -48,7 +49,7 @@ public class Sprinkler extends Device{
     public Integer getScheduleEnd() {
         return this.schedule.getEndHour();
     }
-
+    @Transactional
     public List<Integer> getScheduleWeekdays() {
         if (this.schedule.getWeekdays() != null) {
             return new ArrayList<>(this.schedule.getWeekdays());

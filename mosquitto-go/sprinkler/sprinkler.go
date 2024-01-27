@@ -21,7 +21,7 @@ type Sprinkler struct {
 	IsOn 				bool `json:"on"`
 	ScheduleMode      	bool `json:"scheduleMode"`
 	client           	mqtt.Client
-	Schedule			Schedule
+	Schedule			Schedule `json:"scheduleDTO"`
 	cron				*cron.Cron
 }
 
@@ -138,6 +138,10 @@ func (sprinkler Sprinkler) toggleOn(client mqtt.Client, newOn bool, caller strin
 }
 
 func (sprinkler Sprinkler) operateOnSchedule() {
+
+	sprinkler.cron.Stop()
+	sprinkler.cron = cron.New()
+
 	weekdays := ""
 	for i, weekday := range sprinkler.Schedule.Weekdays {
 		if i == len(sprinkler.Schedule.Weekdays) - 1 {
@@ -147,6 +151,8 @@ func (sprinkler Sprinkler) operateOnSchedule() {
 		weekdays += strconv.Itoa(weekday) + ","
 	}
 
+	// onScheduleString := "* * * * *"
+	// offScheduleString := "* * * * *"
 	onScheduleString := fmt.Sprintf("0 %d * * %s", sprinkler.Schedule.StartHour, weekdays)
 	offScheduleString := fmt.Sprintf("0 %d * * %s", sprinkler.Schedule.EndHour, weekdays)
 	
@@ -155,17 +161,14 @@ func (sprinkler Sprinkler) operateOnSchedule() {
 
 	sprinkler.cron.AddFunc(onScheduleString, func() {sprinkler.toggleOn(sprinkler.client, true, "sprinkler")})
 	sprinkler.cron.AddFunc(offScheduleString, func() {sprinkler.toggleOn(sprinkler.client, false, "sprinkler")})
-
+	sprinkler.cron.Start()
 }
 
 func (sprinkler Sprinkler) updateSchedule(schedule Schedule) {
-	sprinkler.cron.Stop()
+	
 	sprinkler.Schedule = schedule
-	sprinkler.cron = cron.New()
 	sprinkler.operateOnSchedule()
-	sprinkler.cron.Start()
 
-	// TODO save updated schedule
 	topic := fmt.Sprintf("sprinkler/%d/%s", sprinkler.Id, "schedule")
 
 	payload := ScheduleForBackend {
@@ -185,7 +188,6 @@ func (sprinkler Sprinkler) updateSchedule(schedule Schedule) {
 	fmt.Println("At END OF sprinkler update schedule")
 	fmt.Println("payload", payload)
 }
-
 
 func (sprinkler Sprinkler) turnOffSchedule(schedule Schedule) bool {
 
@@ -347,6 +349,10 @@ func RunSprinkler() {
 	}
 	sprinkler.client = client
 	sprinkler.cron = cron.New()
+
+	if (sprinkler.ScheduleMode) {
+		sprinkler.operateOnSchedule()
+	}
 
 	sprinkler.Sub(client)
 	sprinkler.SubToOnSet(client)
