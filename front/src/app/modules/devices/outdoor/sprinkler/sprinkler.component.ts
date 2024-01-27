@@ -28,24 +28,26 @@ export class SprinklerComponent implements OnInit, AfterViewInit {
   makeSchedule: boolean = false;
 
   startHour: number = 23;
+  startHourDisplayValue = "23";
   endHour: number = 7;
+  endHourDisplayValue = "7";
   days: Record<string, number> = {
+    'Sun': 0,
     'Mon': 1,
     'Tue': 2,
     'Wen': 3,
     'Thu': 4,
     'Fri': 5,
-    'Sat': 6,
-    'Sun': 0
+    'Sat': 6
   }
   daysClicked: Record<string, boolean> = {
+    'Sun': true,
     'Mon': true,
     'Tue': true,
     'Wen': true,
     'Thu': true,
     'Fri': true,
-    'Sat': true,
-    'Sun': true
+    'Sat': true
   }
   daysList: { key: string, value: number }[] = Object.entries(this.days).map(([key, value]) => ({ key, value }));
 
@@ -54,6 +56,9 @@ export class SprinklerComponent implements OnInit, AfterViewInit {
     this.sprinklerService.getSprinkler(this.sprinklerId).subscribe((res: any) => {
       console.log("Get sprinkler res:", res)
       this.sprinkler = res;
+      if (this.sprinkler!.scheduleMode) {
+        this.updateScheduleView()
+      }
     })
   }
 
@@ -66,6 +71,9 @@ export class SprinklerComponent implements OnInit, AfterViewInit {
           const parsedData : Sprinkler = JSON.parse(message.body);
           console.log("From sprinkler socket:", parsedData)
           this.sprinkler = parsedData
+          if (this.sprinkler!.scheduleMode) {
+            this.updateScheduleView()
+          }
           this.fireSwalToast(true, "Sprinkler updated")
           return this.sprinkler;
         } catch (error) {
@@ -96,6 +104,24 @@ export class SprinklerComponent implements OnInit, AfterViewInit {
 
   onScheduleOnOffClick(): void {
 
+  }
+
+
+
+  updateScheduleView() {
+    this.startHour = this.sprinkler!.scheduleDTO!.startHour
+    this.endHour = this.sprinkler!.scheduleDTO!.endHour
+    this.startHourDisplayValue = String(this.startHour) + ":00"
+    this.endHourDisplayValue = String(this.endHour) + ":00"
+
+    for (let key in this.daysClicked) {
+      this.daysClicked[key] = false;
+    }
+
+    let weekdayNames = Object.entries(this.days).map(([key, value]) => key);
+    for (let dayInt of this.sprinkler!.scheduleDTO!.weekdays) {
+      this.daysClicked[weekdayNames[dayInt]] = true
+    }
   }
 
   onScheduleSaveClick(): void {

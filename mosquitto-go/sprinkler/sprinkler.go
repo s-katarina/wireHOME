@@ -146,17 +146,9 @@ func (sprinkler Sprinkler) operateOnSchedule() {
 		weekdays += strconv.Itoa(weekday) + ","
 	}
 
-	// seconds minutes hours day-of-month month day-of-week
-	// onScheduleString := fmt.Sprintf("0 %d * * %s", sprinkler.Schedule.StartHour, weekdays)
-	// offScheduleString := fmt.Sprintf("0 %d * * %s", sprinkler.Schedule.EndHour, weekdays)
-	
-	// onScheduleString := "* * * * *"
-	// offScheduleString := "* * * * *"
-	
 	onScheduleString := fmt.Sprintf("0 %d * * %s", sprinkler.Schedule.StartHour, weekdays)
-	offScheduleString := fmt.Sprintf("0 %d * * %s", sprinkler.Schedule.StartHour, weekdays)
+	offScheduleString := fmt.Sprintf("0 %d * * %s", sprinkler.Schedule.EndHour, weekdays)
 	
-	fmt.Println("weekdays string for cron: ", weekdays)
 	fmt.Println("on schedule string: ", onScheduleString)
 	fmt.Println("off schedule string: ", offScheduleString)
 

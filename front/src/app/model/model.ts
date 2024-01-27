@@ -88,6 +88,11 @@ export interface Gate extends DeviceDTO {
 
 export interface Sprinkler extends DeviceDTO {
     scheduleMode: boolean
+    scheduleDTO: {
+        startHour: number,
+        endHour: number,
+        weekdays: number[]
+    }
 }
 
 export interface SolarPanel extends DeviceDTO {
