@@ -16,9 +16,11 @@ import java.util.Collection;
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Sprinkler extends Device{
     private boolean isOn;
+    private boolean scheduleMode;
     public Sprinkler(DeviceRequestDTO deviceRequestDTO) {
         super(deviceRequestDTO);
         this.isOn = false;
         this.setTopic("sprinkler");
+        this.scheduleMode = false;
     }
 }

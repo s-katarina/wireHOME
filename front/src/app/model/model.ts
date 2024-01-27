@@ -86,6 +86,9 @@ export interface Gate extends DeviceDTO {
     licencePlates: string[]
 }
 
+export interface Sprinkler extends DeviceDTO {
+    scheduleMode: boolean
+}
 
 export interface SolarPanel extends DeviceDTO {
     surfaceSize: number;
