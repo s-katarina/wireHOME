@@ -79,7 +79,7 @@ public class SprinklerService implements ISprinklerService {
                 sprinklerScheduleDTO.getWeekdays());
         System.out.println("Changed sprinkler schedule " );
         Sprinkler s = deviceRepository.save(sprinkler);
-        System.out.println(sprinkler.getScheduleWeekdays());
+        System.out.println(sprinkler.getSchedule().getWeekdays());
         // Update web sockets for frontend
         this.simpMessagingTemplate.convertAndSend("/sprinkler/" + sprinkler.getId(), new SprinklerDTO(sprinkler));
         return s;

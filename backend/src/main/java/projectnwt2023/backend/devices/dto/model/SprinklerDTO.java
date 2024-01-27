@@ -31,7 +31,7 @@ public class SprinklerDTO extends DeviceDTO {
         this.setOn(sprinkler.isOn());
         this.setScheduleMode(sprinkler.isScheduleMode());
         if (sprinkler.isScheduleMode()) {
-            this.setScheduleDTO(new SprinklerScheduleDTO(null, sprinkler.getScheduleStart(), sprinkler.getScheduleEnd(), sprinkler.getScheduleWeekdays().stream().mapToInt(Integer::intValue).toArray()));
+            this.setScheduleDTO(new SprinklerScheduleDTO(null, sprinkler.getSchedule().getStartHour(), sprinkler.getSchedule().getEndHour(), sprinkler.getSchedule().getWeekdays().stream().mapToInt(Integer::intValue).toArray()));
         }
     }
 }

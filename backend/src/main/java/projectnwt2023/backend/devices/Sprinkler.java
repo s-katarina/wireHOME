@@ -42,33 +42,5 @@ public class Sprinkler extends Device{
         this.schedule = schedule;
     }
 
-    public Integer getScheduleStart() {
-        return this.schedule.getStartHour();
-    }
-
-    public Integer getScheduleEnd() {
-        return this.schedule.getEndHour();
-    }
-    @Transactional
-    public List<Integer> getScheduleWeekdays() {
-        if (this.schedule.getWeekdays() != null) {
-            return new ArrayList<>(this.schedule.getWeekdays());
-        }
-        return new ArrayList<>();
-    }
 }
 
-@NoArgsConstructor
-@AllArgsConstructor
-@Getter
-@Setter
-@ToString
-@Embeddable
-class SprinklerSchedule {
-    private Integer startHour;
-    private Integer endHour;
-    @ElementCollection
-    @CollectionTable(name = "sprinkler_schedule_weekdays", joinColumns = @JoinColumn(name = "sprinkler_id"))
-    @Column(name = "weekday")
-    private Set<Integer> weekdays;
-}
