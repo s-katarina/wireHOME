@@ -1,0 +1,81 @@
+<div class="page">
+    <h2>{{sprinkler!.modelName}}</h2>
+    <h3>Sprinkler</h3>
+    <mat-divider></mat-divider>
+    <div class="cols">
+        <div class="left-column">
+            <div class="settings-group">
+                <button  mat-button  class="placeholder-btn">
+                    <mat-icon *ngIf="sprinkler!.state">check_circle</mat-icon>
+                    <mat-icon *ngIf="!sprinkler!.state">cloud_off</mat-icon>
+            </button>
+                <button class="placeholder-btn" mat-button>Device is {{this.sprinkler?.state ? "Online" : "Offline"}}</button>
+            </div>
+
+            <div  class="changeable-section" [ngClass]="{'disabled-section': !sprinkler!.state}">
+                <div class="settings-group">
+                    <button  mat-button 
+                     [ngClass]="{'disabled-button': !sprinkler!.state}"
+                     (click)="onOnOffClick()"><mat-icon>power_settings_new</mat-icon></button>
+                    <button class="placeholder-btn" mat-button >Sprinkler is turned {{this.sprinkler?.on ? "On" : "Off"}}</button>
+                </div>
+    
+                <div class="settings-group">
+                    <button   mat-button [ngClass]="{'disabled-button': !sprinkler!.state}"
+                    (click)="makeSchedule=!makeSchedule"><mat-icon>autorenew</mat-icon></button>
+                    <button class="placeholder-btn" mat-button >Schedule mode is {{this.sprinkler?.scheduleMode ? "On" : "Off"}}</button>
+                    <div *ngIf="makeSchedule" class="make-schedule">
+                        <h5>Make schedule</h5>
+                        <div style="display: flex; flex-direction:row;">
+                            <p>Time to turn on:</p>
+                            <div class="timepicker">
+                                <input matInput [ngxTimepicker]="toggleTimepickerStart" [disableClick]="true" [format]="24" [value]="'23:00'" readonly>
+                                <ngx-material-timepicker-toggle [for]="toggleTimepickerStart"></ngx-material-timepicker-toggle>
+                                <ngx-material-timepicker #toggleTimepickerStart [hoursOnly]="true" (hourSelected)="startHour=$event" ></ngx-material-timepicker>
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-direction:row;">
+                            <p>Time to turn off:</p>
+                            <div class="timepicker">
+                                <input matInput [ngxTimepicker]="toggleTimepickerEnd" [disableClick]="true" [format]="24" [value]="'07:00'" readonly>
+                                <ngx-material-timepicker-toggle [for]="toggleTimepickerEnd"></ngx-material-timepicker-toggle>
+                                <ngx-material-timepicker #toggleTimepickerEnd [hoursOnly]="true" (hourSelected)="endHour=$event" ></ngx-material-timepicker>
+                            </div>
+                        </div>
+                        <div> 
+                            <p>Days of week</p>
+                            <div style="display: flex; flex-direction:row;">
+                                <div *ngFor="let d of daysList" >
+                                    <button (click)="daysClicked[d.key]=!daysClicked[d.key]" [class.day-clicked]="daysClicked[d.key]==true"
+                                     mat-button class="weekday-btn">{{d.key}}</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display: flex; flex-direction:row; justify-content: center; ">
+                            <button mat-button id="save-schedule" (click)="onScheduleSaveClick()">Save schedule</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="settings-group">
+                <button class="placeholder-btn"  mat-button><mat-icon>battery_charging_full</mat-icon></button>
+                <button  class="placeholder-btn" mat-button>Charging:</button>
+                <button  class="placeholder-btn" mat-button>{{this.sprinkler?.usesElectricity ? "House/Autonom" : "Battery"}} </button>
+            </div>
+
+            <div class="settings-group">
+                <button class="placeholder-btn"  mat-button><mat-icon>data_usage</mat-icon></button>
+                <button  class="placeholder-btn" mat-button>Consumption:</button>
+                <button  class="placeholder-btn" mat-button>{{sprinkler!.consumptionAmount}} Watts</button>
+            </div>
+
+        </div>
+        
+        <div class="right-column">
+        <img class="img-card" [src]="sprinkler!.imagePath" alt="Sprinkler Image">
+        </div>
+    </div>
+
+    
+</div>
