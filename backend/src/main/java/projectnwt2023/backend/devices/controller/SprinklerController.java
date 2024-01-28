@@ -18,12 +18,16 @@ import projectnwt2023.backend.appUser.service.interfaces.IAppUserService;
 import projectnwt2023.backend.devices.Device;
 import projectnwt2023.backend.devices.Gate;
 import projectnwt2023.backend.devices.Sprinkler;
-import projectnwt2023.backend.devices.dto.SprinklerScheduleDTO;
+import projectnwt2023.backend.devices.dto.*;
 import projectnwt2023.backend.devices.dto.model.GateDTO;
 import projectnwt2023.backend.devices.dto.model.SprinklerDTO;
 import projectnwt2023.backend.devices.mqtt.Gateway;
 import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
+import projectnwt2023.backend.devices.service.interfaces.ISprinklerService;
+import projectnwt2023.backend.helper.ApiResponse;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -40,6 +44,9 @@ public class SprinklerController {
 
     @Autowired
     Gateway mqttGateway;
+
+    @Autowired
+    ISprinklerService sprinklerService;
 
     @GetMapping(value = "/{deviceId}", produces = "application/json")
     ResponseEntity<SprinklerDTO> getSprinkler(@PathVariable Integer deviceId){
@@ -103,6 +110,33 @@ public class SprinklerController {
             e.printStackTrace();
             return ResponseEntity.badRequest().body("Sprinkler on/off set failed");
         }
+    }
+
+    @GetMapping(value = "/{deviceId}/recent", produces = "application/json")
+    ResponseEntity<ApiResponse<List<SprinklerCommandDTO>>> getRecentCommands(@PathVariable Integer deviceId){
+
+        List<SprinklerCommandMeasurement> res = sprinklerService.getRecentCommands(Long.valueOf(deviceId));
+        List<SprinklerCommandDTO> ret = new ArrayList<>();
+        for (SprinklerCommandMeasurement measurement : res) {
+            ret.add(new SprinklerCommandDTO(measurement.getCaller(), measurement.getValue(), String.valueOf(measurement.getTimestamp().getTime())));
+        }
+        return new ResponseEntity<>(new ApiResponse<>(200, ret), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/{deviceId}/range", produces = "application/json")
+    ResponseEntity<ApiResponse<List<SprinklerCommandDTO>>> getRangeCommands(@PathVariable Integer deviceId,
+                                                                       @RequestParam String start,
+                                                                       @RequestParam String end) {
+
+        List<SprinklerCommandMeasurement> res = sprinklerService.getDateRangeCommands(Long.valueOf(deviceId), start, end);
+        List<SprinklerCommandDTO> ret = new ArrayList<>();
+        if (res != null) {
+            for (SprinklerCommandMeasurement measurement : res) {
+                ret.add(new SprinklerCommandDTO(measurement.getCaller(), measurement.getValue(), String.valueOf(measurement.getTimestamp().getTime())));
+            }
+            return new ResponseEntity<>(new ApiResponse<>(200, ret), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new ApiResponse<>(400, new ArrayList<>()), HttpStatus.BAD_REQUEST);
     }
 
 }

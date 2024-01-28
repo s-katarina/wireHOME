@@ -7,9 +7,7 @@ import org.springframework.stereotype.Service;
 import projectnwt2023.backend.devices.Device;
 import projectnwt2023.backend.devices.Lamp;
 import projectnwt2023.backend.devices.Sprinkler;
-import projectnwt2023.backend.devices.dto.PayloadWithCallerDTO;
-import projectnwt2023.backend.devices.dto.PayloadDTO;
-import projectnwt2023.backend.devices.dto.SprinklerScheduleDTO;
+import projectnwt2023.backend.devices.dto.*;
 import projectnwt2023.backend.devices.dto.model.SprinklerDTO;
 import projectnwt2023.backend.devices.mqtt.Beans;
 import projectnwt2023.backend.devices.repository.DeviceRepository;
@@ -17,6 +15,7 @@ import projectnwt2023.backend.devices.service.interfaces.ISprinklerService;
 import projectnwt2023.backend.exceptions.EntityNotFoundException;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static projectnwt2023.backend.helper.RegexPattern.isStringMatchingPattern;
@@ -28,6 +27,9 @@ public class SprinklerService implements ISprinklerService {
 
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
+
+    @Autowired
+    InfluxDBService influxDBService;
 
     @Override
     public void parseRequest(String topic, Message<?> request) {
@@ -99,6 +101,32 @@ public class SprinklerService implements ISprinklerService {
         this.simpMessagingTemplate.convertAndSend("/sprinkler/" + sprinkler.getId(), new SprinklerDTO(sprinkler));
         System.out.println("Changed sprinkler schedule mode to " + sprinkler.isScheduleMode() );
         return s;
+    }
+
+    @Override
+    public List<SprinklerCommandMeasurement> getRecentCommands(Long gateId) {
+        Optional<Device> device = deviceRepository.findById(gateId);
+        if (!device.isPresent()) {
+            throw new EntityNotFoundException(Lamp.class);
+        }
+
+        return influxDBService.findRecentSprinklerCommands(gateId.toString());
+    }
+
+    @Override
+    public List<SprinklerCommandMeasurement> getDateRangeCommands(Long gateId, String start, String end) {
+        Optional<Device> device = deviceRepository.findById(gateId);
+        if (!device.isPresent()) {
+            throw new EntityNotFoundException(Lamp.class);
+        }
+
+        try {
+            List<SprinklerCommandMeasurement> res = influxDBService.findDateRangeSprinklerCommands(String.valueOf(gateId), Long.parseLong(start), Long.parseLong(end));
+            return res;
+        } catch (NumberFormatException e) {
+            return null;
+        }
+
     }
 
 }

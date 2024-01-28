@@ -116,7 +116,7 @@
             <ng-container matColumnDef="eventType">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Event</th>
                 <td mat-cell *matCellDef="let element">
-                    {{ element.eventType }}</td>
+                    {{ displayEventType(element.eventType) }}</td>
             </ng-container>
     
             <ng-container matColumnDef="caller">

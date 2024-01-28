@@ -51,14 +51,14 @@ type ScheduleForBackend struct {
 }
 
 
-func (sprinkler Sprinkler) pubOnOff(client mqtt.Client, onOff bool, caller string) {
+func (sprinkler Sprinkler) pubOnOff(client mqtt.Client, onOff bool) {
 	// Publishes influx write query to mqtt topic, which gets processed by Telegraf
 	topic := fmt.Sprintf("sprinkler/%d/%s", sprinkler.Id, "on-telemetry")
 	val := 1;
 	if (!onOff) {
 		val = 0
 	}
-	data := fmt.Sprintf("sprinkler on/off,device-id=%d value=%d,caller=\"%s\"", sprinkler.Id, val, caller)
+	data := fmt.Sprintf("sprinkler-on/off,device-id=%d value=%d", sprinkler.Id, val)
 	token := client.Publish(topic, 0, false, data)
 	token.Wait()
 
@@ -67,6 +67,21 @@ func (sprinkler Sprinkler) pubOnOff(client mqtt.Client, onOff bool, caller strin
 	}
 
 	fmt.Println("Message from sprinkler on/off published successfully")
+}
+
+func (sprinkler Sprinkler) pubCommand(command string, caller string) {
+	// Publishes influx write query to mqtt topic, which gets processed by Telegraf
+	topic := fmt.Sprintf("sprinkler/%d/%s", sprinkler.Id, "command")
+
+	data := fmt.Sprintf("sprinkler-command,device-id=%d value=\"%s\",caller=\"%s\"", sprinkler.Id, command, caller)
+	token := sprinkler.client.Publish(topic, 0, false, data)
+	token.Wait()
+
+	if token.Error() != nil {
+		log.Fatal(token.Error())
+	}
+
+	fmt.Println("Message from sprinkler command published successfully")
 }
 
 func (sprinkler Sprinkler) SubToOnSet(client mqtt.Client) {
@@ -130,7 +145,8 @@ func (sprinkler Sprinkler) toggleOn(client mqtt.Client, newOn bool, caller strin
 	fmt.Println("At END OF TOGGLE sprinkler on/off")
 	fmt.Println("msg:", message)
 	if (usedFor != "Error") {
-		go sprinkler.pubOnOff(client, sprinkler.IsOn, caller)
+		go sprinkler.pubOnOff(client, sprinkler.IsOn)
+		go sprinkler.pubCommand(usedFor, caller)
 		return newOn
 	} else {
 		return sprinkler.IsOn
@@ -187,6 +203,7 @@ func (sprinkler Sprinkler) updateSchedule(schedule Schedule) {
 	token.Wait()
 	fmt.Println("At END OF sprinkler update schedule")
 	fmt.Println("payload", payload)
+	sprinkler.pubCommand("SET SCHEDULE", schedule.Caller)
 }
 
 func (sprinkler Sprinkler) turnOffSchedule(schedule Schedule) bool {
@@ -216,6 +233,7 @@ func (sprinkler Sprinkler) turnOffSchedule(schedule Schedule) bool {
 	token.Wait()
 	fmt.Println("At END OF sprinkler turn off schedule")
 	fmt.Println("msg:", msg)
+	sprinkler.pubCommand("TURN OFF SCHEDULE", schedule.Caller)
 	return true
 }
 

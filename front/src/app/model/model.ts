@@ -111,6 +111,12 @@ export interface GateEvent  {
     timestamp: string
 }
 
+export interface SprinklerCommand  {
+    caller: string,
+    command: string
+    timestamp: string
+}
+
 export interface ApiResponse {
     status: number,
     data: any

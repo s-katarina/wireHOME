@@ -184,6 +184,10 @@ export class GateComponent implements OnInit, AfterViewInit, OnDestroy {
     this.length = this.events.length;
   }
 
+  displayEventType(eventType: string): string {
+    return eventType.toLowerCase()
+  }
+
   displayCaller(caller: string): string {
     switch (caller) {
       case "GATE_EVENT":

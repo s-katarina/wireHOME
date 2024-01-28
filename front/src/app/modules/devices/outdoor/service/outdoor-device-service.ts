@@ -103,5 +103,15 @@ export class OutdoorDeviceService {
     return this.http.get<ApiResponse>(environment.apiHost + `lamp/${id}/range/bulb`, {params})
   }
 
+  getSprinklerCommands(id: string): Observable<ApiResponse> {
+    return this.http.get<ApiResponse>(environment.apiHost + `sprinkler/${id}/recent`)
+  }
+
+  getRangeSprinklerCommands(id: string, start: string, end: string): Observable<ApiResponse> {
+    const params = new HttpParams().set('start', start)
+                                    .set('end', end);
+
+    return this.http.get<ApiResponse>(environment.apiHost + `sprinkler/${id}/range`, {params})
+  }
 
 }

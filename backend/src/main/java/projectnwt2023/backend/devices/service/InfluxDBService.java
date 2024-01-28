@@ -403,4 +403,43 @@ public class InfluxDBService {
         return ret;
     }
 
+    private List<SprinklerCommandMeasurement> querySprinklerCommand(String fluxQuery) {
+        List<SprinklerCommandMeasurement> result = new ArrayList<>();
+        QueryApi queryApi = this.influxDbClient.getQueryApi();
+        List<FluxTable> tables = queryApi.query(fluxQuery);
+        for (FluxTable fluxTable : tables) {
+            List<FluxRecord> records = fluxTable.getRecords();
+            for (FluxRecord fluxRecord : records) {
+                String measurementName = fluxRecord.getMeasurement();
+                String value = fluxRecord.getValueByKey("value") == null ? null : fluxRecord.getValueByKey("value").toString();
+                String caller = fluxRecord.getValueByKey("caller") == null ? null : fluxRecord.getValueByKey("caller").toString();
+                Date timestamp = fluxRecord.getTime() == null ? null : Date.from(fluxRecord.getTime());
+                result.add(new SprinklerCommandMeasurement(measurementName, value, timestamp, caller));
+                System.out.println(result.toString());
+            }
+        }
+        return result;
+    }
+
+    public List<SprinklerCommandMeasurement> findRecentSprinklerCommands(String deviceId) {
+        String fluxQuery = String.format(
+                "from(bucket:\"%s\") |> range(start: -2h, stop: now())" +
+                        "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"device-id\"] == \"%s\")" +
+                        "|> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")",
+                this.bucket, "sprinkler-command", deviceId);
+        return this.querySprinklerCommand(fluxQuery);
+    }
+
+    public List<SprinklerCommandMeasurement> findDateRangeSprinklerCommands(String deviceId, Long startTimestamp, Long endTimestamp) {
+        System.out.println(deviceId);
+        System.out.println(startTimestamp);
+        System.out.println(endTimestamp);
+        String fluxQuery = String.format(
+                "from(bucket:\"%s\") |> range(start: %d, stop: %d)" +
+                        "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"device-id\"] == \"%s\")" +
+                        "|> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")",
+                this.bucket, startTimestamp/1000, endTimestamp/1000, "sprinkler-command", deviceId);
+        return this.querySprinklerCommand(fluxQuery);
+    }
+
 }
