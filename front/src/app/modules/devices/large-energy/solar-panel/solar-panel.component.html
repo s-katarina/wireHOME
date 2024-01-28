@@ -23,7 +23,7 @@
                      (click)="onOffClick()">
                      <mat-icon *ngIf="!isButtonHovered && !panel!.on">offline_bolt</mat-icon>
                      <mat-icon *ngIf="!isButtonHovered && panel!.on">brightness_medium</mat-icon></button>
-                    <button class="placeholder-btn" mat-button >Panel is on {{panel!.on}}</button>
+                    <button class="placeholder-btn" mat-button >Panel is {{ panel && panel.on ? 'on' : 'off' }}</button>
                 </div>
     
                

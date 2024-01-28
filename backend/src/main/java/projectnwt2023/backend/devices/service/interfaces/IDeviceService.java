@@ -20,9 +20,9 @@ public interface IDeviceService {
 
     public Device changeDeviceOnOff(long deviceId, boolean b);
 
-    List<GateEventMeasurement> getDateRangeEvents(Long valueOf, String start, String end);
+    List<GateEventMeasurement> getDateRangeEvents(Long valueOf, String start, String end, String measurment);
 
-    List<GateEventMeasurement> getRecentEvents(Long valueOf);
+    List<GateEventMeasurement> getRecentEvents(Long valueOf, String measurment);
 
     ArrayList<PyChartDTO> getOnlineOfflineTime(Integer deviceId);
 }

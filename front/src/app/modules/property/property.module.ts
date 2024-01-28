@@ -8,6 +8,7 @@ import { PropertyOverviewComponent } from './property-overview/property-overview
 import { PropertyRequestsComponent } from './property-requests/property-requests.component';
 import { SinglePropertyComponent } from './single-property/single-property.component';
 import { AppRoutingModule } from 'src/app/infrastructure/app-routing.module';
+import { AdminPropertyOverviewComponent } from './admin-property-overview/admin-property-overview.component';
 
 
 
@@ -17,6 +18,7 @@ import { AppRoutingModule } from 'src/app/infrastructure/app-routing.module';
     PropertyOverviewComponent,
     PropertyRequestsComponent,
     SinglePropertyComponent,
+    AdminPropertyOverviewComponent,
   ],
   imports: [
     CommonModule,

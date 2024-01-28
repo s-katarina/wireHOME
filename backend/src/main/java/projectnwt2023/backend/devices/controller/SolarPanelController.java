@@ -5,9 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import projectnwt2023.backend.devices.Battery;
-import projectnwt2023.backend.devices.Device;
-import projectnwt2023.backend.devices.SolarPanel;
+import projectnwt2023.backend.devices.*;
 import projectnwt2023.backend.devices.dto.*;
 import projectnwt2023.backend.devices.mqtt.Gateway;
 import projectnwt2023.backend.devices.dto.GraphDTO;
@@ -32,6 +30,10 @@ public class SolarPanelController {
 
     @Autowired
     InfluxDBService influxDBService;
+
+    @Autowired
+    Gateway mqttGateway;
+
     @GetMapping(value = "/solar/{deviceId}", produces = "application/json")
     ResponseEntity<SolarPanelDTO> getSolarPanel(@PathVariable Integer deviceId){
 
@@ -48,6 +50,19 @@ public class SolarPanelController {
         return new ResponseEntity<>(new BatteryDTO((Battery) device), HttpStatus.OK);
     }
 
+    @GetMapping(value = "/charger/{deviceId}", produces = "application/json")
+    ResponseEntity<ChargerDTO> getCharger(@PathVariable Integer deviceId){
+
+        Device device = deviceService.getById(deviceId.longValue());
+        System.out.println(deviceId);
+        Charger charger = (Charger) device;
+//        if (charger.getAvailablePortNumber() == 0) {
+//            charger.setAvailablePortNumber(charger.getPortNumber());
+//            deviceService.save(charger);
+//        }
+        return new ResponseEntity<>(new ChargerDTO(charger), HttpStatus.OK);
+    }
+
     @PostMapping(value = "/panelReadings", produces = "application/json")
     ResponseEntity<ArrayList<GraphDTO>> getSolarPanelReadings(@RequestBody GraphRequestDTO graphRequestDTO){
         ArrayList<GraphDTO> grapgData = influxDBService.findDeviceEnergyForDate(graphRequestDTO);
@@ -61,12 +76,13 @@ public class SolarPanelController {
     }
 
     @GetMapping(value = "/{deviceId}/recent", produces = "application/json")
-    ResponseEntity<ApiResponse<List<GateEventDTO>>> getRecentGateEvents(@PathVariable Integer deviceId){
+    ResponseEntity<ApiResponse<List<GateEventDTO>>> getRecentGateEvents(@PathVariable Integer deviceId,
+                                                                        @RequestParam String measurement){
 
-        List<GateEventMeasurement> res = deviceService.getRecentEvents(Long.valueOf(deviceId));
+        List<GateEventMeasurement> res = deviceService.getRecentEvents(Long.valueOf(deviceId), measurement);
         List<GateEventDTO> ret = new ArrayList<>();
-        for (GateEventMeasurement measurement : res) {
-            ret.add(new GateEventDTO(measurement.getCaller(), measurement.getValue(), String.valueOf(measurement.getTimestamp().getTime())));
+        for (GateEventMeasurement event : res) {
+            ret.add(new GateEventDTO(event.getCaller(), event.getValue(), String.valueOf(event.getTimestamp().getTime())));
         }
         return new ResponseEntity<>(new ApiResponse<>(200, ret), HttpStatus.OK);
     }
@@ -74,14 +90,26 @@ public class SolarPanelController {
     @GetMapping(value = "/{deviceId}/range", produces = "application/json")
     ResponseEntity<ApiResponse<List<GateEventDTO>>> getRangeGateEvents(@PathVariable Integer deviceId,
                                                                        @RequestParam String start,
-                                                                       @RequestParam String end){
+                                                                       @RequestParam String end,
+                                                                       @RequestParam String measurement){
 
-        List<GateEventMeasurement> res = deviceService.getDateRangeEvents(Long.valueOf(deviceId), start, end);
+        List<GateEventMeasurement> res = deviceService.getDateRangeEvents(Long.valueOf(deviceId), start, end, measurement);
         List<GateEventDTO> ret = new ArrayList<>();
-        for (GateEventMeasurement measurement : res) {
-            ret.add(new GateEventDTO(measurement.getCaller(), measurement.getValue(), String.valueOf(measurement.getTimestamp().getTime())));
+        for (GateEventMeasurement event : res) {
+            ret.add(new GateEventDTO(event.getCaller(), event.getValue(), String.valueOf(event.getTimestamp().getTime())));
         }
         return new ResponseEntity<>(new ApiResponse<>(200, ret), HttpStatus.OK);
     }
+
+    @PutMapping(value = "/charger/{deviceId}/port", produces = "application/json")
+    ResponseEntity<ChargerDTO> changePort(@PathVariable Integer deviceId,
+                                            @RequestParam("val") int percentage){
+        Charger charger = (Charger) deviceService.getById(Long.valueOf(deviceId));
+        charger.setPercentage(percentage);
+        deviceService.save(charger);
+        mqttGateway.sendToMqtt(String.valueOf(percentage), "charger/"+String.valueOf(deviceId)+"/port-set");
+        return new ResponseEntity<>(new ChargerDTO((charger)), HttpStatus.OK);
+    }
+
 
 }

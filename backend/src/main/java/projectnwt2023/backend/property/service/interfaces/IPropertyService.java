@@ -29,4 +29,5 @@ public interface IPropertyService {
     String sendMailRejected(Property property, String reason);
 
     List<Property> getAllPropertyes();
+
 }

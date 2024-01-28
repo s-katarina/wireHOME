@@ -116,14 +116,14 @@ public class DeviceService implements IDeviceService {
     }
 
     @Override
-    public List<GateEventMeasurement> getDateRangeEvents(Long id, String start, String end) {
+    public List<GateEventMeasurement> getDateRangeEvents(Long id, String start, String end, String measurement) {
         Optional<Device> device = deviceRepository.findById(id);
         if (!device.isPresent()) {
             throw new EntityNotFoundException(Lamp.class);
         }
 
         try {
-            List<GateEventMeasurement> res = influxDBService.findDateRangeEvents(String.valueOf(id), Long.parseLong(start), Long.parseLong(end), "on/off");
+            List<GateEventMeasurement> res = influxDBService.findDateRangeEvents(String.valueOf(id), Long.parseLong(start), Long.parseLong(end), measurement);
             return res;
         } catch (NumberFormatException e) {
             return null;
@@ -131,13 +131,13 @@ public class DeviceService implements IDeviceService {
     }
 
     @Override
-    public List<GateEventMeasurement> getRecentEvents(Long id) {
+    public List<GateEventMeasurement> getRecentEvents(Long id, String measurment) {
         Optional<Device> device = deviceRepository.findById(id);
         if (!device.isPresent()) {
             throw new EntityNotFoundException(Lamp.class);
         }
 
-        return influxDBService.findRecentEvents(id.toString(), "on/off");
+        return influxDBService.findRecentEvents(id.toString(), measurment);
     }
 
     @Override

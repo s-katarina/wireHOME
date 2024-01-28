@@ -96,6 +96,13 @@ export interface Battery extends DeviceDTO {
     currentFill: number;
 }
 
+export interface Charger extends DeviceDTO {
+    chargingStrength: number
+    portNumber: number
+    availablePortNumber: number
+    percentage: number
+}
+
 export interface GateEvent  {
     caller: string,
     eventType: string
@@ -153,4 +160,11 @@ export interface AirConditionActionDTO {
     action: string,
     email: string,
     date: string
+}
+
+export interface Car {
+    plate: string,
+    batterySize: number,
+    percentage: number,
+    energyConsumed: number
 }

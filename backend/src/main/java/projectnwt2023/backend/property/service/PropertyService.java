@@ -91,7 +91,7 @@ public class PropertyService implements IPropertyService {
 
     @Override
     public Page<Property> getPropertiesByStatus(PropertyStatus status, Pageable page) {
-        return propertyRepository.findByPropertyStatus(PropertyStatus.PENDING, page);
+        return propertyRepository.findByPropertyStatus(status, page);
     }
 
     public Property acceptProperty(Long id) {
@@ -163,6 +163,8 @@ public class PropertyService implements IPropertyService {
     public List<Property> getAllPropertyes() {
         return propertyRepository.findAll();
     }
+
+
 
 }
 

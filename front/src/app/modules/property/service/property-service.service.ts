@@ -78,4 +78,8 @@ export class PropertyServiceService {
   getEnergyDevices(id:string): Observable<DeviceDTO[]> {
     return this.http.get<DeviceDTO[]>(environment.apiHost + `device/energyDevices/${id}`)
   }
+
+  getAcceptedProperties(): Observable<PropertyDTO[]> {
+    return this.http.get<PropertyDTO[]>(environment.apiHost + 'property/accepted')
+  }
 }

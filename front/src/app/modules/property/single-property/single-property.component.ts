@@ -68,6 +68,8 @@ export class SinglePropertyComponent implements OnInit {
         return "Solar panel"
       case "battery":
         return "Battery"
+      case "charger":
+        return "Charger"
       default:
         return ""
     }
@@ -89,6 +91,9 @@ export class SinglePropertyComponent implements OnInit {
     }
     else if (device.deviceType == 'battery') {
       this.router.navigate(['/battery'])
+    }
+    else if (device.deviceType == 'charger') {
+      this.router.navigate(['/charger'])
     }
   }
 

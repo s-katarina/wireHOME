@@ -76,6 +76,19 @@ public class PropertyController {
         return new ResponseEntity<>(dtos, HttpStatus.OK);
     }
 
+    @GetMapping(value = "/accepted", produces = "application/json")
+    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
+    ResponseEntity<List<PropertyResponseDTO>> getPropertiesForAdminOverview(){
+
+        Page<Property> properties = propertyService.getPropertiesByStatus(PropertyStatus.ACCEPTED, Pageable.unpaged());
+        List<PropertyResponseDTO> dtos = new ArrayList<>();
+        for (Property p : properties.getContent()) {
+            dtos.add(new PropertyResponseDTO(p));
+        }
+
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
+    }
+
     @GetMapping(value = "/pending", produces = "application/json")
     @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     ResponseEntity<List<PropertyResponseDTO>> getPendingProperties(){

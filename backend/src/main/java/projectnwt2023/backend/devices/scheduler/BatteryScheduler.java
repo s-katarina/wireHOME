@@ -42,10 +42,9 @@ public class BatteryScheduler {
             justSendBatteryState();
             sendPropertyConsumption();
         }
-        for (EnergyDTO energy:
-             energies) {
+        for (EnergyDTO energy: energies) {
             int propertyId = energy.getPropertyId();
-            System.out.println(energy);
+//            System.out.println(energy);
             if (!propertyEnergy.containsKey(propertyId)) {
                 propertyEnergy.put(propertyId, 0.0);
             }
@@ -63,7 +62,7 @@ public class BatteryScheduler {
 
     private void sendPropertyConsumption() {
         List<Property> propertyes = propertyService.getAllPropertyes();
-        System.out.println("propertu " + propertyes.size());
+//        System.out.println("propertu " + propertyes.size());
         for (Property property: propertyes) {
             Map<String, String> values = new HashMap<>();
             values.put("property-id", String.valueOf(property.getId()));
@@ -101,7 +100,7 @@ public class BatteryScheduler {
 //        ArrayList<Battery> batteries = batteryService.getBatteriesByPropertyId((long) propertyId);
         ArrayList<Battery> batteries = batteryService.getOnlineBatteriesByPropertyId((long) propertyId); //TODO samo online baterija
 
-        System.out.println(batteries.size());
+//        System.out.println(batteries.size());
         if (batteries.size() == 0) {
             sendToElectroDistibution(propertyId, (float) aggregatedAmount);
             return;
