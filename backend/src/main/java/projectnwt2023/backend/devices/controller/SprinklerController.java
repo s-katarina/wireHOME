@@ -118,7 +118,12 @@ public class SprinklerController {
         List<SprinklerCommandMeasurement> res = sprinklerService.getRecentCommands(Long.valueOf(deviceId));
         List<SprinklerCommandDTO> ret = new ArrayList<>();
         for (SprinklerCommandMeasurement measurement : res) {
-            ret.add(new SprinklerCommandDTO(measurement.getCaller(), measurement.getValue(), String.valueOf(measurement.getTimestamp().getTime())));
+            String caller = measurement.getCaller();
+            Optional<AppUser> user = appUserService.findByEmail(measurement.getCaller());
+            if (user.isPresent()) {
+                caller = user.get().getName() + " " + user.get().getLastName();
+            }
+            ret.add(new SprinklerCommandDTO(caller, measurement.getValue(), String.valueOf(measurement.getTimestamp().getTime())));
         }
         return new ResponseEntity<>(new ApiResponse<>(200, ret), HttpStatus.OK);
     }
@@ -132,7 +137,12 @@ public class SprinklerController {
         List<SprinklerCommandDTO> ret = new ArrayList<>();
         if (res != null) {
             for (SprinklerCommandMeasurement measurement : res) {
-                ret.add(new SprinklerCommandDTO(measurement.getCaller(), measurement.getValue(), String.valueOf(measurement.getTimestamp().getTime())));
+                String caller = measurement.getCaller();
+                Optional<AppUser> user = appUserService.findByEmail(measurement.getCaller());
+                if (user.isPresent()) {
+                    caller = user.get().getName() + " " + user.get().getLastName();
+                }
+                ret.add(new SprinklerCommandDTO(caller, measurement.getValue(), String.valueOf(measurement.getTimestamp().getTime())));
             }
             return new ResponseEntity<>(new ApiResponse<>(200, ret), HttpStatus.OK);
         }
