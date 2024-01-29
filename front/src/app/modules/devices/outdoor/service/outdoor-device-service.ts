@@ -12,26 +12,11 @@ export class OutdoorDeviceService {
   private selectedDeviceId = new BehaviorSubject<string>("");
   selectedLampId = this.selectedDeviceId.asObservable();
 
-  private selectedIndoorDeviceId = new BehaviorSubject<string>("");
-  indoorDeviceId = this.selectedIndoorDeviceId.asObservable();
-
   setSelectedDeviceId(id: string) {
     this.selectedDeviceId.next(id);
   }
 
-  setSelectedIndoorDeviceId(id: string) {
-    this.selectedIndoorDeviceId.next(id);
-  }
-
   constructor(private readonly http: HttpClient) { }
-
-  getAmbientSensor(id: string): Observable<DeviceDTO> {
-    return this.http.get<DeviceDTO>(environment.apiHost + `ambientSensor/${id}`)
-  }
-
-  getAirConditioner(id: string): Observable<DeviceDTO> {
-    return this.http.get<DeviceDTO>(environment.apiHost + `airConditioner/${id}`)
-  }
 
   getLamp(id:string): Observable<Lamp[]> {
     return this.http.get<Lamp[]>(environment.apiHost + `lamp/${id}`)

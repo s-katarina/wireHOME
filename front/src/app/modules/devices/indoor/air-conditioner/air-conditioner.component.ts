@@ -5,10 +5,11 @@ import { Observable } from 'rxjs';
 import { WebsocketService } from 'src/app/infrastructure/socket/websocket.service';
 import { AirConditionActionDTO, AirConditionerActionRequest, DeviceDTO } from 'src/app/model/model';
 import { environment } from 'src/environments/environment';
-import { AuthService } from '../../auth/service/auth.service';
+import { AuthService } from '../../../auth/service/auth.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
-import { OutdoorDeviceService } from '../outdoor/service/outdoor-device-service';
+import { OutdoorDeviceService } from '../../outdoor/service/outdoor-device-service';
+import { IndoorDeviceService } from '../service/indoor-device.service';
 
 @Component({
   selector: 'app-air-conditioner',
@@ -43,12 +44,12 @@ export class AirConditionerComponent implements OnInit, AfterViewInit, OnDestroy
 
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
 
-  constructor(private socketService: WebsocketService, private readonly http: HttpClient, private authService: AuthService, private outdoorService: OutdoorDeviceService) {
-    this.outdoorService.indoorDeviceId.subscribe((res: string) => {
+  constructor(private socketService: WebsocketService, private readonly http: HttpClient, private authService: AuthService, private indoorService: IndoorDeviceService) {
+    this.indoorService.indoorDeviceId.subscribe((res: string) => {
       this.deviceId = res;
       console.log("air conditioner id " + this.deviceId)
 
-      this.outdoorService.getAirConditioner(this.deviceId).subscribe((airConditioner: DeviceDTO) => {
+      this.indoorService.getAirConditioner(this.deviceId).subscribe((airConditioner: DeviceDTO) => {
         this.airConditioner = airConditioner
       })
 

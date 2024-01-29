@@ -7,8 +7,8 @@ import (
 	// "tim10/mqtt/gate"
 	// lamp "tim10/mqtt/lamp"
 	// solarPanel "tim10/mqtt/solarPanel"
-	// ambientSensor "tim10/mqtt/ambientSensor"
-	airConditioner "tim10/mqtt/airConditioner"
+	ambientSensor "tim10/mqtt/ambientSensor"
+	// airConditioner "tim10/mqtt/airConditioner"
 )
 
 // ambientSensore "tim10/mqtt/ambientSensore"
@@ -23,8 +23,8 @@ func main() {
 	// go lamp.RunLamp()
 	// go battery.RunBattery(3)
 	// go solarPanel.RunSolarPanel(4);
-	go airConditioner.RunAirConditioner();
-	// go ambientSensor.RunAmbientSensor();
+	// go airConditioner.RunAirConditioner();
+	go ambientSensor.RunAmbientSensor();
 	wg.Wait()
 
 	// fmt.Println("All scripts completed")

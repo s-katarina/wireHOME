@@ -6,7 +6,8 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { AmbientSensorTempHumDTO, AmbientSensorDateValueDTO, GraphPoint, DeviceDTO } from 'src/app/model/model';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { OutdoorDeviceService } from '../outdoor/service/outdoor-device-service';
+import { OutdoorDeviceService } from '../../outdoor/service/outdoor-device-service';
+import { IndoorDeviceService } from '../service/indoor-device.service';
 
 @Component({
   selector: 'app-ambient-sensor',
@@ -37,12 +38,12 @@ export class AmbientSensorComponent implements OnInit, AfterViewInit, OnDestroy 
     endDate: new FormControl()
   })
 
-  constructor(private socketService: WebsocketService, private readonly http: HttpClient, private outdoorService: OutdoorDeviceService) {
-    this.outdoorService.indoorDeviceId.subscribe((res: string) => {
+  constructor(private socketService: WebsocketService, private readonly http: HttpClient, private indoorService: IndoorDeviceService) {
+    this.indoorService.indoorDeviceId.subscribe((res: string) => {
       this.deviceId = res;
       console.log("ambient sensor id " + this.deviceId)
 
-      this.outdoorService.getAmbientSensor(this.deviceId).subscribe((ambienSensor: DeviceDTO) => {
+      this.indoorService.getAmbientSensor(this.deviceId).subscribe((ambienSensor: DeviceDTO) => {
         this.ambientSensor = ambienSensor
       })
 
