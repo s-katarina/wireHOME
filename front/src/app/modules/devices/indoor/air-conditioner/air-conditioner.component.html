@@ -31,6 +31,27 @@
                 <button type="submit" class="report-btn">Set temp</button>
               </form>
             </div>
+
+            <div *ngIf="selectedOption == 'automatic'" class="margin-left">
+              <mat-form-field class="example-chip-list" appearance="fill">
+                <mat-label>AC Intervals</mat-label>
+                <mat-chip-list #chipList aria-label="Fruit selection">
+                  <mat-chip *ngFor="let interval of intervals" (removed)="removeInterval(interval)">
+                    {{interval.startTime}} - {{interval.endTime}} - {{interval.action}}
+                    <button matChipRemove>
+                      <mat-icon>cancel</mat-icon>
+                    </button>
+                  </mat-chip>
+                  <input placeholder="New AC Interval..."
+                         [matChipInputFor]="chipList"
+                         [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                         [matChipInputAddOnBlur]="addOnBlur"
+                         (matChipInputTokenEnd)="addInterval($event)">
+                </mat-chip-list>
+              </mat-form-field>
+              <button (click)="automation()" class="report-btn">Automate</button>
+            </div>
+
           </div>
 
         </div>

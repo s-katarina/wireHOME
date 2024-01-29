@@ -25,6 +25,7 @@ import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
 import { DatePipe } from '@angular/common';
 import { BatteryComponent } from './modules/devices/large-energy/battery/battery.component';
 import { OnlineOfflineChartComponent } from './modules/devices/online-offline-chart/online-offline-chart.component';
+import { MatChipsModule } from '@angular/material/chips';
 
 @NgModule({
   declarations: [
@@ -51,7 +52,8 @@ import { OnlineOfflineChartComponent } from './modules/devices/online-offline-ch
     ReactiveFormsModule,
     FormsModule,
     HttpClientModule,
-    CanvasJSAngularChartsModule
+    CanvasJSAngularChartsModule,
+    MatChipsModule
   ],
   providers: [
     {

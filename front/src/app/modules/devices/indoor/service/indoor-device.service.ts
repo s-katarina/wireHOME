@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { AirConditionerDTO, DeviceDTO } from 'src/app/model/model';
+import { ACIntervalDTO, AirConditionerDTO, DeviceDTO } from 'src/app/model/model';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -24,5 +24,17 @@ export class IndoorDeviceService {
 
   getAirConditioner(id: string): Observable<AirConditionerDTO> {
     return this.http.get<AirConditionerDTO>(environment.apiHost + `airConditioner/${id}`)
+  }
+
+  getIntervalsForAC(id: string): Observable<ACIntervalDTO[]> {
+    return this.http.get<ACIntervalDTO[]>(environment.apiHost + `airConditioner/${id}/intervals`)
+  }
+
+  addIntervalsForAC(id: string, dto: ACIntervalDTO): Observable<ACIntervalDTO> {
+    return this.http.post<ACIntervalDTO>(environment.apiHost + `airConditioner/${id}/interval`, dto)
+  }
+
+  deleteIntervalsForAC(id: string, intervalId: string): Observable<object> {
+    return this.http.delete(environment.apiHost + `airConditioner/${id}/interval/${intervalId}`)
   }
 }

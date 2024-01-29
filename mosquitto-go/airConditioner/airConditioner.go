@@ -26,6 +26,13 @@ type AirConditioner struct {
 	Client mqtt.Client
 }
 
+type ACInterval struct {
+	Id int32 `json:"id"`
+	StartTime string `json:"startTime"`
+	EndTime string `json:"endTime"`
+	Action string `json:"action"`
+}
+
 var connectHandler mqtt.OnConnectHandler = func(client mqtt.Client) {
 	fmt.Println("Connected")
 }
@@ -65,10 +72,43 @@ func getAirConditioner(deviceId int) AirConditioner {
 
 }
 
+func getAcIntervals(deviceId int32) []ACInterval {
+	apiUrl := fmt.Sprintf("%s/airConditioner/%d/intervals", constants.ApiUrl, deviceId)
+	fmt.Println(apiUrl)
+
+	response, err := http.Get(apiUrl)
+	if err != nil {
+		fmt.Println("Error making GET request:", err)
+		return nil
+	}
+	defer response.Body.Close()
+
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		fmt.Println("Error reading response body:", err)
+		return nil
+	}
+
+	var intervals = []ACInterval{}
+	err = json.Unmarshal(body, &intervals)
+	if err != nil {
+		fmt.Println("Error unmarshalling JSON:", err)
+		return nil
+	}
+
+	fmt.Println("Response for GET AirConditioner Intervals:", string(body))
+	fmt.Println(intervals)
+	return intervals
+}
+
 var airConditioner AirConditioner = getAirConditioner(4)
+var intervals []ACInterval = getAcIntervals(4)
+var onAutomatic = false
+var email = ""
 
 func SetAirConditioner(id int) {
 	airConditioner = getAirConditioner(id)
+	intervals = getAcIntervals(int32(id))
 }
 
 var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
@@ -94,7 +134,7 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 	if helper.IsTopicMatch("airConditioner/\\d+/request", msg.Topic()) {
 		payload := string(msg.Payload())
 		tokens := strings.Split(payload, ";")
-		email := tokens[1]
+		email = tokens[1]
 		tokens = strings.Split(tokens[0], " ")
 		action := strings.ToLower(tokens[1])
 
@@ -107,22 +147,15 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 		}
 		fmt.Println(action)
 		if strings.Contains(action, "temp") {
-			tokens = strings.Split(action, "#")
-			fmt.Println(tokens)
-			tempStr := tokens[1]
-			fmt.Println(tempStr)
-			temp, _ := strconv.Atoi(tempStr)
-			fmt.Println(temp)
-
-			if int32(temp) >= airConditioner.MinTemp && int32(temp) <= airConditioner.MaxTemp {
-				airConditioner.Temp = int32(temp)
-				supported = true
-				PubNewTemp(client)
-			}
+			supported = setTemp(action, client)
 		}
 
 		if strings.Contains(action, "off") {
 			supported = true
+		}
+
+		if strings.Contains(action, "automatic") {
+			intervals = getAcIntervals(int32(airConditioner.Id))
 		}
 
 		if supported {
@@ -131,6 +164,8 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 		} else {
 			PubAction("Unsupported", "", client)
 		}
+
+		onAutomatic = false
 	}
 }
 
@@ -211,32 +246,137 @@ func RunAirConditioner() {
 func RunSim() {
 
 	for {
-		rnd := rand.Intn(11)
-		var affect int32 = 0
-
-		if rnd < 4 {
-			affect = 1
-		}
 
 		if airConditioner.CurrentAction == "colling" {
-			newTemp := airConditioner.Temp - 1 * affect
-			if newTemp >= airConditioner.MinTemp && newTemp <= airConditioner.MaxTemp {
-				airConditioner.Temp = newTemp
-				PubNewTemp(airConditioner.Client)
-			}
+			colling()
 		}
 
 		if airConditioner.CurrentAction == "heating" {
-			newTemp := airConditioner.Temp + 1 * affect
-			if newTemp >= airConditioner.MinTemp && newTemp <= airConditioner.MaxTemp {
-				airConditioner.Temp = newTemp
-				PubNewTemp(airConditioner.Client)
+			heating()
+		}
+
+		if airConditioner.CurrentAction == "ventilation" {
+			ventilation()
+		}
+
+		if airConditioner.CurrentAction == "automatic" {
+			if !onAutomatic {
+				go runAutomatic()
 			}
+			onAutomatic = true
 		}
 
 		time.Sleep(time.Second * 3)
 	}
 
+}
+
+func runAutomatic() {
+	for onAutomatic {
+		currentTime := time.Now()
+		hour := currentTime.Hour()
+		minute := currentTime.Minute()
+		second := currentTime.Second()
+		curr := int64(hour) * 60 * 60 + int64(minute) * 60 + int64(second)
+		fmt.Printf("%d %d %d %d\n", hour, minute, second, curr)
+
+		foundInterval := false
+
+		for _, interval := range intervals {
+			startTime := interval.StartTime
+			endTime := interval.EndTime
+			var iStart int64 = 0
+			var iEnd int64 = 0
+
+			tokens := strings.Split(startTime, ":")
+			h, _ := strconv.Atoi(tokens[0])
+			m, _ := strconv.Atoi(tokens[1])
+			s, _ := strconv.Atoi(tokens[2])
+			iStart += int64(h) * 60 * 60 + int64(m) * 60 + int64(s)
+
+			tokens = strings.Split(endTime, ":")
+			h, _ = strconv.Atoi(tokens[0])
+			m, _ = strconv.Atoi(tokens[1])
+			s, _ = strconv.Atoi(tokens[2])
+			iEnd += int64(h) * 60 * 60 + int64(m) * 60 + int64(s)
+			fmt.Printf("%d %d %d\n", iStart, iEnd, curr)
+			if curr > iStart && curr < iEnd {
+				foundInterval = true
+				if airConditioner.CurrentAction != interval.Action {
+					airConditioner.CurrentAction = interval.Action
+					PubAction(interval.Action, email, airConditioner.Client)
+
+					if strings.Contains(interval.Action, "temp") {
+						setTemp(interval.Action, airConditioner.Client)
+					}
+				}
+			}
+		}
+
+		if !foundInterval {
+			if airConditioner.CurrentAction != "automatic" {
+				airConditioner.CurrentAction = "automatic"
+				PubAction("automatic", email, airConditioner.Client)
+			}
+		}
+
+		time.Sleep(time.Second * 3)
+	}
+}
+
+func ventilation() {
+	if airConditioner.CurrentAction != "ventilation" {
+		PubAction(airConditioner.CurrentAction, email, airConditioner.Client)
+	}
+}
+
+func colling() {
+	rnd := rand.Intn(11)
+	var affect int32 = 0
+
+	if rnd < 4 {
+		affect = 1
+	}
+
+	newTemp := airConditioner.Temp - 1 * affect
+	if newTemp >= airConditioner.MinTemp && newTemp <= airConditioner.MaxTemp {
+		airConditioner.Temp = newTemp
+		PubNewTemp(airConditioner.Client)
+	}
+}
+
+func heating() {
+	rnd := rand.Intn(11)
+	var affect int32 = 0
+
+	if rnd < 4 {
+		affect = 1
+	}
+
+	newTemp := airConditioner.Temp + 1 * affect
+	if newTemp >= airConditioner.MinTemp && newTemp <= airConditioner.MaxTemp {
+		airConditioner.Temp = newTemp
+		PubNewTemp(airConditioner.Client)
+	}
+}
+
+func setTemp(action string, client mqtt.Client) bool {
+	var tokens = strings.Split(action, "#")
+	fmt.Println(tokens)
+	tempStr := tokens[1]
+	fmt.Println(tempStr)
+	temp, _ := strconv.Atoi(tempStr)
+	fmt.Println(temp)
+
+	var supported = false
+
+	if int32(temp) >= airConditioner.MinTemp && int32(temp) <= airConditioner.MaxTemp {
+		airConditioner.Temp = int32(temp)
+		supported = true
+		PubNewTemp(client)
+	}
+
+	return supported
 }
 
 func (airConditioner AirConditioner) SubToActionRequest(client mqtt.Client) {

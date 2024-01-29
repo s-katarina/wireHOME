@@ -162,3 +162,10 @@ export interface AirConditionActionDTO {
     email: string,
     date: string
 }
+
+export interface ACIntervalDTO {
+    id: number,
+    startTime: string,
+    endTime: string,
+    action: string
+}
