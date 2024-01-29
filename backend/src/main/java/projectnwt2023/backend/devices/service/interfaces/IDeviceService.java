@@ -24,5 +24,5 @@ public interface IDeviceService {
 
     List<GateEventMeasurement> getRecentEvents(Long valueOf);
 
-    ArrayList<PyChartDTO> getOnlineOfflineTime(Integer deviceId);
+    ArrayList<PyChartDTO> getOnlineOfflineTime(Integer deviceId, String start, String end);
 }

@@ -141,44 +141,48 @@ public class DeviceService implements IDeviceService {
     }
 
     @Override
-    public ArrayList<PyChartDTO> getOnlineOfflineTime(Integer deviceId) {
+    public ArrayList<PyChartDTO> getOnlineOfflineTime(Integer deviceId, String start, String end) {
         Optional<Device> device = deviceRepository.findById(Long.valueOf(deviceId));
         if (!device.isPresent()) {
             throw new EntityNotFoundException(Device.class);
         }
 
-        List<GateEventMeasurement> data = influxDBService.getOnlineOfflineData(deviceId);
-        System.out.println(data.size());
-        PyChartDTO on = new PyChartDTO("online", 0);
-        PyChartDTO off = new PyChartDTO("offline", 0);
-        for (int i = 0; i < data.size() - 1; i++) {
-            if (data.get(i).getValue().equals("0.0") && data.get(i + 1).getValue().equals("1.0")) {
-                double dateDistance = data.get(i + 1).getTimestamp().getTime() - data.get(i).getTimestamp().getTime();
-                off.setY(off.getY() + dateDistance);
+        try {
+            List<GateEventMeasurement> data = influxDBService.getOnlineOfflineData(deviceId, Long.parseLong(start), Long.parseLong(end));
+            System.out.println(data.size());
+            PyChartDTO on = new PyChartDTO("online", 0);
+            PyChartDTO off = new PyChartDTO("offline", 0);
+            for (int i = 0; i < data.size() - 1; i++) {
+                if (data.get(i).getValue().equals("0.0") && data.get(i + 1).getValue().equals("1.0")) {
+                    double dateDistance = data.get(i + 1).getTimestamp().getTime() - data.get(i).getTimestamp().getTime();
+                    off.setY(off.getY() + dateDistance);
+                }
+                if (data.get(i).getValue().equals("1.0") && data.get(i + 1).getValue().equals("0.0")) {
+                    double dateDistance = data.get(i + 1).getTimestamp().getTime() - data.get(i).getTimestamp().getTime();
+                    on.setY(on.getY() + dateDistance);
+                }
             }
-            if (data.get(i).getValue().equals("1.0") && data.get(i + 1).getValue().equals("0.0")) {
-                double dateDistance = data.get(i + 1).getTimestamp().getTime() - data.get(i).getTimestamp().getTime();
-                on.setY(on.getY() + dateDistance);
+            if (data.size() == 0) {
+                off.setY(100);
+            }else{
+                if (data.get(data.size()-1).getValue().equals("0.0")) {
+                    double dateDistance = (new Date()).getTime() - data.get(data.size()-1).getTimestamp().getTime();
+                    off.setY(off.getY() + dateDistance);
+                }
+                if (data.get(data.size()-1).getValue().equals("1.0")) {
+                    double dateDistance = (new Date()).getTime() - data.get(data.size()-1).getTimestamp().getTime();
+                    on.setY(on.getY() + dateDistance);
+                }
             }
-        }
-        if (data.size() == 0) {
-            off.setY(100);
-        }else{
-            if (data.get(data.size()-1).getValue().equals("0.0")) {
-                double dateDistance = (new Date()).getTime() - data.get(data.size()-1).getTimestamp().getTime();
-                off.setY(off.getY() + dateDistance);
-            }
-            if (data.get(data.size()-1).getValue().equals("1.0")) {
-                double dateDistance = (new Date()).getTime() - data.get(data.size()-1).getTimestamp().getTime();
-                on.setY(on.getY() + dateDistance);
-            }
-        }
 
-        ArrayList<PyChartDTO> pyChartDTOS = new ArrayList<>();
-        pyChartDTOS.add(on);
-        pyChartDTOS.add(off);
-        return pyChartDTOS;
+            ArrayList<PyChartDTO> pyChartDTOS = new ArrayList<>();
+            pyChartDTOS.add(on);
+            pyChartDTOS.add(off);
+            return pyChartDTOS;
 
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
 

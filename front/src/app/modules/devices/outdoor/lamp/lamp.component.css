@@ -1,6 +1,6 @@
 .page {
     margin: 5%;
-    margin-bottom: 10vh;
+    margin-bottom: 10vh !important;
     padding-bottom: 30vh !important;
 }
 

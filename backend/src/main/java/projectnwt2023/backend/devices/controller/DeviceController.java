@@ -123,9 +123,14 @@ public class DeviceController {
 
 
     @GetMapping(value = "/onlinePercent/{deviceId}", produces = "application/json") // koristi i za elektrodistribuciju i za samu potrosnju
-    ResponseEntity<ArrayList<PyChartDTO>> getElectoByProperty(@PathVariable Integer deviceId){
-        ArrayList<PyChartDTO> grapgData = deviceService.getOnlineOfflineTime(deviceId);
-        return new ResponseEntity<>(grapgData, HttpStatus.OK);
+    ResponseEntity<ArrayList<PyChartDTO>> getOnlinePercentageInRange(@PathVariable Integer deviceId,
+                                                                     @RequestParam String start,
+                                                                     @RequestParam String end){
+        ArrayList<PyChartDTO> graphData = deviceService.getOnlineOfflineTime(deviceId, start, end);
+        if (graphData == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(graphData, HttpStatus.OK);
     }
 
 }

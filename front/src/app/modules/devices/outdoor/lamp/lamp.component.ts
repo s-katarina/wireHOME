@@ -40,6 +40,7 @@ export class LampComponent implements OnInit, AfterViewInit, OnDestroy {
 
   chart: any;
   chartBulb: any;
+  showChartBulb: boolean = true;
 
   ngOnInit(): void {
     this.chart = new CanvasJS.Chart("chartContainer", 
@@ -47,9 +48,6 @@ export class LampComponent implements OnInit, AfterViewInit, OnDestroy {
       zoomEnabled: true,
       exportEnabled: true,
       theme: "light2",
-      title: {
-      text: "Light sensor values"
-      },
       data: [{
       type: "line",
       xValueType: "dateTime",
@@ -61,9 +59,6 @@ export class LampComponent implements OnInit, AfterViewInit, OnDestroy {
       zoomEnabled: true,
       exportEnabled: true,
       theme: "light2",
-      title: {
-      text: "Bulb on/off in last 24 hours"
-      },
       data: [{
       type: "scatter",
       xValueType: "dateTime",
@@ -135,6 +130,8 @@ export class LampComponent implements OnInit, AfterViewInit, OnDestroy {
           label: parseInt(item.value) == 1 ? "on at " + this.displayTimestamp(item.timestamp) : "off at " + this.displayTimestamp(item.timestamp)
         }));
         console.log(dataPoints)
+        if (dataPoints.length > 0) this.showChartBulb = true;
+        else this.showChartBulb = false;
         this.chartBulb.options.data[0].dataPoints = dataPoints;
         this.chartBulb.render();
       }
