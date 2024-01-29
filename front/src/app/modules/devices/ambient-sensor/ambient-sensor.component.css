@@ -6,10 +6,117 @@
   background-color: white;
   border-color: black;
   padding: 10px 15px;
-  margin: 30px 50px;
+  /* margin: 30px 50px; */
 }
 
 .report-btn:hover {
   background-color: lightgray;
   cursor: pointer;
+}
+
+.page {
+  margin: 5%;
+  margin-bottom: 10vh;
+  padding-bottom: 30vh !important;
+}
+
+h2 {
+  font-size: 2em;
+  line-height: 1.3em;
+  font-family: 'Sora-semibold', Roboto, "Helvetica Neue", sans-serif !important; 
+  color: rgb(0, 0, 0);
+}
+h3 {
+  font-size: 1.6em;
+  line-height: 1.1em;
+  font-family: 'Sora-regular', Roboto, "Helvetica Neue", sans-serif !important; 
+  color: rgb(0, 0, 0);
+}
+
+h4 {
+  font-size: 1.5em;
+  line-height: 1.3em;
+  font-family: 'Sora-semibold', Roboto, "Helvetica Neue", sans-serif !important; 
+  color: rgb(0, 0, 0);
+  cursor: default;
+}
+h5 {
+  font-size: 1.3em;
+  line-height: 1.1em;
+  font-family: 'Sora-regular', Roboto, "Helvetica Neue", sans-serif !important; 
+  color: rgb(0, 0, 0);
+  cursor: default;
+}
+
+.mat-divider {
+  border-top: 2px solid rgb(190, 190, 190);
+  margin-bottom: 10px;
+}
+
+img {
+  height: auto;
+  width: 30vw;
+  border-radius: 20px;
+}
+
+.cols {
+  display: flex;
+}
+
+.left-column {
+  flex: 1; 
+  flex-direction: column;
+}
+
+.right-column {
+  flex: 0; 
+  margin-left: 20px; 
+}
+
+.placeholder-btn, .disabled-button {
+  pointer-events: none; 
+  cursor: not-allowed;
+}
+
+.settings-group {
+  margin: 10px 0;
+}
+
+.disabled-section {
+  background-color: rgba(208, 208, 208, 0.385); 
+  color: rgb(149, 149, 149); 
+  border-radius: 20px;
+}
+
+.changeable-section {
+  border-radius: 20px;
+  padding: 15px;
+  margin-left: 30px;
+  margin-bottom: 40px;
+}
+
+.view-data {
+  margin-left: 20px;
+}
+
+.mat-tooltip {
+  font-family: 'Heebo-regular', Roboto, "Helvetica Neue", sans-serif !important; 
+  padding: 0 !important;
+  font-size: medium;
+}
+
+.chart-div {
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+#chartOnlineContainer > * {
+  color: rgb(190, 19, 19) !important;
+  font: 400 16px/24px 'Sora-semibold', sans-serif !important;
+}
+
+.chart-div-online {
+  display: block;
+  padding-top: 40px;
+  padding-bottom: 200px;
 }

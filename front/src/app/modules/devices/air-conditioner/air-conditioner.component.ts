@@ -3,11 +3,12 @@ import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular
 import { FormControl, FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { WebsocketService } from 'src/app/infrastructure/socket/websocket.service';
-import { AirConditionActionDTO, AirConditionerActionRequest } from 'src/app/model/model';
+import { AirConditionActionDTO, AirConditionerActionRequest, DeviceDTO } from 'src/app/model/model';
 import { environment } from 'src/environments/environment';
 import { AuthService } from '../../auth/service/auth.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
+import { OutdoorDeviceService } from '../outdoor/service/outdoor-device-service';
 
 @Component({
   selector: 'app-air-conditioner',
@@ -19,7 +20,9 @@ export class AirConditionerComponent implements OnInit, AfterViewInit, OnDestroy
   currentAction: string = ""
   actionStatus: string = ""
   currentTemp: string = ""
-  deviceId: string = "6"
+  deviceId: string = ""
+  airConditioner: DeviceDTO | undefined
+  selectedOption: string = ""
 
   tempForm = new FormGroup({
     temp: new FormControl()
@@ -40,7 +43,17 @@ export class AirConditionerComponent implements OnInit, AfterViewInit, OnDestroy
 
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
 
-  constructor(private socketService: WebsocketService, private readonly http: HttpClient, private authService: AuthService) { }
+  constructor(private socketService: WebsocketService, private readonly http: HttpClient, private authService: AuthService, private outdoorService: OutdoorDeviceService) {
+    this.outdoorService.indoorDeviceId.subscribe((res: string) => {
+      this.deviceId = res;
+      console.log("air conditioner id " + this.deviceId)
+
+      this.outdoorService.getAirConditioner(this.deviceId).subscribe((airConditioner: DeviceDTO) => {
+        this.airConditioner = airConditioner
+      })
+
+    })
+  }
 
   ngOnInit(): void {
     this.fetchReport(Number(this.deviceId)).subscribe((res: AirConditionActionDTO[]) => {
@@ -134,6 +147,18 @@ export class AirConditionerComponent implements OnInit, AfterViewInit, OnDestroy
     }
     await this.sendAction(request).toPromise()
     this.actionStatus = "Trying to turn off air conditioner"
+  }
+
+  async onDropdownChange() {
+    console.log("selected " + this.selectedOption)
+    if (this.selectedOption == "cooling")
+      await this.cooling()
+    if (this.selectedOption == "heating")
+      await this.heating()
+    if (this.selectedOption == "ventilation")
+      await this.ventilation()
+    if (this.selectedOption == "off")
+      await this.turnOff()
   }
 
   fetch(): void {

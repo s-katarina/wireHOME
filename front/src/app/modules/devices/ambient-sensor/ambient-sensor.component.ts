@@ -4,8 +4,9 @@ import * as Chart from 'chart.js';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
-import { AmbientSensorTempHumDTO, AmbientSensorDateValueDTO, GraphPoint } from 'src/app/model/model';
+import { AmbientSensorTempHumDTO, AmbientSensorDateValueDTO, GraphPoint, DeviceDTO } from 'src/app/model/model';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { OutdoorDeviceService } from '../outdoor/service/outdoor-device-service';
 
 @Component({
   selector: 'app-ambient-sensor',
@@ -14,17 +15,20 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 })
 export class AmbientSensorComponent implements OnInit, AfterViewInit, OnDestroy {
 
-  public realtimeChart: any;
-  public reportChart: any;
+  public realtimeTempChart: any;
+  public realtimeHumChart: any;
+  public reportTempChart: any;
+  public reportHumChart: any;
 
   tempData: GraphPoint[] = []
   humData: GraphPoint[] = []
 
   currentTemp: number = NaN
   currentHum: number = NaN
-  deviceId: string = "5"
+  deviceId: string = ""
+  ambientSensor: DeviceDTO | undefined
 
-
+  selectedOption: string = ""
   reportTempData: GraphPoint[] = []
   reportHumData: GraphPoint[] = []
 
@@ -33,7 +37,17 @@ export class AmbientSensorComponent implements OnInit, AfterViewInit, OnDestroy 
     endDate: new FormControl()
   })
 
-  constructor(private socketService: WebsocketService, private readonly http: HttpClient) { }
+  constructor(private socketService: WebsocketService, private readonly http: HttpClient, private outdoorService: OutdoorDeviceService) {
+    this.outdoorService.indoorDeviceId.subscribe((res: string) => {
+      this.deviceId = res;
+      console.log("ambient sensor id " + this.deviceId)
+
+      this.outdoorService.getAmbientSensor(this.deviceId).subscribe((ambienSensor: DeviceDTO) => {
+        this.ambientSensor = ambienSensor
+      })
+
+    })
+  }
 
   ngOnInit(): void {
 
@@ -76,10 +90,12 @@ export class AmbientSensorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   makeRealtimeChart(): void {
-    if (this.realtimeChart)
-      this.realtimeChart.destroy()
+    if (this.realtimeTempChart)
+      this.realtimeTempChart.destroy()
+    if (this.realtimeHumChart)
+      this.realtimeHumChart.destroy()
 
-    this.realtimeChart = new Chart("realtimeChart", {
+    this.realtimeTempChart = new Chart("realtimeTempChart", {
       type: 'line',
 
       data: {
@@ -89,13 +105,34 @@ export class AmbientSensorComponent implements OnInit, AfterViewInit, OnDestroy 
             data: this.tempData,
             borderColor: "blue",
             fill: false
-          },
+          }
+        ]
+      },
+      options: {
+        scales: {
+          xAxes: [{
+            type: 'time',
+            time: {
+              unit: 'second'
+            },
+            distribution: 'series'
+          }]
+        }
+      }
+      
+    });
+
+    this.realtimeHumChart = new Chart("realtimeHumChart", {
+      type: 'line',
+
+      data: {
+	       datasets: [
           {
             label: "Humidity",
             data: this.humData,
             borderColor: "green",
             fill: false
-          } 
+          }
         ]
       },
       options: {
@@ -123,10 +160,12 @@ export class AmbientSensorComponent implements OnInit, AfterViewInit, OnDestroy 
         console.log("temp: " + temp)
 
         let now: number = Math.floor(Date.now() / 1000)
-        let firstInChart: number = Math.floor((new Date(this.tempData[0].x)).getTime() / 1000)
+        if (this.tempData.length > 0) {
+          let firstInChart: number = Math.floor((new Date(this.tempData[0].x)).getTime() / 1000)
 
-        if (firstInChart + 60 * 60 < now)
-          this.tempData.shift()
+          if (firstInChart + 60 * 60 < now)
+            this.tempData.shift()
+        }
 
         let point: GraphPoint = {
           x: (new Date()).toISOString(),
@@ -136,7 +175,7 @@ export class AmbientSensorComponent implements OnInit, AfterViewInit, OnDestroy 
         this.tempData.push(point)
         this.currentTemp = temp
 
-        this.realtimeChart.update()
+        this.realtimeTempChart.update()
       })
 
       stompClient.subscribe('/ambient-sensor/' + this.deviceId + '/hum', (message: { body: number }) => {
@@ -144,10 +183,12 @@ export class AmbientSensorComponent implements OnInit, AfterViewInit, OnDestroy 
         console.log("hum: " + hum)
 
         let now: number = Math.floor(Date.now() / 1000)
-        let firstInChart: number = Math.floor((new Date(this.humData[0].x)).getTime() / 1000)
+        if (this.humData.length > 0) {
+          let firstInChart: number = Math.floor((new Date(this.humData[0].x)).getTime() / 1000)
 
-        if (firstInChart + 60 * 60 < now)
-          this.humData.shift()
+          if (firstInChart + 60 * 60 < now)
+            this.humData.shift()
+        }
 
         let point: GraphPoint = {
           x: (new Date()).toISOString(),
@@ -157,7 +198,7 @@ export class AmbientSensorComponent implements OnInit, AfterViewInit, OnDestroy 
         this.humData.push(point)
         this.currentHum = hum
 
-        this.realtimeChart.update()
+        this.realtimeHumChart.update()
       })
     })
   }
@@ -168,6 +209,20 @@ export class AmbientSensorComponent implements OnInit, AfterViewInit, OnDestroy 
 
   ngOnDestroy(): void {
     this.socketService.closeWebSocket();
+  }
+
+  onDropdownChange() {
+    console.log("selected " + this.selectedOption)
+    if (this.selectedOption == "6h")
+      this.report(6)
+    else if (this.selectedOption == "12h")
+      this.report(12)
+    else if (this.selectedOption == "24h")
+      this.report(24)
+    else if (this.selectedOption == "7d")
+      this.report(7 * 24)
+    else if (this.selectedOption == "30d")
+      this.report(30 * 24)
   }
 
   report(hours: number): void {
@@ -202,10 +257,12 @@ export class AmbientSensorComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   makeReportChart(): void {
-    if (this.reportChart)
-      this.reportChart.destroy()
+    if (this.reportTempChart)
+      this.reportTempChart.destroy()
+    if (this.reportHumChart)
+      this.reportHumChart.destroy()
 
-    this.reportChart = new Chart("reportChart", {
+    this.reportTempChart = new Chart("reportTempChart", {
       type: 'line',
 
       data: {
@@ -215,13 +272,34 @@ export class AmbientSensorComponent implements OnInit, AfterViewInit, OnDestroy 
             data: this.reportTempData,
             borderColor: "blue",
             fill: false
-          },
+          }
+        ]
+      },
+      options: {
+        scales: {
+          xAxes: [{
+            type: 'time',
+            time: {
+              unit: 'second'
+            },
+            distribution: 'series'
+          }]
+        }
+      }
+      
+    });
+
+    this.reportHumChart = new Chart("reportHumChart", {
+      type: 'line',
+
+      data: {
+	       datasets: [
           {
             label: "Humidity",
             data: this.reportHumData,
             borderColor: "green",
             fill: false
-          } 
+          }
         ]
       },
       options: {
@@ -243,6 +321,7 @@ export class AmbientSensorComponent implements OnInit, AfterViewInit, OnDestroy 
 
     let startDate: Date = new Date(this.dateForm.value.startDate)
     let endDate: Date = new Date(this.dateForm.value.endDate)
+    console.log(startDate)
 
     const mesecDana = 30 * 24 * 60 * 60 * 1000; // Broj milisekundi u mesecu
     const razlika = Math.abs(endDate.getTime() - startDate.getTime());
