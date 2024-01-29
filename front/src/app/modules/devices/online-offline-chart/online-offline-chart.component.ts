@@ -11,6 +11,7 @@ import { FormGroup, FormControl } from '@angular/forms';
 export class OnlineOfflineChartComponent implements OnInit {
   @Input() deviceId = '';
   pyChart: any
+  intervalChart: any
 
   dateFrom = ""
   dateTo = ""
@@ -54,6 +55,30 @@ export class OnlineOfflineChartComponent implements OnInit {
 		}
 		]
 	});
+
+  var yLabels = ["Offline","Online"];
+
+  this.intervalChart = new CanvasJS.Chart("intervalChartContainer", 
+    {
+      colorSet: "appColors",
+      zoomEnabled: true,
+      exportEnabled: true,
+      theme: "light2",
+      axisY: {
+        interval: 1,
+        labelFormatter: function (e: any) {  
+          if (e.value != 1 && e.value != 0) return "" 
+          return yLabels[e.value];
+        },
+        maximum: 1.1
+      },
+      data: [{
+      type: "line",
+      xValueType: "dateTime",
+      dataPoints: []
+      }]
+    })
+  this.intervalChart.render();
   
 	// Get data for last 24 hours on init
 	let dayBeforeTimestamp = (new Date()).setDate((new Date()).getDate() - 1	)
@@ -62,6 +87,21 @@ export class OnlineOfflineChartComponent implements OnInit {
 		this.pyChart.options.data[0].dataPoints = res
 		this.pyChart.render();
 	});
+
+  this.largeEnergyDeviceService.getDeviceOnlineOfflineIntervalChart(this.deviceId, (Math.floor(dayBeforeTimestamp)).toString(), (Math.floor((new Date()).getTime())).toString()).subscribe((res: any) => {
+		if (res.status == 200) {
+      console.log(res.data)
+      const dataPoints = res.data.map((item: { timestamp: string; value: string; }) => ({
+        x: parseInt(item.timestamp),
+        y: Math.floor(parseFloat(item.value))
+      }));
+      console.log(dataPoints)
+      this.intervalChart.options.data[0].dataPoints = dataPoints;
+      this.intervalChart.render();
+    }
+	});
+  
+
   }
 
   onSubmit() {
@@ -94,6 +134,20 @@ export class OnlineOfflineChartComponent implements OnInit {
 		this.pyChart.options.data[0].dataPoints = res
 		this.pyChart.render();
 	});
+
+  this.largeEnergyDeviceService.getDeviceOnlineOfflineIntervalChart(this.deviceId, this.dateFrom, this.dateTo).subscribe((res: any) => {
+		if (res.status == 200) {
+      console.log(res.data)
+      const dataPoints = res.data.map((item: { timestamp: string; value: string; }) => ({
+        x: parseInt(item.timestamp),
+        y: Math.floor(parseFloat(item.value))
+      }));
+      console.log(dataPoints)
+      this.intervalChart.options.data[0].dataPoints = dataPoints;
+      this.intervalChart.render();
+    }
+	});
+
   
   }
 

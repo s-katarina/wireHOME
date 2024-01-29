@@ -10,7 +10,7 @@ import projectnwt2023.backend.devices.Measurement.BulbOnOffMeasurement;
 import projectnwt2023.backend.devices.mqtt.Gateway;
 import projectnwt2023.backend.devices.dto.model.DeviceDTO;
 import projectnwt2023.backend.devices.dto.model.LampDTO;
-import projectnwt2023.backend.devices.dto.LightSensorDTO;
+import projectnwt2023.backend.devices.dto.ValueTimestampDTO;
 import projectnwt2023.backend.devices.dto.Measurement;
 import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
 import projectnwt2023.backend.devices.service.interfaces.ILampService;
@@ -77,15 +77,15 @@ public class LampController {
     }
 
     @GetMapping(value = "/{deviceId}/range", produces = "application/json")
-    ResponseEntity<ApiResponse<List<LightSensorDTO>>> getRangeLightSensor(@PathVariable Integer deviceId,
-                                                                         @RequestParam String start,
-                                                                         @RequestParam String end){
+    ResponseEntity<ApiResponse<List<ValueTimestampDTO>>> getRangeLightSensor(@PathVariable Integer deviceId,
+                                                                             @RequestParam String start,
+                                                                             @RequestParam String end){
 
         List<Measurement> res = lampService.getDateRangeLightSensor(Long.valueOf(deviceId), start, end);
-        List<LightSensorDTO> ret = new ArrayList<>();
+        List<ValueTimestampDTO> ret = new ArrayList<>();
         if (res != null) {
             for (Measurement measurement : res) {
-                ret.add(new LightSensorDTO(String.valueOf(measurement.getValue()), String.valueOf(measurement.getTimestamp().getTime())));
+                ret.add(new ValueTimestampDTO(String.valueOf(measurement.getValue()), String.valueOf(measurement.getTimestamp().getTime())));
             }
             return new ResponseEntity<>(new ApiResponse<>(200, ret), HttpStatus.OK);
         }

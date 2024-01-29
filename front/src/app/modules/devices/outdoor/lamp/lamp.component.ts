@@ -31,7 +31,7 @@ export class LampComponent implements OnInit, AfterViewInit, OnDestroy {
 
   isButtonHovered: boolean = false;
 
-  selectedOption: string = ""
+  selectedOption: string = "24h"
   
   range = new FormGroup({
     start: new FormControl<Date | null>(null),
@@ -54,6 +54,9 @@ export class LampComponent implements OnInit, AfterViewInit, OnDestroy {
       dataPoints: []
       }]
     })
+
+    var yLabels = ["Off","On"];
+
     this.chartBulb = new CanvasJS.Chart("chartBulbContainer", 
     {
       zoomEnabled: true,
@@ -69,11 +72,13 @@ export class LampComponent implements OnInit, AfterViewInit, OnDestroy {
         lineThickness: 0,
       },
       axisY: {
-        labelFormatter: function(_: any) { 
-          return "";
+        labelFormatter: function (e: any) {  
+          if (e.value != 1 && e.value != 0) return "" 
+          return yLabels[e.value];
         },
         gridThickness: 0,
         lineThickness: 0,
+        minimum: -0.25,
       },
     })
     this.chart.render();
@@ -134,6 +139,19 @@ export class LampComponent implements OnInit, AfterViewInit, OnDestroy {
         else this.showChartBulb = false;
         this.chartBulb.options.data[0].dataPoints = dataPoints;
         this.chartBulb.render();
+      }
+    });
+
+    this.lampService.getRangeLightSensor(this.lamp!.id, (Math.floor(start)).toString(), (Math.floor(current.getTime())).toString()).subscribe((res: ApiResponse) => {
+      if (res.status == 200) {
+        console.log(res.data)
+        const dataPoints = res.data.map((item: { timestamp: string; value: string; }) => ({
+          x: parseInt(item.timestamp),
+          y: parseFloat(item.value)
+        }));
+        console.log(dataPoints)
+        this.chart.options.data[0].dataPoints = dataPoints;
+        this.chart.render();
       }
     });
 

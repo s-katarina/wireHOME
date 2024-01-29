@@ -13,8 +13,10 @@ import projectnwt2023.backend.devices.dto.*;
 import projectnwt2023.backend.devices.dto.model.DeviceDTO;
 import projectnwt2023.backend.devices.mqtt.Gateway;
 import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
+import projectnwt2023.backend.helper.ApiResponse;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/device")
@@ -131,6 +133,21 @@ public class DeviceController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(graphData, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/onlineIntervals/{deviceId}", produces = "application/json")
+    ResponseEntity<ApiResponse<List<ValueTimestampDTO>>> getOnlineIntervals(@PathVariable Integer deviceId,
+                                                                     @RequestParam String start,
+                                                                     @RequestParam String end){
+        ArrayList<GateEventMeasurement> res = deviceService.getOnlineOfflineIntervals(deviceId, start, end);
+        List<ValueTimestampDTO> ret = new ArrayList<>();
+        if (res != null) {
+            for (GateEventMeasurement measurement : res) {
+                ret.add(new ValueTimestampDTO(String.valueOf(measurement.getValue()), String.valueOf(measurement.getTimestamp().getTime())));
+            }
+            return new ResponseEntity<>(new ApiResponse<>(200, ret), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new ApiResponse<>(400, new ArrayList<>()), HttpStatus.BAD_REQUEST);
     }
 
 }

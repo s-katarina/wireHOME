@@ -32,11 +32,15 @@
             </mat-form-field>
          </div>
         <p *ngIf="rangeOver30Days">Dates must be less than 30 days apart</p>
-        <button mat-raised-button (click)="onSubmit()" class="view-data">View data</button>
+        <button mat-raised-button (click)="onSubmit()" class="view-data" style="margin-left: 20px;">View data</button>
     </div>
 
-    <div class="chart" id="PYCHARTchartContainer"></div>    
+    <div class="chart-container">
 
-    <mat-divider></mat-divider>
-
+        <div class="chart" id="PYCHARTchartContainer"></div>    
+        
+        <mat-divider></mat-divider>
+        
+        <div class="chart" id="intervalChartContainer"></div>    
+    </div>
 </div>

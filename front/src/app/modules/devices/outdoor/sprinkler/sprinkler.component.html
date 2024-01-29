@@ -160,5 +160,13 @@
         ></mat-paginator>
     
     </div>
+
+
+    <h4 matTooltip="Get intel on generated real-time event data">Detailed data values</h4>
+    <h5 matTooltip="Graphical chart displaying of data for true accessibility">Chart insights</h5>
+    <mat-divider></mat-divider>
+    <div class="chart-div-online">
+        <app-online-offline-chart class="chart" #onlineOfflineChart [deviceId]="sprinkler!.id"></app-online-offline-chart>
+    </div>
     
 </div>

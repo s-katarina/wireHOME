@@ -25,4 +25,8 @@ public interface IDeviceService {
     List<GateEventMeasurement> getRecentEvents(Long valueOf);
 
     ArrayList<PyChartDTO> getOnlineOfflineTime(Integer deviceId, String start, String end);
+
+    ArrayList<PyChartDTO> getOnlineOfflinePerTimeUnit(Integer deviceId, String start, String end);
+
+    ArrayList<GateEventMeasurement> getOnlineOfflineIntervals(Integer deviceId, String start, String end);
 }

@@ -73,6 +73,12 @@ export class LargeEnergyService {
                                     .set('end', end);
     return this.http.get<PyChartDTO[]>(environment.apiHost + `device/onlinePercent/${id}`, {params})
   }
+
+  getDeviceOnlineOfflineIntervalChart(id: string, start: string, end: string) : Observable<ApiResponse> {
+    const params = new HttpParams().set('start', start)
+                                    .set('end', end);
+    return this.http.get<ApiResponse>(environment.apiHost + `device/onlineIntervals/${id}`, {params})
+  }
   
   constructor(private readonly http: HttpClient) { }
 

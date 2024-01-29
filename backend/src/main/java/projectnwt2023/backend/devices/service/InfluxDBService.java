@@ -171,6 +171,7 @@ public class InfluxDBService {
                 String caller = fluxRecord.getValueByKey("caller") == null ? null : fluxRecord.getValueByKey("caller").toString();
                 Date timestamp = fluxRecord.getTime() == null ? null : Date.from(fluxRecord.getTime());
                 result.add(new GateEventMeasurement(measurementName, value, timestamp, caller));
+                System.out.println(value);
             }
         }
         return result;
@@ -296,20 +297,23 @@ public class InfluxDBService {
 
     public List<GateEventMeasurement> getOnlineOfflineData(Integer deviceId, Long startTimestamp, Long endTimestamp) {
 
-        LocalDateTime dateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(startTimestamp/1000), ZoneId.systemDefault());
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
-        String formattedDate = dateTime.format(formatter);
-        System.out.println("Start time " + formattedDate);
-        dateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(endTimestamp/1000), ZoneId.systemDefault());
-        formattedDate = dateTime.format(formatter);
-        System.out.println("End time " + formattedDate);
-
         String fluxQuery = String.format(
                 "from(bucket:\"%s\") |> range(start: %d, stop: %d)" +
                         "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"device-id\"] == \"%s\")" +
                         "|> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")" +                 // where measurement name (_measurement) equals value measurementName
                         "|> sort(columns: [\"_time\"], desc: false)",
                 this.bucket, startTimestamp / 1000, endTimestamp / 1000, "online/offline", deviceId);
+        return this.queryGate(fluxQuery);
+
+    }
+
+    public List<GateEventMeasurement> getOnlineOfflineDataLast(Integer deviceId) {
+
+        String fluxQuery = String.format(
+                "from(bucket:\"%s\") |> range(start: -1y)" +
+                        "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"device-id\"] == \"%s\")" +
+                        "|> last()",
+                this.bucket, "online/offline", deviceId);
         return this.queryGate(fluxQuery);
 
     }
