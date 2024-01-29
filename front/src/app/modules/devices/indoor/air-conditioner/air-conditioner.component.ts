@@ -3,7 +3,7 @@ import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular
 import { FormControl, FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { WebsocketService } from 'src/app/infrastructure/socket/websocket.service';
-import { AirConditionActionDTO, AirConditionerActionRequest, DeviceDTO } from 'src/app/model/model';
+import { AirConditionActionDTO, AirConditionerActionRequest, AirConditionerDTO, DeviceDTO } from 'src/app/model/model';
 import { environment } from 'src/environments/environment';
 import { AuthService } from '../../../auth/service/auth.service';
 import { MatTableDataSource } from '@angular/material/table';
@@ -22,7 +22,7 @@ export class AirConditionerComponent implements OnInit, AfterViewInit, OnDestroy
   actionStatus: string = ""
   currentTemp: string = ""
   deviceId: string = ""
-  airConditioner: DeviceDTO | undefined
+  airConditioner: AirConditionerDTO | undefined
   selectedOption: string = ""
 
   tempForm = new FormGroup({
@@ -49,8 +49,9 @@ export class AirConditionerComponent implements OnInit, AfterViewInit, OnDestroy
       this.deviceId = res;
       console.log("air conditioner id " + this.deviceId)
 
-      this.indoorService.getAirConditioner(this.deviceId).subscribe((airConditioner: DeviceDTO) => {
+      this.indoorService.getAirConditioner(this.deviceId).subscribe((airConditioner: AirConditionerDTO) => {
         this.airConditioner = airConditioner
+        console.log(this.airConditioner?.regimes)
       })
 
     })
@@ -152,7 +153,7 @@ export class AirConditionerComponent implements OnInit, AfterViewInit, OnDestroy
 
   async onDropdownChange() {
     console.log("selected " + this.selectedOption)
-    if (this.selectedOption == "cooling")
+    if (this.selectedOption == "colling")
       await this.cooling()
     if (this.selectedOption == "heating")
       await this.heating()

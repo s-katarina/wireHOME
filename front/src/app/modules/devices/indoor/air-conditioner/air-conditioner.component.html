@@ -15,9 +15,9 @@
               <mat-label>Select action</mat-label>
               <mat-select [(ngModel)]="selectedOption" (selectionChange)="onDropdownChange()">
                   <mat-option value="temp">Set temperature</mat-option>
-                  <mat-option value="cooling">Cooling</mat-option>
-                  <mat-option value="heating">Heating</mat-option>
-                  <mat-option value="ventilation">Ventilation</mat-option>
+                  <mat-option *ngFor="let regime of airConditioner?.regimes" [value]="regime">
+                    {{ regime | titlecase }}
+                  </mat-option>
                   <mat-option value="off">Turn off</mat-option>
               </mat-select>
             </mat-form-field>

@@ -96,6 +96,14 @@ export interface Battery extends DeviceDTO {
     currentFill: number;
 }
 
+export interface AirConditionerDTO extends DeviceDTO {
+    regimes: string[],
+    currentAction: string,
+    temp: number,
+    minTemp: number,
+    maxTemp: number
+}
+
 export interface GateEvent  {
     caller: string,
     eventType: string
