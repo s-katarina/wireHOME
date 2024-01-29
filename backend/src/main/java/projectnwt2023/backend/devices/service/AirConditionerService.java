@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import projectnwt2023.backend.devices.ACInterval;
 import projectnwt2023.backend.devices.AirConditioner;
 import projectnwt2023.backend.devices.Device;
+import projectnwt2023.backend.devices.RegimeAirConditioner;
 import projectnwt2023.backend.devices.repository.ACIntervalRepository;
 import projectnwt2023.backend.devices.repository.DeviceRepository;
 import projectnwt2023.backend.devices.service.interfaces.IAirConditionerService;
@@ -83,6 +84,26 @@ public class AirConditionerService implements IAirConditionerService {
         }
 
         if (!pass)
+            throw new IntervalNotValidException(ACInterval.class);
+
+        String action = acInterval.getAction();
+        Boolean supported = false;
+
+        for (RegimeAirConditioner regime : acInterval.getAirConditioner().getAvailableRegimes())
+            if (regime.toString().contains(action))
+                supported = true;
+
+        if (action.contains("temp")) {
+            String temp = action.split("#")[1];
+            Integer tempNum = Integer.valueOf(temp);
+            if (tempNum < acInterval.getAirConditioner().getMinTemp() ||
+                tempNum > acInterval.getAirConditioner().getMaxTemp())
+                supported = false;
+            else
+                supported = true;
+        }
+
+        if (!supported)
             throw new IntervalNotValidException(ACInterval.class);
 
         return acIntervalRepository.save(acInterval);
