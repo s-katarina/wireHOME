@@ -4,9 +4,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
+import projectnwt2023.backend.devices.ACInterval;
 import projectnwt2023.backend.devices.AirConditioner;
+import projectnwt2023.backend.devices.Device;
+import projectnwt2023.backend.devices.repository.ACIntervalRepository;
 import projectnwt2023.backend.devices.repository.DeviceRepository;
 import projectnwt2023.backend.devices.service.interfaces.IAirConditionerService;
+import projectnwt2023.backend.exceptions.EntityNotFoundException;
+import projectnwt2023.backend.exceptions.IntervalNotValidException;
+
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 import static projectnwt2023.backend.helper.RegexPattern.isStringMatchingPattern;
 
@@ -15,6 +23,9 @@ public class AirConditionerService implements IAirConditionerService {
 
     @Autowired
     private DeviceRepository deviceRepository;
+
+    @Autowired
+    private ACIntervalRepository acIntervalRepository;
 
     @Autowired
     private SimpMessagingTemplate simpMessagingTemplate;
@@ -42,6 +53,55 @@ public class AirConditionerService implements IAirConditionerService {
             airConditioner.setTemp(Integer.valueOf(temp));
             deviceRepository.save(airConditioner);
         }
+    }
+
+    @Override
+    public ArrayList<ACInterval> findIntervalsByAirConditioner(AirConditioner airConditioner) {
+        return acIntervalRepository.findByAirConditioner(airConditioner);
+    }
+
+    @Override
+    public ACInterval saveInterval(ACInterval acInterval) {
+        String startTime = acInterval.getStartTime();
+        String endTime = acInterval.getEndTime();
+        Long start = getSecondsFromTime(startTime);
+        Long end = getSecondsFromTime(endTime);
+        System.out.println(startTime + " " + endTime + " " + start + " " + end);
+
+        ArrayList<ACInterval> intervals = (ArrayList<ACInterval>) acIntervalRepository.findByAirConditioner(acInterval.getAirConditioner());
+
+        Boolean pass = true;
+
+        for (ACInterval interval : intervals) {
+            Long iStart = getSecondsFromTime(interval.getStartTime());
+            Long iEnd = getSecondsFromTime(interval.getEndTime());
+            if (!(
+                    (start < iStart && end < iStart) ||
+                    (start > iEnd && end > iEnd)
+            ))
+                pass = false;
+        }
+
+        if (!pass)
+            throw new IntervalNotValidException(ACInterval.class);
+
+        return acIntervalRepository.save(acInterval);
+    }
+
+    public Long getSecondsFromTime(String time) {
+        String[] tokens = time.split(":");
+
+        Long ret = 0L;
+        ret += Long.parseLong(tokens[0]) * 60 * 60;
+        ret += Long.parseLong(tokens[1]) * 60;
+        ret += Long.parseLong(tokens[2]);
+
+        return ret;
+    }
+
+    @Override
+    public void deleteIntervalById(Long id) {
+        acIntervalRepository.deleteById(id);
     }
 
 }

@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import projectnwt2023.backend.devices.ACInterval;
 import projectnwt2023.backend.devices.AirConditioner;
 import projectnwt2023.backend.devices.AmbientSensor;
 import projectnwt2023.backend.devices.dto.*;
@@ -54,6 +55,35 @@ public class AirConditionerController {
         ArrayList<AirConditionerActionDTO> ret = influxDBService.getAllAirConditionerActions(deviceId);
 
         return new ResponseEntity<>(ret, HttpStatus.OK);
+
+    }
+
+    @GetMapping(value = "/{deviceId}/intervals", produces = "application/json")
+    ResponseEntity<ArrayList<ACIntervalDTO>> getAirConditionerIntervals(@PathVariable Integer deviceId) {
+
+        AirConditioner device = (AirConditioner) deviceService.getById(deviceId.longValue());
+        ArrayList<ACInterval> intervals = airConditionerService.findIntervalsByAirConditioner(device);
+        ArrayList<ACIntervalDTO> ret = new ArrayList<>();
+        for (ACInterval acInterval : intervals)
+            ret.add(new ACIntervalDTO(acInterval));
+
+        return new ResponseEntity<>(ret, HttpStatus.OK);
+
+    }
+
+    @DeleteMapping(value = "/{deviceId}/interval/{intervalId}", produces = "application/json")
+    void deleteAirConditionerInterval(@PathVariable Integer deviceId, @PathVariable Integer intervalId) {
+        airConditionerService.deleteIntervalById((long) intervalId);
+    }
+
+    @PostMapping(value = "/{deviceId}/interval", produces = "application/json")
+    ResponseEntity<ACIntervalDTO> addAirConditionerInterval(@PathVariable Integer deviceId, @RequestBody ACIntervalDTO acIntervalDTO) {
+
+        AirConditioner airConditioner = (AirConditioner) deviceService.getById((long) deviceId);
+        ACInterval acInterval = new ACInterval(acIntervalDTO, airConditioner);
+        ACInterval saved = airConditionerService.saveInterval(acInterval);
+
+        return new ResponseEntity<>(new ACIntervalDTO(saved), HttpStatus.OK);
 
     }
 
