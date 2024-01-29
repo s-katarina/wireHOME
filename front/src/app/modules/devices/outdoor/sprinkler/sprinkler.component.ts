@@ -53,7 +53,7 @@ export class SprinklerComponent implements OnInit, AfterViewInit {
 
 
   // ---------- Table section
-  displayedColumns : string[] = ['command', 'caller', 'timestamp'];
+  displayedColumns : string[] = ['command', 'caller', 'callerUsername', 'timestamp'];
   dataSource!: MatTableDataSource<SprinklerCommand>;
   commands : SprinklerCommand[] = [];
   recentCommands: SprinklerCommand[] = [];
@@ -221,8 +221,9 @@ export class SprinklerComponent implements OnInit, AfterViewInit {
         this.sprinklerService.getRangeSprinklerCommands(this.sprinkler!.id, Math.floor(this.range.value.start!.getTime()).toString(), Math.floor(this.range.value.end!.getTime()).toString()).subscribe((res: ApiResponse) => {
           if (res.status == 200) {
             console.log(res)
-            filteredEvents = res.data.filter((event: { caller: string; command: string; }) =>
-              event.caller.toLowerCase().includes(this.filterInitiator.toLowerCase()) &&
+            filteredEvents = res.data.filter((event: { caller: string; command: string; callerUsername: string;}) =>
+              (event.caller.toLowerCase().includes(this.filterInitiator.toLowerCase()) ||
+              event.callerUsername.toLowerCase().includes(this.filterInitiator.toLowerCase())) &&
               event.command.toLowerCase().includes(this.filterEvent.toLowerCase())
               );
             this.commands = filteredEvents
@@ -235,9 +236,10 @@ export class SprinklerComponent implements OnInit, AfterViewInit {
     } else {
       // Filter for caller and command
       filteredEvents = this.recentCommands.filter(event =>
-        event.caller.toLowerCase().includes(this.filterInitiator.toLowerCase()) &&
-        event.command.toLowerCase().includes(this.filterEvent.toLowerCase())
-      );
+        (event.caller.toLowerCase().includes(this.filterInitiator.toLowerCase()) ||
+        event.callerUsername.toLowerCase().includes(this.filterInitiator.toLowerCase()) &&
+        event.command.toLowerCase().includes(this.filterEvent.toLowerCase()
+      )));
       this.commands = filteredEvents
       this.dataSource = new MatTableDataSource<SprinklerCommand>(this.commands);
       this.dataSource.sort = this.sort;

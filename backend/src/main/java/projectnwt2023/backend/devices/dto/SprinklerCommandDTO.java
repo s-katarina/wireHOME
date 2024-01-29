@@ -9,6 +9,7 @@ import lombok.*;
 @ToString
 public class SprinklerCommandDTO {
     private String caller;
+    private String callerUsername;
     private String command;
     private String timestamp;
 }

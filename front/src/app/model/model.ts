@@ -113,6 +113,7 @@ export interface GateEvent  {
 
 export interface SprinklerCommand  {
     caller: string,
+    callerUsername: string,
     command: string
     timestamp: string
 }

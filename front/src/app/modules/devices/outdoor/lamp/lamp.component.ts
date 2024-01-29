@@ -5,6 +5,7 @@ import { ApiResponse, Lamp } from 'src/app/model/model';
 import Swal from 'sweetalert2';
 import { OutdoorDeviceService } from '../service/outdoor-device-service';
 import { CanvasJS } from '@canvasjs/angular-charts';
+import { timestamp } from 'rxjs';
 
 @Component({
   selector: 'app-lamp',
@@ -67,7 +68,18 @@ export class LampComponent implements OnInit, AfterViewInit, OnDestroy {
       type: "scatter",
       xValueType: "dateTime",
       dataPoints: []
-      }]
+      }],
+      axisX:{
+        gridThickness: 0,
+        lineThickness: 0,
+      },
+      axisY: {
+        labelFormatter: function(_: any) { 
+          return "";
+        },
+        gridThickness: 0,
+        lineThickness: 0,
+      },
     })
     this.chart.render();
     this.lampService.getLamp(this.lampId).subscribe((res: any) => {
@@ -114,9 +126,13 @@ export class LampComponent implements OnInit, AfterViewInit, OnDestroy {
     this.lampService.getRangeBulb(this.lamp!.id, (Math.floor(start)).toString(), (Math.floor(current.getTime())).toString()).subscribe((res: ApiResponse) => {
       if (res.status == 200) {
         console.log(res.data)
+        let point_label = "on"
+        
         const dataPoints = res.data.map((item: { timestamp: string; value: string; }) => ({
           x: parseInt(item.timestamp),
-          y: parseInt(item.value)
+          y: parseInt(item.value),
+          markerSize: 35,
+          label: parseInt(item.value) == 1 ? "on at " + this.displayTimestamp(item.timestamp) : "off at " + this.displayTimestamp(item.timestamp)
         }));
         console.log(dataPoints)
         this.chartBulb.options.data[0].dataPoints = dataPoints;
@@ -148,6 +164,25 @@ export class LampComponent implements OnInit, AfterViewInit, OnDestroy {
     } else this.lampService.postAutomaticOnOff(this.lamp!.id, true).subscribe((res: any) => {
       console.log(res);
     });
+  }
+
+  displayTimestamp(timestamp: string): string {
+    const unixTimestamp = parseInt(timestamp, 10);
+  
+    if (isNaN(unixTimestamp)) {
+      return 'Invalid timestamp';
+    }
+  
+    const date = new Date(unixTimestamp);
+    const options: Intl.DateTimeFormatOptions = {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+  };
+    return new Intl.DateTimeFormat('en-GB', options).format(date);
   }
 
   dateFrom = ""

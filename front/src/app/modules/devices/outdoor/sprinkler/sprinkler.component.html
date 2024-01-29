@@ -89,7 +89,7 @@
                 <input matInput placeholder="Event" [(ngModel)]="filterEvent">
               </mat-form-field>
             <mat-form-field>
-              <input matInput placeholder="Initiator" [(ngModel)]="filterInitiator">
+              <input matInput placeholder="Caller (name or username)" [(ngModel)]="filterInitiator">
             </mat-form-field>
             <mat-form-field>
                 <mat-label>Enter a date range</mat-label>
@@ -132,6 +132,13 @@
                 </td>
             </ng-container>
     
+            <ng-container matColumnDef="callerUsername">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header>Caller username</th>
+                <td mat-cell *matCellDef="let element">
+                    {{element.callerUsername}}
+                </td>
+            </ng-container>
+
             <ng-container matColumnDef="timestamp">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Time</th>
                 <td mat-cell *matCellDef="let element">
