@@ -11,17 +11,18 @@ import projectnwt2023.backend.devices.Device;
 import projectnwt2023.backend.devices.Lamp;
 import projectnwt2023.backend.devices.State;
 import projectnwt2023.backend.devices.dto.GateEventMeasurement;
+import projectnwt2023.backend.devices.dto.Measurement;
 import projectnwt2023.backend.devices.dto.PyChartDTO;
+import projectnwt2023.backend.devices.dto.ValueTimestampDTO;
 import projectnwt2023.backend.devices.repository.DeviceRepository;
 import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
 import projectnwt2023.backend.exceptions.EntityNotFoundException;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
+
+import static java.lang.Math.abs;
 
 @Service
 public class DeviceService implements IDeviceService {
@@ -188,69 +189,126 @@ public class DeviceService implements IDeviceService {
     }
 
     @Override
-    public ArrayList<PyChartDTO> getOnlineOfflinePerTimeUnit(Integer deviceId, String start, String end) {
+    public List<ValueTimestampDTO> getOnlinePerTimeUnit(Integer deviceId, String start, String end) {
         Optional<Device> device = deviceRepository.findById(Long.valueOf(deviceId));
         if (!device.isPresent()) {
             throw new EntityNotFoundException(Device.class);
         }
 
+
         try {
+            List<ValueTimestampDTO> ret = new ArrayList<>();
 
             long startInSecondsSinceEpoch = Long.parseLong(start);
             long endInSecondsSinceEpoch = Long.parseLong(end);
-            List<GateEventMeasurement> data = influxDBService.getOnlineOfflineData(deviceId, startInSecondsSinceEpoch, endInSecondsSinceEpoch);
-            System.out.println(data.size());
 
-            LocalDateTime startDateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(startInSecondsSinceEpoch), ZoneId.systemDefault());
-            LocalDateTime endDateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(endInSecondsSinceEpoch/1000), ZoneId.systemDefault());
-            System.out.println("Start time " + startDateTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
-            System.out.println("End time " + endDateTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
+            LocalDateTime startDateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(startInSecondsSinceEpoch / 1000), ZoneId.systemDefault());
+            LocalDateTime endDateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(endInSecondsSinceEpoch / 1000), ZoneId.systemDefault());
+            endDateTime = endDateTime.withMinute(0).withSecond(0).withNano(0);
+            startDateTime = startDateTime.withMinute(0).withSecond(0).withNano(0);
 
             Duration duration = Duration.between(startDateTime, endDateTime);
-            int hourStep = 1;       // Calculate percentage for every hour
+            String interval = "1h";       // Calculate percentage for every hour
             if (duration.getSeconds() > 60 * 60 * 24) {
-                hourStep = 24;      // Calculate percentage every 24 hours
+                interval = "24h";      // Calculate percentage every 24 hours
+                endDateTime = endDateTime.withHour(0);
+                startDateTime = startDateTime.withHour(0);
             }
+            endDateTime = endDateTime.minusHours(interval.equals("1h") ? 1 : 24);
+//            System.out.println("Start time " + startDateTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
+//            System.out.println("End time " + endDateTime.format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")));
 
-            Map<LocalDateTime, Integer> intervals = new HashMap<>();
+            // Measurements grouped in tables by window (hour)
+            List<List<Measurement>> data = influxDBService.getOnlineOfflinePerTimeUnit(deviceId.toString(), startInSecondsSinceEpoch, endInSecondsSinceEpoch, interval);
+
+            Map<Date, Double> intervals = new HashMap<>();
             // key: interval start
             // value: online percentage
             LocalDateTime intervalStart = LocalDateTime.of(startDateTime.toLocalDate(), startDateTime.toLocalTime());
-            intervals.put(intervalStart, 0);
+            intervalStart = intervalStart.minusHours(interval.equals("1h") ? 1 : 24);
+            int windowIndex = 0;
+            double lastOnlineValue = 0.0;
             do {
-                LocalDateTime intervalStartNew = intervalStart.plusHours(hourStep);
-                intervals.put(intervalStartNew, 0);
-            } while (intervalStart.compareTo(endDateTime) <= 0);
-
-            int i = 0; // data index
-
-            for (Map.Entry<LocalDateTime, Integer> interval : intervals.entrySet()) {
-                double dateDistanceToNextState = data.get(i + 1).getTimestamp().getTime() - data.get(i).getTimestamp().getTime();
-
-                if (interval.getKey().isBefore(LocalDateTime.ofInstant(Instant.ofEpochMilli(data.get(i + 1).getTimestamp().getTime()), ZoneId.systemDefault()))) {
-                    if (data.get(i).getValue().equals("1.0")) interval.setValue(100);
-                    else interval.setValue(0);
+                if (data.size() == 0) {
+                    return ret;
                 }
-                if (data.get(i).getValue().equals("1.0")) {
+                // Interval is:
+                intervalStart = intervalStart.plusHours(interval.equals("1h") ? 1 : 24);
+                Date intervalTime = java.sql.Date.from((intervalStart.atZone(ZoneId.systemDefault()).toInstant()));
+                double onlineAmount = 0;
+                // Window is :
+                List<Measurement> window = data.get(windowIndex);
+                // Window hour is same as interval hour
+                if ( window.size() > 0 &&
+                        ((interval.equals("1h") && window.get(0).getTimestamp().getHour() == intervalStart.getHour())
+                             || (interval.equals("24h") && window.get(0).getTimestamp().getDayOfMonth() == intervalStart.getDayOfMonth()))) {
+//                    System.out.println("Window hour is same as interval hour: " + window.get(0).getTimestamp().getHour() + " & " + intervalStart.getHour());
+//                    System.out.println("Window day is same as interval hour: " + window.get(0).getTimestamp().getDayOfMonth() + " & " + intervalStart.getDayOfMonth());
+                    // calculate percentage
 
+                    if (lastOnlineValue == 1.0) {
+
+                        double secondsDistance = (Duration.between((window.get(0).getTimestamp()).atZone(ZoneId.systemDefault()).toInstant(), intervalStart.atZone(ZoneId.systemDefault()).toInstant())).getSeconds();
+                        if (interval.equals("24h")) {
+                            LocalDateTime startInterval = window.get(0).getTimestamp().withHour(intervalStart.getHour());
+                            secondsDistance = (Duration.between((window.get(0).getTimestamp()).atZone(ZoneId.systemDefault()).toInstant(), startInterval.atZone(ZoneId.systemDefault()).toInstant())).getSeconds();
+                        }
+                        onlineAmount += abs(secondsDistance);
+//                        System.out.println("At start, Last online value is 1, add online amount , " + secondsDistance);
+//                        System.out.println("First value is at" + window.get(0).getTimestamp().getHour() + " " + window.get(0).getTimestamp().getMinute());
+//                        System.out.println("Start interval hour is , " + intervalStart.getHour() + " " + intervalStart.getMinute());
+
+                    }
+                    for (int i = 0; i < window.size()-1 ; i++) {
+                        if (window.get(i).getValue() == 1.0  && window.get(i + 1).getValue() == 0.0) {
+                            double secondsDistance = (Duration.between((window.get(0).getTimestamp()).atZone(ZoneId.systemDefault()).toInstant(), (window.get(1).getTimestamp()).atZone(ZoneId.systemDefault()).toInstant())).getSeconds();
+                            onlineAmount += secondsDistance;
+//                            System.out.println("Value online:  " + window.get(i).getValue());
+//                            System.out.println("Adding online amount for intervals in window, " + secondsDistance);
+                        }
+                    }
+
+                    lastOnlineValue = window.get(window.size()-1).getValue();
+                    if (lastOnlineValue == 1.0) {
+                        LocalDateTime endInterval = intervalStart.plusHours(interval.equals("1h") ? 1 : 24);
+                        if (interval.equals("24h")) {
+                            endInterval = window.get(window.size()-1).getTimestamp().withHour(endInterval.getHour());
+                        }
+                        double secondsDistance = (Duration.between((window.get(window.size()-1).getTimestamp()).atZone(ZoneId.systemDefault()).toInstant(), endInterval.atZone(ZoneId.systemDefault()).toInstant())).getSeconds();
+                        onlineAmount += abs(secondsDistance);
+//                        System.out.println("At end, Last online value is 1, add online amount , " + secondsDistance);
+//                        System.out.println("last value is at" + window.get(0).getTimestamp().getHour() + " " + window.get(0).getTimestamp().getMinute());
+//                        System.out.println("end interval hour is , " + endInterval.getHour() + " " + endInterval.getMinute());
+
+                    }
+                    if (windowIndex + 1 < data.size()) {
+                        windowIndex += 1;
+                    }
+                // Window hour is missing, fill with last value
+                } else {
+//                    System.out.println("Window hour missing, interval hour: " + intervalStart.getHour());
+//                    System.out.println("Window day missing, interval day: " + intervalStart.getDayOfMonth());
+                    if (lastOnlineValue == 1.0) {
+                        intervals.put(intervalTime, 1.0);
+                    } else {
+                        intervals.put(intervalTime, 0.0);
+                    }
                 }
-                i += 1;
+                double secondsAmount = (Duration.between((intervalStart.atZone(ZoneId.systemDefault()).toInstant()), (intervalStart.plusHours(interval.equals("1h") ? 1 : 24)).atZone(ZoneId.systemDefault()).toInstant())).getSeconds();
+//                System.out.println("Seconds amount: " + secondsAmount);
+//                System.out.println("Online amount: " + onlineAmount);
+                intervals.put(intervalTime, onlineAmount / secondsAmount);
+
+            } while (intervalStart.compareTo(endDateTime) < 0);
+
+            // Transform results
+
+            for (Map.Entry<Date, Double> entry : intervals.entrySet()) {
+                ret.add(new ValueTimestampDTO(entry.getValue().toString(), Long.toString(entry.getKey().getTime())));
             }
-            if (data.size() == 0) {
-                // get last
-            }else{
-                if (data.get(data.size()-1).getValue().equals("0.0")) {
-                    double dateDistance = (new Date()).getTime() - data.get(data.size()-1).getTimestamp().getTime();
-                }
-                if (data.get(data.size()-1).getValue().equals("1.0")) {
-                    double dateDistance = (new Date()).getTime() - data.get(data.size()-1).getTimestamp().getTime();
-                }
-            }
-
-            ArrayList<PyChartDTO> pyChartDTOS = new ArrayList<>();
-            return pyChartDTOS;
-
-        } catch (NumberFormatException e) {
+//            System.out.println("Number of intervals in ret: " + ret.size());
+            return ret;
+        } catch (NumberFormatException | DateTimeException e) {
             return null;
         }
     }

@@ -4,6 +4,7 @@ import projectnwt2023.backend.devices.Device;
 import projectnwt2023.backend.devices.State;
 import projectnwt2023.backend.devices.dto.GateEventMeasurement;
 import projectnwt2023.backend.devices.dto.PyChartDTO;
+import projectnwt2023.backend.devices.dto.ValueTimestampDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,8 @@ public interface IDeviceService {
 
     ArrayList<PyChartDTO> getOnlineOfflineTime(Integer deviceId, String start, String end);
 
-    ArrayList<PyChartDTO> getOnlineOfflinePerTimeUnit(Integer deviceId, String start, String end);
+
+    List<ValueTimestampDTO> getOnlinePerTimeUnit(Integer deviceId, String start, String end);
 
     ArrayList<GateEventMeasurement> getOnlineOfflineIntervals(Integer deviceId, String start, String end);
 }

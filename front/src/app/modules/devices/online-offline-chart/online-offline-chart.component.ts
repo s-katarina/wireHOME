@@ -12,6 +12,7 @@ export class OnlineOfflineChartComponent implements OnInit {
   @Input() deviceId = '';
   pyChart: any
   intervalChart: any
+  timeUnitChart: any
 
   dateFrom = ""
   dateTo = ""
@@ -62,7 +63,6 @@ export class OnlineOfflineChartComponent implements OnInit {
     {
       colorSet: "appColors",
       zoomEnabled: true,
-      exportEnabled: true,
       theme: "light2",
       axisY: {
         interval: 1,
@@ -80,24 +80,77 @@ export class OnlineOfflineChartComponent implements OnInit {
     })
   this.intervalChart.render();
   
+  this.timeUnitChart = new CanvasJS.Chart("timeUnitChartContainer", 
+    {
+      colorSet: "appColors",
+      theme: "light2",
+      axisX: {
+        intervalType: "dateTime",
+      },
+      axisY: {
+        suffix: "%"
+      },
+      toolTip: {
+        shared: true
+      },
+      legend: {
+        reversed: true,
+        verticalAlign: "center",
+        horizontalAlign: "right"
+      },
+      dataPointWidth: 20,
+      data: [{
+        type: "stackedColumn100",
+        xValueType: "dateTime",
+        name: "Online",
+        showInLegend: true,
+        yValueFormatString: "#,##0\"%\"",
+        dataPoints: []
+      },
+      {
+        type: "stackedColumn100",
+        xValueType: "dateTime",
+        name: "Offline",
+        showInLegend: true,
+        yValueFormatString: "#,##0\"%\"",
+        dataPoints: []
+      }]
+    })
+  this.timeUnitChart.render();
+
 	// Get data for last 24 hours on init
 	let dayBeforeTimestamp = (new Date()).setDate((new Date()).getDate() - 1	)
 	this.largeEnergyDeviceService.getDeviceOnlineOfflinePyChart(this.deviceId, (Math.floor(dayBeforeTimestamp)).toString(), (Math.floor((new Date()).getTime())).toString()).subscribe((res: any) => {
-		console.log(res);
 		this.pyChart.options.data[0].dataPoints = res
 		this.pyChart.render();
 	});
 
   this.largeEnergyDeviceService.getDeviceOnlineOfflineIntervalChart(this.deviceId, (Math.floor(dayBeforeTimestamp)).toString(), (Math.floor((new Date()).getTime())).toString()).subscribe((res: any) => {
 		if (res.status == 200) {
-      console.log(res.data)
       const dataPoints = res.data.map((item: { timestamp: string; value: string; }) => ({
         x: parseInt(item.timestamp),
         y: Math.floor(parseFloat(item.value))
       }));
-      console.log(dataPoints)
       this.intervalChart.options.data[0].dataPoints = dataPoints;
       this.intervalChart.render();
+    }
+	});
+
+  this.largeEnergyDeviceService.getDeviceOnlineOfflineTimeUnitChart(this.deviceId, (Math.floor(dayBeforeTimestamp)).toString(), (Math.floor((new Date()).getTime())).toString()).subscribe((res: any) => {
+		if (res.status == 200) {
+      console.log(res.data)
+      const dataPoints = res.data.map((item: { timestamp: string; value: string; }) => ({
+        x: parseInt(item.timestamp),
+        y: parseFloat(item.value)  * 100
+      }));
+      console.log(dataPoints)
+      const offlineDataPoints = res.data.map((item: { timestamp: string; value: string; }) => ({
+        x: parseInt(item.timestamp),
+        y: 100 - (parseFloat(item.value) * 100)
+      }));
+      this.timeUnitChart.options.data[0].dataPoints = dataPoints;
+      this.timeUnitChart.options.data[1].dataPoints = offlineDataPoints;
+      this.timeUnitChart.render();
     }
 	});
   
@@ -130,21 +183,36 @@ export class OnlineOfflineChartComponent implements OnInit {
     }
 	  
 	this.largeEnergyDeviceService.getDeviceOnlineOfflinePyChart(this.deviceId, this.dateFrom, this.dateTo).subscribe((res: any) => {
-		console.log(res);
 		this.pyChart.options.data[0].dataPoints = res
 		this.pyChart.render();
 	});
 
   this.largeEnergyDeviceService.getDeviceOnlineOfflineIntervalChart(this.deviceId, this.dateFrom, this.dateTo).subscribe((res: any) => {
 		if (res.status == 200) {
-      console.log(res.data)
       const dataPoints = res.data.map((item: { timestamp: string; value: string; }) => ({
         x: parseInt(item.timestamp),
         y: Math.floor(parseFloat(item.value))
       }));
-      console.log(dataPoints)
       this.intervalChart.options.data[0].dataPoints = dataPoints;
       this.intervalChart.render();
+    }
+	});
+
+  this.largeEnergyDeviceService.getDeviceOnlineOfflineTimeUnitChart(this.deviceId, this.dateFrom, this.dateTo).subscribe((res: any) => {
+		if (res.status == 200) {
+      console.log(res.data)
+      const dataPoints = res.data.map((item: { timestamp: string; value: string; }) => ({
+        x: parseInt(item.timestamp),
+        y: parseFloat(item.value) * 100
+      }));
+      const offlineDataPoints = res.data.map((item: { timestamp: string; value: string; }) => ({
+        x: parseInt(item.timestamp),
+        y: 100 - (parseFloat(item.value) * 100)
+      }));
+      console.log(dataPoints)
+      this.timeUnitChart.options.data[0].dataPoints = dataPoints;
+      this.timeUnitChart.options.data[1].dataPoints = offlineDataPoints;
+      this.timeUnitChart.render();
     }
 	});
 

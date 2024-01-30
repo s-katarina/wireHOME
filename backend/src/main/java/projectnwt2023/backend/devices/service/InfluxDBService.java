@@ -41,7 +41,7 @@ public class InfluxDBService {
             for (FluxRecord fluxRecord : records) {
                 result.add(new Measurement(fluxRecord.getMeasurement(),
                         fluxRecord.getValue() == null ? 0 : ((double) fluxRecord.getValue()),
-                        fluxRecord.getTime() == null ? null : Date.from(fluxRecord.getTime())));
+                        fluxRecord.getTime() == null ? null : LocalDateTime.ofInstant(fluxRecord.getTime(), ZoneId.systemDefault())));
             }
         }
         return result;
@@ -177,6 +177,33 @@ public class InfluxDBService {
         return result;
     }
 
+    public List<List<Measurement>> getOnlineOfflinePerTimeUnit(String deviceId,  long startTime, long endTime, String interval) {
+        List<List<Measurement>> result = new ArrayList<>();
+        QueryApi queryApi = this.influxDbClient.getQueryApi();
+        String fluxQuery = String.format(
+                "from(bucket:\"%s\") |> range(start: %d, stop: %d)" +
+                        "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"device-id\"] == \"%s\")" +
+                        "|> filter(fn: (r) => r[\"_field\"] == \"value\")\n" +
+                        "|> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\n" +
+                        "|> window(every: %s)\n" +
+                        "|> fill(usePrevious: true)\n" +
+                        "|> sort(columns: [\"_time\"], desc: false)",
+                this.bucket, startTime / 1000, endTime / 1000, "online/offline", deviceId, interval);
+        List<FluxTable> tables = queryApi.query(fluxQuery);
+        for (FluxTable fluxTable : tables) {
+            List<FluxRecord> records = fluxTable.getRecords();
+            List<Measurement> tableResults = new ArrayList<>();
+            for (FluxRecord fluxRecord : records) {
+                String measurementName = fluxRecord.getMeasurement();
+                Double value = fluxRecord.getValueByKey("value") == null ? null : (Double) fluxRecord.getValueByKey("value");
+                LocalDateTime timestamp = fluxRecord.getTime() == null ? null : LocalDateTime.ofInstant(fluxRecord.getTime(), ZoneId.systemDefault());
+                tableResults.add(new Measurement(measurementName, value == null ? 0 : value, timestamp));
+            }
+            result.add(tableResults);
+        }
+        return result;
+    }
+
     public List<GateEventMeasurement> findRecentGateEvents(String deviceId) {
         String fluxQuery = String.format(
                 "from(bucket:\"%s\") |> range(start: -2h, stop: now())" +
@@ -223,7 +250,7 @@ public class InfluxDBService {
             for (FluxRecord fluxRecord : records) {
                 String measurementName = fluxRecord.getMeasurement();
                 Double value = fluxRecord.getValueByKey("value") == null ? null : (Double) fluxRecord.getValueByKey("value");
-                Date timestamp = fluxRecord.getTime() == null ? null : Date.from(fluxRecord.getTime());
+                LocalDateTime timestamp = fluxRecord.getTime() == null ? null : LocalDateTime.ofInstant(fluxRecord.getTime(), ZoneId.systemDefault());
                 result.add(new Measurement(measurementName, value, timestamp));
             }
         }

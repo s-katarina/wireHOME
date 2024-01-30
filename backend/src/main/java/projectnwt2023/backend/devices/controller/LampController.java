@@ -16,6 +16,8 @@ import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
 import projectnwt2023.backend.devices.service.interfaces.ILampService;
 import projectnwt2023.backend.helper.ApiResponse;
 
+import java.sql.Date;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -85,7 +87,7 @@ public class LampController {
         List<ValueTimestampDTO> ret = new ArrayList<>();
         if (res != null) {
             for (Measurement measurement : res) {
-                ret.add(new ValueTimestampDTO(String.valueOf(measurement.getValue()), String.valueOf(measurement.getTimestamp().getTime())));
+                ret.add(new ValueTimestampDTO(String.valueOf(measurement.getValue()), String.valueOf( ( Date.from((measurement.getTimestamp().atZone(ZoneId.systemDefault()).toInstant()))).getTime() )));
             }
             return new ResponseEntity<>(new ApiResponse<>(200, ret), HttpStatus.OK);
         }

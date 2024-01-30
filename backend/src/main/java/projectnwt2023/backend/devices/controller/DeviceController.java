@@ -150,4 +150,15 @@ public class DeviceController {
         return new ResponseEntity<>(new ApiResponse<>(400, new ArrayList<>()), HttpStatus.BAD_REQUEST);
     }
 
+    @GetMapping(value = "/onlinePerUnit/{deviceId}", produces = "application/json")
+    ResponseEntity<ApiResponse<List<ValueTimestampDTO>>> getOnlinePerUnit(@PathVariable Integer deviceId,
+                                                                            @RequestParam String start,
+                                                                            @RequestParam String end){
+        List<ValueTimestampDTO> ret = deviceService.getOnlinePerTimeUnit(deviceId, start, end);
+        if (ret != null) {
+            return new ResponseEntity<>(new ApiResponse<>(200, ret), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new ApiResponse<>(400, new ArrayList<>()), HttpStatus.BAD_REQUEST);
+    }
+
 }
