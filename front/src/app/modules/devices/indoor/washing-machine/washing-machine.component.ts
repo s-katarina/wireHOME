@@ -175,7 +175,7 @@ export class WashingMachineComponent implements OnInit, AfterViewInit, OnDestroy
     if (action != "") {
       let dto: WMTaskDTO = {
         id: 0,
-        startTime: startTime.toLocaleString(),
+        startTime: startTime.toISOString(),
         action: action
       }
       this.indoorService.addWMTaskForWM(this.deviceId, dto).subscribe((ret: WMTaskDTO) => {

@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"sort"
 	"strconv"
 	"strings"
 	"tim10/mqtt/constants"
@@ -92,6 +93,13 @@ func getWMTasks(deviceId int32) []WMTask {
 	}
 
 	fmt.Println("Response for GET WashingMachine WMTasks:", string(body))
+
+	sort.Slice(wmtasks, func(i, j int) bool {
+		t1, _ := time.Parse(time.RFC3339, wmtasks[i].StartTime)
+		t2, _ := time.Parse(time.RFC3339, wmtasks[j].StartTime)
+		return t1.After(t2)
+	})
+
 	fmt.Println(wmtasks)
 	return wmtasks
 }
@@ -152,7 +160,7 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 			PubAction("Unsupported", "", client)
 		}
 
-		//onAutomatic = false
+		onAutomatic = false
 	}
 }
 
@@ -224,24 +232,70 @@ func RunSim() {
 
 	for {
 
-		//if washingMachine.CurrentAction == "wool30" {
-		//	//colling()
-		//	fmt.Println("wool30")
-		//}
+		if washingMachine.CurrentAction != "automatic" && washingMachine.CurrentAction != "off" {
+			runAction(washingMachine.CurrentAction, 15)
+		}
+
+		if washingMachine.CurrentAction == "automatic" {
+			if !onAutomatic {
+				onAutomatic = true
+			}
+			runAutomatic()
+		}
+
+		onAutomatic = false
 
 		fmt.Println(washingMachine.CurrentAction)
-
-		//if washingMachine.CurrentAction == "automatic" {
-		//	if !onAutomatic {
-		//		go runAutomatic()
-		//	}
-		//	onAutomatic = true
-		//}
-
 
 		time.Sleep(time.Second * 3)
 	}
 
+}
+
+func runAutomatic() {
+	for onAutomatic {
+		task := WMTask{Id: -1}
+		curr := time.Now().UTC()
+
+		for _, wmtask := range wmtasks {
+			start, _ := time.Parse(time.RFC3339, wmtask.StartTime)
+
+			fmt.Printf("%s - %s\n", start, curr)
+
+			if curr.After(start) && curr.Before(start.Add(time.Second * 4))  {
+				fmt.Println("uso")
+				task = wmtask
+				break
+			}
+		}
+		fmt.Println(task)
+		if task.Id != -1 {
+			PubAction("automatic#" + task.Action, email, washingMachine.Client)
+			washingMachine.CurrentAction = task.Action
+			runAction(task.Action, 15)
+			if onAutomatic {
+				washingMachine.CurrentAction = "automatic"
+				PubAction("automatic", email, washingMachine.Client)
+			}
+		}
+
+		time.Sleep(time.Second * 3)
+	}
+}
+
+func runAction(action string, seconds int) {
+	start := time.Now()
+	for strings.Contains(washingMachine.CurrentAction, action) {
+		curr := time.Now()
+
+		if curr.Sub(start).Seconds() >= float64(seconds) {
+			washingMachine.CurrentAction = "off"
+			PubAction("off", email, washingMachine.Client)
+			break
+		}
+
+		time.Sleep(time.Second * 3)
+	}
 }
 
 func (washingMachine WashingMachine) SubToActionRequest(client mqtt.Client) {
