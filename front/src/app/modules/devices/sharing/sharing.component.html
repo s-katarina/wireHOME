@@ -46,6 +46,22 @@
             (click)="navigateToSingleProperty()"/>
         </mat-card>
     </div>
-</div>
+  </div>
+
+  <h4 matTooltip="Get intel sharing">Devices shared with you</h4>
+  <mat-divider></mat-divider>
+
+  <div class="sections">
+    <div class="section">
+      <div class="card-container">
+        <div *ngFor="let sharedDevice of sharedDevices">
+          <div class="card" (click)="navigateToDevice(sharedDevice.device)">
+            <p>{{getDeviceTypeDisplayName(sharedDevice.device)}}</p>
+            <img class="img-card" [src]="sharedDevice.device.imagePath" alt="{{sharedDevice.device.modelName}}">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 
 </div>

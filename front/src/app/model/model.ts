@@ -186,3 +186,9 @@ export interface SharedPropertyDTO {
     shareWith: AppUserDTO,
     property: PropertyDTO
 }
+
+export interface SharedDeviceDTO {
+    id: number,
+    shareWith: AppUserDTO,
+    device: DeviceDTO
+}
