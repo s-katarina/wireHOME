@@ -162,6 +162,7 @@ export class SharingComponent implements OnInit {
 
     this.sharingService.shareProperty(dto).subscribe((res: SharedPropertyDTO) => {
       console.log(res)
+      alert("Successfully shared property")
     })
   }
 
@@ -173,6 +174,7 @@ export class SharingComponent implements OnInit {
 
     this.sharingService.removeProperty(dto).subscribe((res: object) => {
       console.log(res)
+      alert("Successfully removed property")
     })
   }
 
@@ -184,6 +186,7 @@ export class SharingComponent implements OnInit {
 
     this.sharingService.shareDevice(dto).subscribe((res: SharedDeviceDTO) => {
       console.log(res)
+      alert("Successfully shared device")
     })
   }
 
@@ -195,6 +198,7 @@ export class SharingComponent implements OnInit {
 
     this.sharingService.removeDevice(dto).subscribe((res: object) => {
       console.log(res)
+      alert("Successfully removed device")
     })
   }
 
