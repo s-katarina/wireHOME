@@ -3,16 +3,8 @@ package main
 import (
 	// "fmt"
 	"sync"
-	// battery "tim10/mqtt/battery"
-	// "tim10/mqtt/gate"
-	// lamp "tim10/mqtt/lamp"
-	// solarPanel "tim10/mqtt/solarPanel"
-	// ambientSensor "tim10/mqtt/ambientSensor"
-	airConditioner "tim10/mqtt/airConditioner"
+	"tim10/mqtt/washingMachine"
 )
-
-// ambientSensore "tim10/mqtt/ambientSensore"
-// "tim10/mqtt/gate"
 
 func main() {
 	var wg sync.WaitGroup
@@ -23,8 +15,9 @@ func main() {
 	// go lamp.RunLamp()
 	// go battery.RunBattery(3)
 	// go solarPanel.RunSolarPanel(4);
-	go airConditioner.RunAirConditioner();
+	//go airConditioner.RunAirConditioner();
 	// go ambientSensor.RunAmbientSensor();
+	go washingMachine.RunWashingMachine();
 	wg.Wait()
 
 	// fmt.Println("All scripts completed")
