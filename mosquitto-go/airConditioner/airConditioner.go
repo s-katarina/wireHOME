@@ -101,8 +101,8 @@ func getAcIntervals(deviceId int32) []ACInterval {
 	return intervals
 }
 
-var airConditioner AirConditioner = getAirConditioner(5)
-var intervals []ACInterval = getAcIntervals(5)
+var airConditioner AirConditioner = getAirConditioner(8)
+var intervals []ACInterval = getAcIntervals(8)
 var onAutomatic = false
 var email = ""
 

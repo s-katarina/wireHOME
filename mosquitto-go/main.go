@@ -3,7 +3,7 @@ package main
 import (
 	// "fmt"
 	"sync"
-	"tim10/mqtt/washingMachine"
+	"tim10/mqtt/airConditioner"
 )
 
 func main() {
@@ -15,9 +15,9 @@ func main() {
 	// go lamp.RunLamp()
 	// go battery.RunBattery(3)
 	// go solarPanel.RunSolarPanel(4);
-	//go airConditioner.RunAirConditioner();
+	go airConditioner.RunAirConditioner();
 	// go ambientSensor.RunAmbientSensor();
-	go washingMachine.RunWashingMachine();
+	// go washingMachine.RunWashingMachine();
 	wg.Wait()
 
 	// fmt.Println("All scripts completed")

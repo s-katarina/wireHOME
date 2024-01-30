@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { SharingService } from './sharing.service';
 import { AuthService } from '../../auth/service/auth.service';
-import { DeviceDTO, SharedDeviceDTO, SharedPropertyDTO } from 'src/app/model/model';
+import { DeviceDTO, PropertyDTO, ShareActionDTO, SharedDeviceDTO, SharedPropertyDTO } from 'src/app/model/model';
 import { PropertyServiceService } from '../../property/service/property-service.service';
 import { ImageServiceService } from '../../service/image-service.service';
 import { Router } from '@angular/router';
 import { OutdoorDeviceService } from '../outdoor/service/outdoor-device-service';
 import { LargeEnergyService } from '../large-energy/large-energy.service';
 import { IndoorDeviceService } from '../indoor/service/indoor-device.service';
+import { FormControl, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-sharing',
@@ -20,7 +21,20 @@ export class SharingComponent implements OnInit {
   hoveredPropertyId: string | null = null;
   isHovered = false;
 
+  email: string = ""
+  email2: string = ""
+
   sharedDevices: SharedDeviceDTO[] = []
+
+  myProperties: PropertyDTO[] = []
+  selectedProperty: PropertyDTO | undefined
+
+  myDevices: DeviceDTO[] = []
+  selectedDevice: DeviceDTO | undefined
+
+  sharePropertyForm = new FormGroup({
+    email: new FormControl()
+  })
 
   constructor(private sharingService: SharingService, 
               private authService: AuthService, 
@@ -41,6 +55,17 @@ export class SharingComponent implements OnInit {
     this.sharingService.getSharedWithDevices(this.authService.getId()).subscribe((devices: SharedDeviceDTO[]) => {
       this.sharedDevices = devices
       console.log(this.sharedDevices)
+    })
+
+    this.propertyService.getProperties().subscribe((properties: PropertyDTO[]) => {
+      this.myProperties = properties
+      console.log(this.myProperties)
+    })
+
+    let id: string = this.authService.getId()
+    this.sharingService.getDevicesForOwnerOfProperty(id).subscribe((devices: DeviceDTO[]) => {
+      this.myDevices = devices
+      console.log(this.myDevices)
     })
 
   }
@@ -127,6 +152,50 @@ export class SharingComponent implements OnInit {
     } else if (device.deviceType == 'washingMachine') {
       this.router.navigate(['/washing-machine'])
     }
+  }
+
+  shareProperty() {
+    let dto: ShareActionDTO = {
+      email: this.email,
+      id: this.selectedProperty!.id
+    }
+
+    this.sharingService.shareProperty(dto).subscribe((res: SharedPropertyDTO) => {
+      console.log(res)
+    })
+  }
+
+  removeProperty() {
+    let dto: ShareActionDTO = {
+      email: this.email,
+      id: this.selectedProperty!.id
+    }
+
+    this.sharingService.removeProperty(dto).subscribe((res: object) => {
+      console.log(res)
+    })
+  }
+
+  shareDevice() {
+    let dto: ShareActionDTO = {
+      email: this.email2,
+      id: this.selectedDevice!.id
+    }
+
+    this.sharingService.shareDevice(dto).subscribe((res: SharedDeviceDTO) => {
+      console.log(res)
+    })
+  }
+
+  removeDevice() {
+    let dto: ShareActionDTO = {
+      email: this.email2,
+      id: this.selectedDevice!.id
+    }
+
+    this.sharingService.removeDevice(dto).subscribe((res: object) => {
+      console.log(res)
+    })
   }
 
 }

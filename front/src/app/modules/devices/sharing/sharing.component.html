@@ -4,23 +4,37 @@
   <mat-divider></mat-divider>
   
   <div class="same-row">
-    <!-- <form [formGroup]="giveForm" (ngSubmit)="givePermission()">
-      <mat-form-field class="margin-left">
-        <mat-label>Select property</mat-label>
-        <mat-select [(ngModel)]="selectedProperty">
-            <mat-option *ngFor="let property of properties [value]="property">
-              {{ property. | titlecase }}
-            </mat-option>
-            <mat-option value="off">Turn off</mat-option>
-        </mat-select>
-      </mat-form-field>
-      <mat-form-field class="oneLine">
-          <mat-label>User email</mat-label>
-          <input matInput type="text" name="email" formControlName="email" />
-      </mat-form-field>
-      <button type="submit" class="report-btn">Give</button>
-    </form> -->
+    <mat-form-field class="margin-left">
+      <mat-label>Select property</mat-label>
+      <mat-select [(ngModel)]="selectedProperty">
+          <mat-option *ngFor="let property of myProperties" [value]="property">
+            {{ property.address }}
+          </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="oneLine">
+      <mat-label>User email</mat-label>
+      <input matInput type="text" name="email" [(ngModel)]="email" />
+    </mat-form-field>
+    <button (click)="shareProperty()" class="report-btn">Give</button>
+    <button (click)="removeProperty()" class="report-btn">Remove</button>
+  </div>
 
+  <div class="same-row">
+    <mat-form-field class="margin-left">
+      <mat-label>Select device</mat-label>
+      <mat-select [(ngModel)]="selectedDevice">
+          <mat-option *ngFor="let device of myDevices" [value]="device">
+            {{ device.modelName }}
+          </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="oneLine">
+      <mat-label>User email</mat-label>
+      <input matInput type="text" name="email" [(ngModel)]="email2" />
+    </mat-form-field>
+    <button (click)="shareDevice()" class="report-btn">Give</button>
+    <button (click)="removeDevice()" class="report-btn">Remove</button>
   </div>
 
   <h4 matTooltip="Get intel sharing">Properties shared with you</h4>

@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import projectnwt2023.backend.appUser.AppUser;
+import projectnwt2023.backend.appUser.service.interfaces.IAppUserService;
 import projectnwt2023.backend.devices.Device;
 import projectnwt2023.backend.devices.RegimeAirConditioner;
 import projectnwt2023.backend.devices.RegimeType;
@@ -14,6 +16,7 @@ import projectnwt2023.backend.devices.mqtt.Gateway;
 import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/device")
@@ -23,6 +26,8 @@ public class DeviceController {
 
     @Autowired
     IDeviceService deviceService;
+    @Autowired
+    IAppUserService appUserService;
 
     @Autowired
     Gateway mqttGateway;
@@ -125,6 +130,19 @@ public class DeviceController {
     ResponseEntity<ArrayList<PyChartDTO>> getElectoByProperty(@PathVariable Integer deviceId){
         ArrayList<PyChartDTO> grapgData = deviceService.getOnlineOfflineTime(deviceId);
         return new ResponseEntity<>(grapgData, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/owner/{ownerId}", produces = "application/json")
+    ResponseEntity<ArrayList<DeviceDTO>> getDevicesByOwner(@PathVariable Long ownerId) {
+
+        Optional<AppUser> owner = appUserService.findById(ownerId);
+        ArrayList<Device> devices = deviceService.findAllByOwnerOfProperty(owner.get());
+        ArrayList<DeviceDTO> ret = new ArrayList<>();
+
+        for (Device device : devices)
+            ret.add(new DeviceDTO(device));
+
+        return new ResponseEntity<>(ret, HttpStatus.OK);
     }
 
 }

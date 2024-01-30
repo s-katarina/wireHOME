@@ -192,3 +192,8 @@ export interface SharedDeviceDTO {
     shareWith: AppUserDTO,
     device: DeviceDTO
 }
+
+export interface ShareActionDTO {
+    email: string,
+    id: string
+}

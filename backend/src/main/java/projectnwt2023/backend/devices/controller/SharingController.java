@@ -10,6 +10,7 @@ import projectnwt2023.backend.appUser.service.interfaces.IAppUserService;
 import projectnwt2023.backend.devices.Device;
 import projectnwt2023.backend.devices.SharedDevice;
 import projectnwt2023.backend.devices.SharedProperty;
+import projectnwt2023.backend.devices.dto.ShareActionDTO;
 import projectnwt2023.backend.devices.dto.SharedDeviceDTO;
 import projectnwt2023.backend.devices.dto.SharedPropertyDTO;
 import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
@@ -48,11 +49,11 @@ public class SharingController {
         return new ResponseEntity<>(ret, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/property/{shareWithId}", produces = "application/json")
-    ResponseEntity<SharedPropertyDTO> addSharedProperties(@PathVariable Integer shareWithId, @RequestBody SharedPropertyDTO sharedPropertyDTO) {
+    @PostMapping(value = "/property", produces = "application/json")
+    ResponseEntity<SharedPropertyDTO> addSharedProperty(@RequestBody ShareActionDTO shareActionDTO) {
 
-        Optional<AppUser> shareWith = appUserService.findById((long) shareWithId);
-        Property property = propertyService.getById(sharedPropertyDTO.getProperty().getId());
+        Optional<AppUser> shareWith = appUserService.findByEmail(shareActionDTO.getEmail());
+        Property property = propertyService.getById(shareActionDTO.getId());
 
         SharedProperty sharedProperty = new SharedProperty();
         sharedProperty.setShareWith(shareWith.get());
@@ -63,11 +64,13 @@ public class SharingController {
         return new ResponseEntity<>(new SharedPropertyDTO(saved), HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "/property/{sharedPropertyId}", produces = "application/json")
-    void deleteSharedProperties(@PathVariable Integer sharedPropertyId) {
+    @PostMapping(value = "/property/delete", produces = "application/json")
+    void deleteSharedProperties(@RequestBody ShareActionDTO shareActionDTO) {
+        Optional<AppUser> shareWith = appUserService.findByEmail(shareActionDTO.getEmail());
 
-        sharingService.deleteSharedPropertyById((long) sharedPropertyId);
-
+        for (SharedProperty sharedProperty : sharingService.findAllSharedPropertiesByShareWith(shareWith.get()))
+            if (sharedProperty.getProperty().getId() == shareActionDTO.getId())
+                sharingService.deleteSharedPropertyById(sharedProperty.getId());
     }
 
     @GetMapping(value = "/device/{shareWithId}", produces = "application/json")
@@ -83,11 +86,11 @@ public class SharingController {
         return new ResponseEntity<>(ret, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/device/{shareWithId}", produces = "application/json")
-    ResponseEntity<SharedDeviceDTO> addSharedDevice(@PathVariable Integer shareWithId, @RequestBody SharedDeviceDTO sharedDeviceDTO) {
+    @PostMapping(value = "/device", produces = "application/json")
+    ResponseEntity<SharedDeviceDTO> addSharedDevice(@RequestBody ShareActionDTO shareActionDTO) {
 
-        Optional<AppUser> shareWith = appUserService.findById((long) shareWithId);
-        Device device = deviceService.getById((long) sharedDeviceDTO.getDevice().getId());
+        Optional<AppUser> shareWith = appUserService.findByEmail(shareActionDTO.getEmail());
+        Device device = deviceService.getById(shareActionDTO.getId());
 
         SharedDevice sharedDevice = new SharedDevice();
         sharedDevice.setShareWith(shareWith.get());
@@ -98,11 +101,14 @@ public class SharingController {
         return new ResponseEntity<>(new SharedDeviceDTO(saved), HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "/device/{sharedDeviceId}", produces = "application/json")
-    void deleteSharedDevice(@PathVariable Integer sharedDeviceId) {
+    @PostMapping(value = "/device/delete", produces = "application/json")
+    void deleteSharedDevice(@RequestBody ShareActionDTO shareActionDTO) {
 
-        sharingService.deleteSharedDeviceById((long) sharedDeviceId);
+        Optional<AppUser> shareWith = appUserService.findByEmail(shareActionDTO.getEmail());
 
+        for (SharedDevice sharedDevice : sharingService.findAllSharedDevicesByShareWith(shareWith.get()))
+            if (sharedDevice.getDevice().getId() == shareActionDTO.getId())
+                sharingService.deleteSharedDeviceById(sharedDevice.getId());
     }
 
 }

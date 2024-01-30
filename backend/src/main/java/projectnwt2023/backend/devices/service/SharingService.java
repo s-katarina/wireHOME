@@ -9,6 +9,8 @@ import projectnwt2023.backend.devices.repository.SharedDeviceRepository;
 import projectnwt2023.backend.devices.repository.SharedPropertyRepository;
 import projectnwt2023.backend.devices.service.interfaces.ISharingService;
 import projectnwt2023.backend.exceptions.EntityAlreadyExistsException;
+import projectnwt2023.backend.property.Property;
+import projectnwt2023.backend.property.repository.PropertyRepository;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -24,6 +26,15 @@ public class SharingService implements ISharingService {
     @Override
     public ArrayList<SharedProperty> findAllSharedPropertiesByShareWith(AppUser shareWith) {
         return sharedPropertyRepository.findAllByShareWith(shareWith);
+    }
+
+    @Override
+    public ArrayList<SharedProperty> findAllSharedPropertiesByOwner(AppUser owner) {
+        ArrayList<SharedProperty> ret = new ArrayList<>();
+        for (SharedProperty sharedProperty : sharedPropertyRepository.findAll())
+            if (sharedProperty.getProperty().getPropertyOwner().getId() == owner.getId())
+                ret.add(sharedProperty);
+        return ret;
     }
 
     @Override
