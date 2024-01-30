@@ -26,6 +26,7 @@ import { DatePipe } from '@angular/common';
 import { BatteryComponent } from './modules/devices/large-energy/battery/battery.component';
 import { OnlineOfflineChartComponent } from './modules/devices/online-offline-chart/online-offline-chart.component';
 import { MatChipsModule } from '@angular/material/chips';
+import { WashingMachineComponent } from './modules/devices/indoor/washing-machine/washing-machine.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,8 @@ import { MatChipsModule } from '@angular/material/chips';
     BatteryComponent,
     OnlineOfflineChartComponent,
     AmbientSensorComponent,
-    AirConditionerComponent
+    AirConditionerComponent,
+    WashingMachineComponent
   ],
   imports: [
     BrowserModule,

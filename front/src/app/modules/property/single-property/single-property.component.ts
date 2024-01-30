@@ -102,6 +102,9 @@ export class SinglePropertyComponent implements OnInit {
     else if (device.deviceType == 'airConditioner') {
       this.router.navigate(['/air-conditioner'])
     }
+    else if (device.deviceType == 'washingMachine') {
+      this.router.navigate(['/washing-machine'])
+    }
   }
 
 }

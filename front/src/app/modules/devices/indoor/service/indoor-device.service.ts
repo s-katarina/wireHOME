@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { ACIntervalDTO, AirConditionerDTO, DeviceDTO } from 'src/app/model/model';
+import { ACIntervalDTO, AirConditionerDTO, DeviceDTO, WMTaskDTO, WashingMachineDTO } from 'src/app/model/model';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -26,6 +26,10 @@ export class IndoorDeviceService {
     return this.http.get<AirConditionerDTO>(environment.apiHost + `airConditioner/${id}`)
   }
 
+  getWashingMachine(id: string): Observable<WashingMachineDTO> {
+    return this.http.get<WashingMachineDTO>(environment.apiHost + `washingMachine/${id}`)
+  }
+
   getIntervalsForAC(id: string): Observable<ACIntervalDTO[]> {
     return this.http.get<ACIntervalDTO[]>(environment.apiHost + `airConditioner/${id}/intervals`)
   }
@@ -36,5 +40,17 @@ export class IndoorDeviceService {
 
   deleteIntervalsForAC(id: string, intervalId: string): Observable<object> {
     return this.http.delete(environment.apiHost + `airConditioner/${id}/interval/${intervalId}`)
+  }
+
+  getTasksForWM(id: string): Observable<WMTaskDTO[]> {
+    return this.http.get<WMTaskDTO[]>(environment.apiHost + `washingMachine/${id}/wmtasks`)
+  }
+
+  addWMTaskForWM(id: string, dto: WMTaskDTO): Observable<WMTaskDTO> {
+    return this.http.post<WMTaskDTO>(environment.apiHost + `washingMachine/${id}/wmtask`, dto)
+  }
+
+  deleteWMTaskForWM(id: string, wmtaskId: string): Observable<object> {
+    return this.http.delete(environment.apiHost + `washingMachine/${id}/wmtask/${wmtaskId}`)
   }
 }

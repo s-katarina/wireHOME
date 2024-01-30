@@ -104,6 +104,11 @@ export interface AirConditionerDTO extends DeviceDTO {
     maxTemp: number
 }
 
+export interface WashingMachineDTO extends DeviceDTO {
+    regimes: string[],
+    currentAction: string
+}
+
 export interface GateEvent  {
     caller: string,
     eventType: string
@@ -167,5 +172,11 @@ export interface ACIntervalDTO {
     id: number,
     startTime: string,
     endTime: string,
+    action: string
+}
+
+export interface WMTaskDTO {
+    id: number,
+    startTime: string,
     action: string
 }
