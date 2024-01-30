@@ -180,3 +180,9 @@ export interface WMTaskDTO {
     startTime: string,
     action: string
 }
+
+export interface SharedPropertyDTO {
+    id: number,
+    shareWith: AppUserDTO,
+    property: PropertyDTO
+}

@@ -1,0 +1,51 @@
+<div class="page">
+  
+  <h4 matTooltip="Get intel sharing">Give and remove permissions</h4>
+  <mat-divider></mat-divider>
+  
+  <div class="same-row">
+    <!-- <form [formGroup]="giveForm" (ngSubmit)="givePermission()">
+      <mat-form-field class="margin-left">
+        <mat-label>Select property</mat-label>
+        <mat-select [(ngModel)]="selectedProperty">
+            <mat-option *ngFor="let property of properties [value]="property">
+              {{ property. | titlecase }}
+            </mat-option>
+            <mat-option value="off">Turn off</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-form-field class="oneLine">
+          <mat-label>User email</mat-label>
+          <input matInput type="text" name="email" formControlName="email" />
+      </mat-form-field>
+      <button type="submit" class="report-btn">Give</button>
+    </form> -->
+
+  </div>
+
+  <h4 matTooltip="Get intel sharing">Properties shared with you</h4>
+  <mat-divider></mat-divider>
+
+  <div class="grid">
+    <div *ngFor="let sharedPropery of sharedProperties">
+        <mat-card class="property-card"  (mouseenter)="showImage(sharedPropery.property.id)" (mouseleave)="hideImage()">
+            <mat-card-header class="locations">
+                <div class="title">
+                    <mat-card-title>{{sharedPropery.property.propertyType}}</mat-card-title>
+                    <mat-card-subtitle *ngIf="sharedPropery.property.propertyStatus === 'PENDING'"
+                        matTooltip="Waiting for admin approval"
+                        [matTooltipPosition]='"above"'>PENDING</mat-card-subtitle>
+                </div>
+                <div class="locations">
+                    <mat-card-subtitle>Address: {{sharedPropery.property.address}}</mat-card-subtitle>
+                    <mat-card-subtitle>City: {{sharedPropery.property.city.name}}, {{sharedPropery.property.city.country.name}}</mat-card-subtitle>
+                </div>
+            </mat-card-header>
+            <mat-divider></mat-divider>
+            <img [src]="sharedPropery.property.imagePath" class="hover-image" (error)="handleImageError($event)"
+            (click)="navigateToSingleProperty()"/>
+        </mat-card>
+    </div>
+</div>
+
+</div>

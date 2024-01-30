@@ -27,6 +27,7 @@ import { BatteryComponent } from './modules/devices/large-energy/battery/battery
 import { OnlineOfflineChartComponent } from './modules/devices/online-offline-chart/online-offline-chart.component';
 import { MatChipsModule } from '@angular/material/chips';
 import { WashingMachineComponent } from './modules/devices/indoor/washing-machine/washing-machine.component';
+import { SharingComponent } from './modules/devices/sharing/sharing.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +43,8 @@ import { WashingMachineComponent } from './modules/devices/indoor/washing-machin
     OnlineOfflineChartComponent,
     AmbientSensorComponent,
     AirConditionerComponent,
-    WashingMachineComponent
+    WashingMachineComponent,
+    SharingComponent
   ],
   imports: [
     BrowserModule,

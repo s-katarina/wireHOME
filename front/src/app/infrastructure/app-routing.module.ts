@@ -19,6 +19,7 @@ import { BatteryComponent } from '../modules/devices/large-energy/battery/batter
 import { AmbientSensorComponent } from '../modules/devices/indoor/ambient-sensor/ambient-sensor.component';
 import { AirConditionerComponent } from '../modules/devices/indoor/air-conditioner/air-conditioner.component';
 import { WashingMachineComponent } from '../modules/devices/indoor/washing-machine/washing-machine.component';
+import { SharingComponent } from '../modules/devices/sharing/sharing.component';
 
 const routes: Routes = [
   { path: 'properties', component: PropertyOverviewComponent, canActivate: [TokenGuard, RoleGuard ], data: {roles: ["AUTH_USER"]}  },
@@ -37,6 +38,7 @@ const routes: Routes = [
   { path: 'ambient-sensor', component: AmbientSensorComponent},
   { path: 'air-conditioner', component: AirConditionerComponent},
   { path: 'washing-machine', component: WashingMachineComponent},
+  { path: 'sharing', component: SharingComponent},
   { path: '**', component: LandingComponent }
 ];
 
