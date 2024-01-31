@@ -193,3 +193,8 @@ export interface StartEnd {
     start: number
     end: number
 }
+
+export interface LabeledGraphDTO {
+    label: string
+    graphDTOS: GraphDTO[]
+}

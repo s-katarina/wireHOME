@@ -127,6 +127,14 @@ public class PropertyController {
         return new ResponseEntity<>(grapgData, HttpStatus.OK);
     }
 
+    @PostMapping(value = "/propertyByDay", produces = "application/json") // koristi i za elektrodistribuciju i za samu potrosnju
+    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
+    ResponseEntity<ArrayList<LabeledGraphDTO>> getElectroByDay(@RequestBody CityGraphDTO graphRequestDTO){
+//        System.out.println("striglo je " + graphRequestDTO);
+        ArrayList<LabeledGraphDTO> grapgData = propertyService.findPropertyEnergyByDayForDate(graphRequestDTO);
+        return new ResponseEntity<>(grapgData, HttpStatus.OK);
+    }
+
 
     private double getValueForLabel(ArrayList<PyChartDTO> graphData, String city) {
         for (PyChartDTO pyChartDTO : graphData) {

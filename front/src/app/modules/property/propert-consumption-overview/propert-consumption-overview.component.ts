@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { PropertyServiceService } from '../service/property-service.service';
-import { ByTimeOfDay, PropertyDTO, StartEnd } from 'src/app/model/model';
+import { ByTimeOfDay, LabeledGraphDTO, PropertyDTO, StartEnd } from 'src/app/model/model';
 import { CanvasJS } from '@canvasjs/angular-charts';
 import { FormControl, FormGroup } from '@angular/forms';
 
@@ -15,6 +15,9 @@ export class PropertConsumptionOverviewComponent implements OnInit {
   public property: PropertyDTO | undefined;
 
   barChartElec: any;
+
+  labledGraphData: LabeledGraphDTO[] = []
+  dayCharts: any[] = []
 
   timeOfDay: ByTimeOfDay | undefined
 
@@ -96,6 +99,34 @@ distTotal: number = 0;
       this.distTotal = (this.timeOfDay?.dayDist || 0 )+ (this.timeOfDay?.nightDist || 0)
 
     })
+    this.fillDayGrafs(datee)
+
+  }
+
+  public fillDayGrafs(datee: StartEnd) { 
+    this.propertyService.getPropertyByDayReadingFrom(this.property?.id || "0", datee.start, datee.end, "property-electricity").subscribe((res: any) => {
+      console.log(res)
+      this.labledGraphData = res
+      for (const  labeledData of this.labledGraphData) {
+        let chart = new CanvasJS.Chart(labeledData.label, 
+        {
+          zoomEnabled: true,
+          exportEnabled: true,
+          theme: "light2",
+          title: {
+          text: labeledData.label
+          },
+          data: [{
+          type: "line",
+          xValueType: "dateTime",
+          dataPoints: [labeledData.graphDTOS]
+          }]
+        })
+        chart.render();
+      }
+
+    })
+
   }
 
   public getDate(): StartEnd {

@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { BarChartDTO, ByTimeOfDay, CityDTO, CityOverview, DeviceDTO, GraphDTO, PropertyDTO, PropertyRequestDTO, PyChartDTO } from 'src/app/model/model';
+import { BarChartDTO, ByTimeOfDay, CityDTO, CityOverview, DeviceDTO, GraphDTO, LabeledGraphDTO, PropertyDTO, PropertyRequestDTO, PyChartDTO } from 'src/app/model/model';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -129,6 +129,20 @@ export class PropertyServiceService {
     }
     
     return this.http.post<GraphDTO[]>(environment.apiHost + 'property/propertyEnergy', 
+    {
+      id: cityId,
+      from: dateFrom,
+      to: dateTo,
+      measurement: measurment,
+    }, options)  
+  }
+
+  getPropertyByDayReadingFrom(cityId: string, dateFrom: number, dateTo: number, measurment: string) {
+    const options: any = {
+      responseType: 'json'
+    }
+    
+    return this.http.post<LabeledGraphDTO[]>(environment.apiHost + 'property/propertyByDay', 
     {
       id: cityId,
       from: dateFrom,

@@ -7,10 +7,7 @@ import projectnwt2023.backend.devices.dto.PyChartDTO;
 import projectnwt2023.backend.property.City;
 import projectnwt2023.backend.property.Property;
 import projectnwt2023.backend.property.PropertyStatus;
-import projectnwt2023.backend.property.dto.BarChartDTO;
-import projectnwt2023.backend.property.dto.ByTimeOfDayDTO;
-import projectnwt2023.backend.property.dto.CityGraphDTO;
-import projectnwt2023.backend.property.dto.PropertyRequestDTO;
+import projectnwt2023.backend.property.dto.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,6 +38,9 @@ public interface IPropertyService {
     double getElictricityForProperty(Long id, Long start, Long end, String measurement);
 
     ArrayList<GraphDTO> findPropertyEnergyForDate(CityGraphDTO graphRequestDTO);
+
+    ArrayList<LabeledGraphDTO> findPropertyEnergyByDayForDate(CityGraphDTO graphRequestDTO);
+
 
     ArrayList<BarChartDTO> getBarChartForPropertyForYear(Integer propertyId, int year, String measurement);
 

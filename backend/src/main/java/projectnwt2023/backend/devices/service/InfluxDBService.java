@@ -16,12 +16,10 @@ import projectnwt2023.backend.devices.dto.*;
 import projectnwt2023.backend.property.dto.BarChartDTO;
 import projectnwt2023.backend.property.dto.ByTimeOfDayDTO;
 import projectnwt2023.backend.property.dto.CityGraphDTO;
+import projectnwt2023.backend.property.dto.LabeledGraphDTO;
 
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.Month;
-import java.time.YearMonth;
-import java.time.ZoneId;
+import java.time.*;
 import java.util.*;
 
 @Service
@@ -143,9 +141,8 @@ public class InfluxDBService {
     }
 
     public ArrayList<GraphDTO> findDeviceEnergyForDate(GraphRequestDTO graphRequestDTO) {
-        System.out.println("graphRequestDTO.getFrom()");
-        System.out.println(graphRequestDTO.getFrom());
-        System.out.println(graphRequestDTO.getMeasurement());
+//        System.out.println("graphRequestDTO.getF
+
 
         // Print the result
         String fluxQuery = String.format(
@@ -486,7 +483,7 @@ public class InfluxDBService {
                             "|> sum(column: \"_value\")", // Summing the values
                     this.bucket, startOfMonth.getTime()/1000, endOfMonth.getTime()/1000, measurement, propertyId);
 
-            System.out.println(fluxQuery);
+//            System.out.println(fluxQuery);
             double sum = this.returnSum(fluxQuery);
 
             BarChartDTO barChartDTO = new BarChartDTO(getMonthName(month), Math.abs(sum));
@@ -535,5 +532,34 @@ public class InfluxDBService {
             isFirst = !isFirst;
         }
         return new ByTimeOfDayDTO(firstInterval, secondInterval, 0.0, 0.0);
+    }
+
+    public ArrayList<LabeledGraphDTO> findPropertyEnergyByDayForDate(CityGraphDTO graphRequestDTO) {
+        Long start = graphRequestDTO.getFrom();
+        ArrayList<LabeledGraphDTO> labeledGraph = new ArrayList<>();
+        long interval = 24 * 60 * 60 * 10;  // 24 hours in milliseconds
+        long end = start + interval * 6;  //7 days
+        for (long currentTime = start; currentTime <= end; currentTime += interval) {
+            long currentIntervalEnd = currentTime + interval;
+            String fluxQuery = String.format(
+                    "from(bucket:\"%s\") |> range(start: %s, stop: %s)" +
+                            "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"property-id\"] == \"%s\")" +
+                            "|> aggregateWindow(every: 1h, fn: sum, createEmpty: true)" + // Aggregate over 1-hour intervals using sum
+                            "|> sort(columns: [\"_time\"], desc: false)",
+                    this.bucket,
+                    currentTime, currentIntervalEnd,
+                    graphRequestDTO.getMeasurement(), graphRequestDTO.getId()
+            );
+            System.out.println(fluxQuery);
+            Instant instant = Instant.ofEpochMilli(currentTime);
+            LocalDate localDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
+
+            // Get the day of the week as a string
+            String dayOfWeekString = localDate.getDayOfWeek().name();
+            labeledGraph.add(new LabeledGraphDTO(dayOfWeekString, queryForGraph(fluxQuery)));
+            System.out.println(queryForGraph(fluxQuery).size());
+        }
+//        System.out.println(fluxQuery);
+        return labeledGraph;
     }
 }

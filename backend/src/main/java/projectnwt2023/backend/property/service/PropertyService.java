@@ -16,10 +16,7 @@ import projectnwt2023.backend.property.City;
 import projectnwt2023.backend.property.Property;
 import projectnwt2023.backend.property.PropertyStatus;
 import projectnwt2023.backend.property.PropertyType;
-import projectnwt2023.backend.property.dto.BarChartDTO;
-import projectnwt2023.backend.property.dto.ByTimeOfDayDTO;
-import projectnwt2023.backend.property.dto.CityGraphDTO;
-import projectnwt2023.backend.property.dto.PropertyRequestDTO;
+import projectnwt2023.backend.property.dto.*;
 import projectnwt2023.backend.property.repository.CityRepository;
 import projectnwt2023.backend.property.repository.PropertyRepository;
 import projectnwt2023.backend.property.service.interfaces.IPropertyService;
@@ -191,6 +188,11 @@ public class PropertyService implements IPropertyService {
     @Override
     public ArrayList<GraphDTO> findPropertyEnergyForDate(CityGraphDTO graphRequestDTO) {
         return influxDBService.findCityEnergyForDate(graphRequestDTO);
+    }
+
+    @Override
+    public ArrayList<LabeledGraphDTO> findPropertyEnergyByDayForDate(CityGraphDTO graphRequestDTO) {
+        return influxDBService.findPropertyEnergyByDayForDate(graphRequestDTO);
     }
 
     @Override
