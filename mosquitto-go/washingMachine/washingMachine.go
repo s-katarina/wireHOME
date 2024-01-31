@@ -104,8 +104,8 @@ func getWMTasks(deviceId int32) []WMTask {
 	return wmtasks
 }
 
-var washingMachine WashingMachine = getWashingMachine(6)
-var wmtasks []WMTask = getWMTasks(6)
+var washingMachine WashingMachine = getWashingMachine(8)
+var wmtasks []WMTask = getWMTasks(8)
 var onAutomatic = false
 var email = ""
 

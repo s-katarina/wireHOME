@@ -43,9 +43,6 @@ export class AmbientSensorComponent implements OnInit, AfterViewInit, OnDestroy 
       this.deviceId = res;
       console.log("ambient sensor id " + this.deviceId)
 
-      this.indoorService.getAmbientSensor(this.deviceId).subscribe((ambienSensor: DeviceDTO) => {
-        this.ambientSensor = ambienSensor
-      })
 
     })
   }
@@ -54,6 +51,11 @@ export class AmbientSensorComponent implements OnInit, AfterViewInit, OnDestroy 
 
     let now: number = Math.floor(Date.now() / 1000)
     let before: number = now - 1 * 60 * 60
+
+    
+    this.indoorService.getAmbientSensor(this.deviceId).subscribe((ambienSensor: DeviceDTO) => {
+      this.ambientSensor = ambienSensor
+    })
 
     this.getTempAndHum(before, now).subscribe((res: AmbientSensorTempHumDTO) => {
       

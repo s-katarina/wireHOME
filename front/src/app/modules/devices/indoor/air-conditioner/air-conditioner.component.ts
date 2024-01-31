@@ -54,17 +54,6 @@ export class AirConditionerComponent implements OnInit, AfterViewInit, OnDestroy
     this.indoorService.indoorDeviceId.subscribe((res: string) => {
       this.deviceId = res;
       console.log("air conditioner id " + this.deviceId)
-
-      this.indoorService.getAirConditioner(this.deviceId).subscribe((airConditioner: AirConditionerDTO) => {
-        this.airConditioner = airConditioner
-        console.log(this.airConditioner?.regimes)
-      })
-
-      this.indoorService.getIntervalsForAC(this.deviceId).subscribe((intervals: ACIntervalDTO[]) => {
-        this.intervals = intervals
-        console.log(this.intervals)
-      })
-
     })
   }
 
@@ -74,6 +63,16 @@ export class AirConditionerComponent implements OnInit, AfterViewInit, OnDestroy
       this.ELEMENT_DATA = res
       this.dataSource = new MatTableDataSource<AirConditionActionDTO>(this.ELEMENT_DATA)
       this.dataSource.paginator = this.paginator;
+    })
+
+    this.indoorService.getAirConditioner(this.deviceId).subscribe((airConditioner: AirConditionerDTO) => {
+      this.airConditioner = airConditioner
+      console.log(this.airConditioner?.regimes)
+    })
+
+    this.indoorService.getIntervalsForAC(this.deviceId).subscribe((intervals: ACIntervalDTO[]) => {
+      this.intervals = intervals
+      console.log(this.intervals)
     })
   }
 
