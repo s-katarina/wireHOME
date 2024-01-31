@@ -3,11 +3,15 @@ import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular
 import { FormControl, FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { WebsocketService } from 'src/app/infrastructure/socket/websocket.service';
-import { AirConditionActionDTO, AirConditionerActionRequest } from 'src/app/model/model';
+import { ACIntervalDTO, AirConditionActionDTO, AirConditionerActionRequest, AirConditionerDTO, DeviceDTO } from 'src/app/model/model';
 import { environment } from 'src/environments/environment';
-import { AuthService } from '../../auth/service/auth.service';
+import { AuthService } from '../../../auth/service/auth.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
+import { OutdoorDeviceService } from '../../outdoor/service/outdoor-device-service';
+import { IndoorDeviceService } from '../service/indoor-device.service';
+import {COMMA, ENTER} from '@angular/cdk/keycodes';
+import {MatChipInputEvent} from '@angular/material/chips';
 
 @Component({
   selector: 'app-air-conditioner',
@@ -19,7 +23,9 @@ export class AirConditionerComponent implements OnInit, AfterViewInit, OnDestroy
   currentAction: string = ""
   actionStatus: string = ""
   currentTemp: string = ""
-  deviceId: string = "6"
+  deviceId: string = ""
+  airConditioner: AirConditionerDTO | undefined
+  selectedOption: string = ""
 
   tempForm = new FormGroup({
     temp: new FormControl()
@@ -40,7 +46,27 @@ export class AirConditionerComponent implements OnInit, AfterViewInit, OnDestroy
 
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
 
-  constructor(private socketService: WebsocketService, private readonly http: HttpClient, private authService: AuthService) { }
+  addOnBlur = true;
+  readonly separatorKeysCodes = [ENTER, COMMA] as const;
+  intervals: ACIntervalDTO[] = []
+
+  constructor(private socketService: WebsocketService, private readonly http: HttpClient, private authService: AuthService, private indoorService: IndoorDeviceService) {
+    this.indoorService.indoorDeviceId.subscribe((res: string) => {
+      this.deviceId = res;
+      console.log("air conditioner id " + this.deviceId)
+
+      this.indoorService.getAirConditioner(this.deviceId).subscribe((airConditioner: AirConditionerDTO) => {
+        this.airConditioner = airConditioner
+        console.log(this.airConditioner?.regimes)
+      })
+
+      this.indoorService.getIntervalsForAC(this.deviceId).subscribe((intervals: ACIntervalDTO[]) => {
+        this.intervals = intervals
+        console.log(this.intervals)
+      })
+
+    })
+  }
 
   ngOnInit(): void {
     this.fetchReport(Number(this.deviceId)).subscribe((res: AirConditionActionDTO[]) => {
@@ -123,6 +149,15 @@ export class AirConditionerComponent implements OnInit, AfterViewInit, OnDestroy
     this.actionStatus = "Trying to set temperature"
   }
 
+  async automation(): Promise<void> {
+    let request: AirConditionerActionRequest = {
+      action: "START AUTOMATIC",
+      userEmail: this.authService.getEmail()
+    }
+    await this.sendAction(request).toPromise()
+    this.actionStatus = "Trying to set automatic"
+  }
+
   turnOn(): void {
 
   }
@@ -134,6 +169,18 @@ export class AirConditionerComponent implements OnInit, AfterViewInit, OnDestroy
     }
     await this.sendAction(request).toPromise()
     this.actionStatus = "Trying to turn off air conditioner"
+  }
+
+  async onDropdownChange() {
+    console.log("selected " + this.selectedOption)
+    if (this.selectedOption == "colling")
+      await this.cooling()
+    if (this.selectedOption == "heating")
+      await this.heating()
+    if (this.selectedOption == "ventilation")
+      await this.ventilation()
+    if (this.selectedOption == "off")
+      await this.turnOff()
   }
 
   fetch(): void {
@@ -166,6 +213,35 @@ export class AirConditionerComponent implements OnInit, AfterViewInit, OnDestroy
     this.ELEMENT_DATA = ret
     this.dataSource = new MatTableDataSource<AirConditionActionDTO>(this.ELEMENT_DATA)
     this.dataSource.paginator = this.paginator
+  }
+
+  addInterval(event: MatChipInputEvent): void {
+    const value = (event.value || '').trim();
+
+    if (value) {
+      let tokens: string[] = value.split("-")
+      let dto: ACIntervalDTO = {
+        id: 0,
+        startTime: tokens[0],
+        endTime: tokens[1],
+        action: tokens[2]
+      }
+      this.indoorService.addIntervalsForAC(this.deviceId, dto).subscribe((ret: ACIntervalDTO) => {
+        this.intervals.push(ret);
+      })
+    }
+
+    event.chipInput!.clear();
+  }
+
+  removeInterval(interval: ACIntervalDTO): void {
+    const index = this.intervals.indexOf(interval);
+
+    if (index >= 0) {
+      this.indoorService.deleteIntervalsForAC(this.deviceId, interval.id + "").subscribe((ret: object) => {
+        this.intervals.splice(index, 1);
+      })
+    }
   }
 
 }

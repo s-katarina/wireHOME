@@ -61,7 +61,7 @@ func getAmbientSensor(deviceId int) AmbientSensor {
 
 }
 
-var ambientSensor AmbientSensor = getAmbientSensor(5)
+var ambientSensor AmbientSensor = getAmbientSensor(2)
 
 func SetAmbientSensor(id int) {
 	ambientSensor = getAmbientSensor(id)

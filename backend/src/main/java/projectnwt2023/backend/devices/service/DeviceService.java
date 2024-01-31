@@ -350,5 +350,14 @@ public class DeviceService implements IDeviceService {
         }
     }
 
+    @Override
+    public ArrayList<Device> findAllByOwnerOfProperty(AppUser owner) {
+        ArrayList<Device> ret = new ArrayList<>();
+        for (Device device : deviceRepository.findAll())
+            if (device.getProperty().getPropertyOwner().getId() == owner.getId())
+                ret.add(device);
+        return ret;
+    }
+
 
 }

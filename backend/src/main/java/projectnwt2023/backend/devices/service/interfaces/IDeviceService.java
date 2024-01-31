@@ -1,5 +1,6 @@
 package projectnwt2023.backend.devices.service.interfaces;
 
+import projectnwt2023.backend.appUser.AppUser;
 import projectnwt2023.backend.devices.Device;
 import projectnwt2023.backend.devices.State;
 import projectnwt2023.backend.devices.dto.GateEventMeasurement;
@@ -31,4 +32,6 @@ public interface IDeviceService {
     List<ValueTimestampDTO> getOnlinePerTimeUnit(Integer deviceId, String start, String end);
 
     ArrayList<GateEventMeasurement> getOnlineOfflineIntervals(Integer deviceId, String start, String end);
+
+    ArrayList<Device> findAllByOwnerOfProperty(AppUser owner);
 }

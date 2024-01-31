@@ -18,8 +18,8 @@ import { LampComponent } from './modules/devices/outdoor/lamp/lamp.component';
 import { GateComponent } from './modules/devices/outdoor/gate/gate.component';
 import { EnergyOverviewComponent } from './modules/devices/large-energy/energy-overview/energy-overview.component';
 import { SolarPanelComponent } from './modules/devices/large-energy/solar-panel/solar-panel.component';
-import { AmbientSensorComponent } from './modules/devices/ambient-sensor/ambient-sensor.component';
-import { AirConditionerComponent } from './modules/devices/air-conditioner/air-conditioner.component';
+import { AmbientSensorComponent } from './modules/devices/indoor/ambient-sensor/ambient-sensor.component';
+import { AirConditionerComponent } from './modules/devices/indoor/air-conditioner/air-conditioner.component';
 
 import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
 import { DatePipe } from '@angular/common';
@@ -28,6 +28,9 @@ import { OnlineOfflineChartComponent } from './modules/devices/online-offline-ch
 import { ChargerComponent } from './modules/devices/large-energy/charger/charger.component';
 import { SprinklerComponent } from './modules/devices/outdoor/sprinkler/sprinkler.component';
 import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
+import { MatChipsModule } from '@angular/material/chips';
+import { WashingMachineComponent } from './modules/devices/indoor/washing-machine/washing-machine.component';
+import { SharingComponent } from './modules/devices/sharing/sharing.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +47,9 @@ import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
     AmbientSensorComponent,
     AirConditionerComponent,
     ChargerComponent,
-    SprinklerComponent
+    SprinklerComponent,
+    WashingMachineComponent,
+    SharingComponent
   ],
   imports: [
     BrowserModule,
@@ -57,7 +62,8 @@ import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
     FormsModule,
     HttpClientModule,
     CanvasJSAngularChartsModule,
-    NgxMaterialTimepickerModule
+    NgxMaterialTimepickerModule,
+    MatChipsModule
   ],
   providers: [
     {

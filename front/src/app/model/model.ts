@@ -127,6 +127,19 @@ export interface Charger extends DeviceDTO {
     percentage: number
 }
 
+export interface AirConditionerDTO extends DeviceDTO {
+    regimes: string[],
+    currentAction: string,
+    temp: number,
+    minTemp: number,
+    maxTemp: number
+}
+
+export interface WashingMachineDTO extends DeviceDTO {
+    regimes: string[],
+    currentAction: string
+}
+
 export interface GateEvent  {
     caller: string,
     eventType: string
@@ -213,4 +226,34 @@ export interface StartEnd {
 export interface LabeledGraphDTO {
     label: string
     graphDTOS: GraphDTO[]
+}
+
+export interface ACIntervalDTO {
+    id: number,
+    startTime: string,
+    endTime: string,
+    action: string
+}
+
+export interface WMTaskDTO {
+    id: number,
+    startTime: string,
+    action: string
+}
+
+export interface SharedPropertyDTO {
+    id: number,
+    shareWith: AppUserDTO,
+    property: PropertyDTO
+}
+
+export interface SharedDeviceDTO {
+    id: number,
+    shareWith: AppUserDTO,
+    device: DeviceDTO
+}
+
+export interface ShareActionDTO {
+    email: string,
+    id: string
 }

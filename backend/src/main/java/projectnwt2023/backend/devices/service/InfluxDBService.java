@@ -374,7 +374,7 @@ public class InfluxDBService {
                 bucket, from, to, id
         );
 
-        AmbientSensorDateValueDTO ret = new AmbientSensorDateValueDTO(new ArrayList<>(), new ArrayList<>());
+        AmbientSensorDateValueDTO dto = new AmbientSensorDateValueDTO(new ArrayList<>(), new ArrayList<>());
 
         QueryApi queryApi = influxDbClient.getQueryApi();
 
@@ -384,12 +384,24 @@ public class InfluxDBService {
             List<FluxRecord> records = fluxTable.getRecords();
             for (FluxRecord fluxRecord : records) {
 
-                ret.getValues().add((Double) fluxRecord.getValueByKey("_value"));
-                ret.getDates().add(String.valueOf(fluxRecord.getValueByKey("_time")));
+                dto.getValues().add((Double) fluxRecord.getValueByKey("_value"));
+                dto.getDates().add(String.valueOf(fluxRecord.getValueByKey("_time")));
 
 //                System.out.println(fluxRecord.getValues());
             }
         }
+
+        Integer step = (int) Math.ceil((double) dto.getValues().size() / 70);
+        if (step == 0)
+            step = 1;
+        System.out.println(step);
+        AmbientSensorDateValueDTO ret = new AmbientSensorDateValueDTO(new ArrayList<>(), new ArrayList<>());
+
+        for (int i = 0; i < dto.getValues().size(); i += step) {
+            ret.getDates().add(dto.getDates().get(i));
+            ret.getValues().add(dto.getValues().get(i));
+        }
+        System.out.println(ret.getValues().size());
 
         return ret;
     }
@@ -400,6 +412,43 @@ public class InfluxDBService {
                 "from(bucket: \"%s\") " +
                         "|> range(start: 0) " +
                         "|> filter(fn: (r) => r[\"_measurement\"] == \"airEvent\") " +
+                        "|> filter(fn: (r) => r[\"device-id\"] == \"%d\") " +
+                        "|> filter(fn: (r) => r[\"_field\"] == \"value\") " +
+                        "|> yield(name: \"value\")",
+                bucket, id
+        );
+
+        ArrayList<AirConditionerActionDTO> ret = new ArrayList<>();
+
+        QueryApi queryApi = influxDbClient.getQueryApi();
+
+        List<FluxTable> tables = queryApi.query(fluxQuery);
+
+        for (FluxTable fluxTable : tables) {
+            List<FluxRecord> records = fluxTable.getRecords();
+            for (FluxRecord fluxRecord : records) {
+
+                AirConditionerActionDTO dto = new AirConditionerActionDTO();
+
+                dto.setAction(String.valueOf(fluxRecord.getValueByKey("_value")));
+                dto.setDate(String.valueOf(fluxRecord.getValueByKey("_time")));
+                dto.setEmail(String.valueOf(fluxRecord.getValueByKey("email")));
+
+                ret.add(dto);
+
+//                System.out.println(fluxRecord.getValues());
+            }
+        }
+
+        return ret;
+    }
+
+    public ArrayList<AirConditionerActionDTO> getAllWashingMachineActions(int id) {
+
+        String fluxQuery = String.format(
+                "from(bucket: \"%s\") " +
+                        "|> range(start: 0) " +
+                        "|> filter(fn: (r) => r[\"_measurement\"] == \"washingEvent\") " +
                         "|> filter(fn: (r) => r[\"device-id\"] == \"%d\") " +
                         "|> filter(fn: (r) => r[\"_field\"] == \"value\") " +
                         "|> yield(name: \"value\")",
@@ -444,7 +493,7 @@ public class InfluxDBService {
                 bucket, from, to, id
         );
 
-        AmbientSensorDateValueDTO ret = new AmbientSensorDateValueDTO(new ArrayList<>(), new ArrayList<>());
+        AmbientSensorDateValueDTO dto = new AmbientSensorDateValueDTO(new ArrayList<>(), new ArrayList<>());
 
         QueryApi queryApi = influxDbClient.getQueryApi();
 
@@ -454,13 +503,27 @@ public class InfluxDBService {
             List<FluxRecord> records = fluxTable.getRecords();
             for (FluxRecord fluxRecord : records) {
 
-                ret.getValues().add((Double) fluxRecord.getValueByKey("_value"));
-                ret.getDates().add(String.valueOf(fluxRecord.getValueByKey("_time")));
+                dto.getValues().add((Double) fluxRecord.getValueByKey("_value"));
+                dto.getDates().add(String.valueOf(fluxRecord.getValueByKey("_time")));
 
 //                System.out.println(fluxRecord.getValues());
             }
         }
 
+        System.out.println(dto.getDates().size());
+        System.out.println(dto.getValues().size());
+
+        Integer step = (int) Math.ceil((double) dto.getValues().size() / 70);
+        if (step == 0)
+            step = 1;
+        System.out.println(step);
+        AmbientSensorDateValueDTO ret = new AmbientSensorDateValueDTO(new ArrayList<>(), new ArrayList<>());
+
+        for (int i = 0; i < dto.getValues().size(); i += step) {
+            ret.getDates().add(dto.getDates().get(i));
+            ret.getValues().add(dto.getValues().get(i));
+        }
+        System.out.println(ret.getValues().size());
         return ret;
     }
 
