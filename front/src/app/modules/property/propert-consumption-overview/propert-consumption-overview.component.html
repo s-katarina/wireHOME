@@ -1,6 +1,8 @@
+
+<div class="page">
 <div class="filter-section">
-    <mat-label>Year for monthly report</mat-label>
     <mat-form-field>
+        <mat-label>Year for monthly report</mat-label>
         <input matInput placeholder="Year: 2024" required type="number" [(ngModel)]="year">
       </mat-form-field>
     <button mat-raised-button (click)="changeYear()">Filter</button>
@@ -10,7 +12,7 @@
     <div class="barChart" id="barChartt"></div>    
 </div>
 
-
+<mat-divider class="margin-top"></mat-divider>
 <div class="filter-section">
     <mat-form-field>
         <mat-label>Enter a date range</mat-label>
@@ -27,7 +29,7 @@
     </mat-form-field>
     <button mat-raised-button (click)="changeByPartOfDay()">Filter</button>
 </div>
-<mat-card class="widthCard">
+<mat-card>
     <mat-card-header>
       <div class="car-plate">Data by Time of Day</div>
     </mat-card-header>
@@ -35,35 +37,36 @@
       <div class="car-info">
         <div class="car-detail">
           <span class="detail-label">Property consumption by day:</span>
-          <span class="detail-value">{{ timeOfDay?.dayElec }} kW</span>
+          <span class="detail-value">{{ timeOfDay?.dayElec | number:'1.2-2' }} kW</span>
         </div>
+
         <div class="car-detail">
-          <span class="detail-label"><div class="car-detail">
-            <span class="detail-label">From electrodistribution by night:</span>
-            <span class="detail-value">{{ timeOfDay?.nightDist }} kW</span>
-          </div> by night:</span>
-          <span class="detail-value">{{ timeOfDay?.nightElec }} kW</span>
+            <span class="detail-label">Property consumption by night:</span>
+          <span class="detail-value">{{ timeOfDay?.nightElec | number:'1.2-2' }} kW</span>
         </div>
         <div class="car-detail">
           <span class="detail-label">From electrodistribution by day:</span>
-          <span class="detail-value">{{ timeOfDay?.dayDist }} kW</span>
+          <span class="detail-value">{{ timeOfDay?.dayDist | number:'1.2-2' }} kW</span>
         </div>
 
         <div class="car-detail">
             <span class="detail-label">From electrodistribution by night:</span>
-            <span class="detail-value">{{ timeOfDay?.nightDist }} kW</span>
+            <span class="detail-value">{{ timeOfDay?.nightDist | number:'1.2-2' }} kW</span>
           </div>
       </div>
     </mat-card-content>
     <mat-card-footer>
         <div class="car-detail">
             <span class="detail-label">Total property consumption:</span>
-            <span class="detail-value">{{ elecTotal }} kW</span>
+            <span class="detail-value">{{ elecTotal | number:'1.2-2'}} kW</span>
           </div>
           <div class="car-detail">
             <span class="detail-label">Total from electrodistribution:</span>
-            <span class="detail-value">{{ distTotal }} kW</span>
+            <span class="detail-value">{{ distTotal | number:'1.2-2' }} kW</span>
           </div>
 
     </mat-card-footer>
   </mat-card>
+<mat-divider class="margin-top"></mat-divider>
+
+</div>

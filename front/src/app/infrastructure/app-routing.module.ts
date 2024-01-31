@@ -43,7 +43,7 @@ const routes: Routes = [
   { path: 'ambient-sensor', component: AmbientSensorComponent},
   { path: 'air-conditioner', component: AirConditionerComponent},
   { path: 'charger', component: ChargerComponent},
-  { path: '**', component: ChargerComponent }
+  { path: '**', component: LandingComponent }
 ];
 
 @NgModule({

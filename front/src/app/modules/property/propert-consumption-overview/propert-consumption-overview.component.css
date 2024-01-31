@@ -3,11 +3,17 @@
     margin-top: 3vh;
 }
 
+.page {
+  margin: 5%;
+}
+
 .filter-section {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
+    margin-top: 3vh;
+    /* margin-bottom: 1vh; */
 }
 
 .filter-section .mat-form-field {
@@ -51,3 +57,35 @@
   .widthCard {
     width: 80%;
   }
+
+  .mat-form-field {
+    margin: 20px !important;
+    width: 30% !important;
+}
+  
+  
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+    color: rgb(57, 57, 57) !important;
+}
+
+::ng-deep .mat-form-field.mat-focused .mat-form-field-label {
+    color: black !important ;
+}
+
+.mat-raised-button {
+    margin: 20px;
+    height: 2.8em;
+    min-width: 160px;
+    width: 6vw;
+}
+
+.mat-tooltip {
+    font-family: 'Heebo-regular', Roboto, "Helvetica Neue", sans-serif !important; 
+    /* padding: 15px 28px !important;  */
+    padding: 0 !important;
+    font-size: medium;
+}
+
+.margin-top {
+  margin-top: 5vh;
+}

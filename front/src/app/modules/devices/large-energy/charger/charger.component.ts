@@ -75,15 +75,15 @@ export class ChargerComponent implements OnInit {
   constructor( private readonly largeEnergyDeviceService: LargeEnergyService,
     private socketService: WebsocketService,
     private fb: FormBuilder) { 
-      // this.largeEnergyDeviceService.selectedDeviceId$.subscribe((res: string) => {
-      //   this.chargerId = res;
+      this.largeEnergyDeviceService.selectedDeviceId$.subscribe((res: string) => {
+        this.chargerId = res;
 
-      //   console.log(this.chargerId)
-      // })
+        console.log(this.chargerId)
+      })
       this.chargerForm = this.fb.group({
         percentage: ['', [Validators.required, Validators.min(0), Validators.max(100)]]
       });
-      this.chargerId = '6';
+      // this.chargerId = '6';
 
  }
 
