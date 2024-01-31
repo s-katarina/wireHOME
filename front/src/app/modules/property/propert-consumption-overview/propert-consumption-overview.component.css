@@ -1,0 +1,53 @@
+.barChart {
+    height: 370px; width: 100%; margin:auto;
+    margin-top: 3vh;
+}
+
+.filter-section {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.filter-section .mat-form-field {
+    flex: 1; 
+}
+
+.filter-section-button {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.car-plate {
+    margin-left: 27px;
+    font-size: 1.3em;
+    padding: 1.5vh;
+  }
+  
+  .car-info {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .car-detail {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    margin-left: 27px;
+  }
+  
+  .detail-label {
+    font-weight: bold;
+    margin-right: 10px;
+    margin-left: 40px;
+  }
+  
+  .detail-value {
+    color: #007bff; /* You can customize the color */
+  }
+  .widthCard {
+    width: 80%;
+  }

@@ -9,6 +9,8 @@ import { PropertyRequestsComponent } from './property-requests/property-requests
 import { SinglePropertyComponent } from './single-property/single-property.component';
 import { AppRoutingModule } from 'src/app/infrastructure/app-routing.module';
 import { AdminPropertyOverviewComponent } from './admin-property-overview/admin-property-overview.component';
+import { CityOverviewComponent } from './city-overview/city-overview.component';
+import { PropertConsumptionOverviewComponent } from './propert-consumption-overview/propert-consumption-overview.component';
 
 
 
@@ -19,6 +21,8 @@ import { AdminPropertyOverviewComponent } from './admin-property-overview/admin-
     PropertyRequestsComponent,
     SinglePropertyComponent,
     AdminPropertyOverviewComponent,
+    CityOverviewComponent,
+    PropertConsumptionOverviewComponent,
   ],
   imports: [
     CommonModule,

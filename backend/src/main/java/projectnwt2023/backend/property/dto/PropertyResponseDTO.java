@@ -32,6 +32,10 @@ public class PropertyResponseDTO {
 
     private String propertyStatus;
 
+    private double energy;
+
+    private double electodistribution;
+
     public PropertyResponseDTO(Property property) {
         this.id = property.getId();
         this.propertyType = property.getPropertyType().toString();
@@ -44,4 +48,17 @@ public class PropertyResponseDTO {
         this.propertyStatus = property.getPropertyStatus().toString();
     }
 
+    public PropertyResponseDTO(Property property, double electricity, double electodistribution) {
+        this.id = property.getId();
+        this.propertyType = property.getPropertyType().toString();
+        this.address = property.getAddress();
+        this.city = new CityDTO(property.getCity());
+        this.propertyOwner = new AppUserDTO((property.getPropertyOwner()));
+        this.imagePath = Constants.imgPathForFrontend + property.getImagePath();
+        this.area = property.getArea();
+        this.floorCount = property.getFloorCount();
+        this.propertyStatus = property.getPropertyStatus().toString();
+        this.energy = electricity;
+        this.electodistribution = electodistribution;
+    }
 }

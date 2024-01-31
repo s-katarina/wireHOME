@@ -1,7 +1,7 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { CityDTO, DeviceDTO, PropertyDTO, PropertyRequestDTO } from 'src/app/model/model';
+import { BarChartDTO, ByTimeOfDay, CityDTO, CityOverview, DeviceDTO, GraphDTO, PropertyDTO, PropertyRequestDTO, PyChartDTO } from 'src/app/model/model';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -16,6 +16,13 @@ export class PropertyServiceService {
     this.propertySource.next(property);
   }
 
+  private citySource = new BehaviorSubject<CityOverview | undefined>(undefined);
+  currentCity = this.citySource.asObservable();
+
+  setCity(city: CityOverview | undefined) {
+    this.citySource.next(city);
+  }
+
   constructor(private readonly http: HttpClient) { }
 
   private selectedProperty = new BehaviorSubject<string>("");
@@ -23,6 +30,13 @@ export class PropertyServiceService {
 
   setSelectedPropertyId(PropertyId: string) {
     this.selectedProperty.next(PropertyId);
+  }
+
+  private selectedCity= new BehaviorSubject<string>("");
+  selectedCityId$ = this.selectedCity.asObservable();
+
+  setSelectedCityId(cityId: string) {
+    this.selectedCity.next(cityId);
   }
 
   getCities() : Observable<CityDTO[]> {
@@ -79,7 +93,48 @@ export class PropertyServiceService {
     return this.http.get<DeviceDTO[]>(environment.apiHost + `device/energyDevices/${id}`)
   }
 
-  getAcceptedProperties(): Observable<PropertyDTO[]> {
-    return this.http.get<PropertyDTO[]>(environment.apiHost + 'property/accepted')
+  getAcceptedProperties(start: number, end: number): Observable<PropertyDTO[]> {
+    const params = new HttpParams().set('start', start)
+    .set('end', end);
+    return this.http.get<PropertyDTO[]>(environment.apiHost + 'property/accepted', {params})
+  }
+
+  getCityForOverview(start: number, end: number): Observable<CityOverview[]> {
+    const params = new HttpParams().set('start', start)
+    .set('end', end);
+    return this.http.get<CityOverview[]>(environment.apiHost + 'property/byCity', {params})
+  }
+
+  getByCityChart(start: number, end: number): Observable<PyChartDTO[]> {
+    const params = new HttpParams().set('start', start)
+                                    .set('end', end);
+    return this.http.get<PyChartDTO[]>(environment.apiHost + 'property/byCityChart', {params})
+  }
+
+  getByMonthProperty(id: string, year: number, measurement:string): Observable<BarChartDTO[]> {
+    const params = new HttpParams().set('year', year)
+                                  .set("measurement", measurement)
+    return this.http.get<BarChartDTO[]>(environment.apiHost + `property/byMonthProperty/${id}`, {params})
+  }
+
+  getTimeOfDay(id: string | undefined, start: number, end: number): Observable<ByTimeOfDay[]> {
+    const params = new HttpParams().set('start', start)
+                                  .set("end", end)
+    return this.http.get<ByTimeOfDay[]>(environment.apiHost + `property/byTimeOfDay/${id}`, {params})
+  }
+
+  getCityReadingFrom(cityId: number, dateFrom: number, dateTo: number, measurment: string) {
+    const options: any = {
+      responseType: 'json'
+    }
+    
+    return this.http.post<GraphDTO[]>(environment.apiHost + 'property/propertyEnergy', 
+    {
+      id: cityId,
+      from: dateFrom,
+      to: dateTo,
+      measurement: measurment,
+    }, options)  
   }
 }
+  

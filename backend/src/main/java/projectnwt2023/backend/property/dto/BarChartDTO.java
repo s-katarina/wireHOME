@@ -1,4 +1,4 @@
-package projectnwt2023.backend.devices.dto;
+package projectnwt2023.backend.property.dto;
 
 import lombok.*;
 
@@ -7,7 +7,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class PyChartDTO {
-    private String indexLabel;
+public class BarChartDTO {
+    private String label;
     private double y;
 }

@@ -65,6 +65,7 @@ public class BatteryScheduler {
 //        System.out.println("propertu " + propertyes.size());
         for (Property property: propertyes) {
             Map<String, String> values = new HashMap<>();
+            values.put("city-id", String.valueOf(property.getCity().getId()));
             values.put("property-id", String.valueOf(property.getId()));
             influxDBService.save("property-electricity", 0, new Date(), values);
             this.simpMessagingTemplate.convertAndSend("/energy/" + property.getId(), 0);
@@ -93,6 +94,8 @@ public class BatteryScheduler {
         double aggregatedAmount = entry.getValue();
 
         Map<String, String> values = new HashMap<>();
+        Property property = propertyService.getById((long) propertyId);
+        values.put("city-id", String.valueOf(property.getCity().getId()));
         values.put("property-id", String.valueOf(propertyId));
         influxDBService.save("property-electricity", (float) aggregatedAmount, new Date(), values);
         this.simpMessagingTemplate.convertAndSend("/energy/" + propertyId, aggregatedAmount);
@@ -140,6 +143,8 @@ public class BatteryScheduler {
 
     private void sendToElectroDistibution(int propertyId, float aggregatedAmount) {
         Map<String, String> values = new HashMap<>();
+        Property property = propertyService.getById((long) propertyId);
+        values.put("city-id", String.valueOf(property.getCity().getId()));
         values.put("property-id", String.valueOf(propertyId));
         influxDBService.save("electrodeposition", aggregatedAmount, new Date(), values);
     }

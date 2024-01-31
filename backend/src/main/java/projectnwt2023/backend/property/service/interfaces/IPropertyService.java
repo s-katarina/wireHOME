@@ -2,13 +2,19 @@ package projectnwt2023.backend.property.service.interfaces;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import projectnwt2023.backend.devices.dto.GraphDTO;
+import projectnwt2023.backend.devices.dto.PyChartDTO;
 import projectnwt2023.backend.property.City;
 import projectnwt2023.backend.property.Property;
 import projectnwt2023.backend.property.PropertyStatus;
+import projectnwt2023.backend.property.dto.BarChartDTO;
+import projectnwt2023.backend.property.dto.ByTimeOfDayDTO;
+import projectnwt2023.backend.property.dto.CityGraphDTO;
 import projectnwt2023.backend.property.dto.PropertyRequestDTO;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public interface IPropertyService {
 
@@ -30,4 +36,13 @@ public interface IPropertyService {
 
     List<Property> getAllPropertyes();
 
+    ArrayList<PyChartDTO> getPychartForCities(Map<City, List<Property>> propertiesByCity, Long start, Long end, String measurement);
+
+    double getElictricityForProperty(Long id, Long start, Long end, String measurement);
+
+    ArrayList<GraphDTO> findPropertyEnergyForDate(CityGraphDTO graphRequestDTO);
+
+    ArrayList<BarChartDTO> getBarChartForPropertyForYear(Integer propertyId, int year, String measurement);
+
+    ByTimeOfDayDTO getByTimeOfDayForPropertyInRange(Integer propertyId, Long start, Long end);
 }

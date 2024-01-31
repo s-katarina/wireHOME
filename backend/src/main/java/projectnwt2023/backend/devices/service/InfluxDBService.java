@@ -13,7 +13,15 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import projectnwt2023.backend.devices.Measurement.BulbOnOffMeasurement;
 import projectnwt2023.backend.devices.dto.*;
+import projectnwt2023.backend.property.dto.BarChartDTO;
+import projectnwt2023.backend.property.dto.ByTimeOfDayDTO;
+import projectnwt2023.backend.property.dto.CityGraphDTO;
 
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.YearMonth;
+import java.time.ZoneId;
 import java.util.*;
 
 @Service
@@ -182,9 +190,9 @@ public class InfluxDBService {
     }
 
     public List<GateEventMeasurement> findDateRangeGateEvents(String deviceId, Long startTimestamp, Long endTimestamp) {
-        System.out.println(deviceId);
-        System.out.println(startTimestamp);
-        System.out.println(endTimestamp);
+//        System.out.println(deviceId);
+//        System.out.println(startTimestamp);
+//        System.out.println(endTimestamp);
         String fluxQuery = String.format(
                 "from(bucket:\"%s\") |> range(start: %d, stop: %d)" +
                         "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"device-id\"] == \"%s\")" +
@@ -403,4 +411,129 @@ public class InfluxDBService {
         return ret;
     }
 
+    public double getElectricityForPropertyInRange(Long propertyId, Long start, Long end, String measurement) {
+        String fluxQuery = String.format(
+                "from(bucket:\"%s\") |> range(start: %d, stop: %d)" +
+                        "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"property-id\"] == \"%s\")" +
+                        "|> sum(column: \"_value\")", // Summing the values
+                this.bucket, start, end, measurement, propertyId);
+        return Math.abs(this.returnSum(fluxQuery));
+    }
+
+    private double returnSum(String fluxQuery) {
+        QueryApi queryApi = this.influxDbClient.getQueryApi();
+        List<FluxTable> tables = queryApi.query(fluxQuery);
+        for (FluxTable fluxTable : tables) {
+//            System.out.println("Zelim sumu svih property potrosnje " + fluxTable);
+            List<FluxRecord> records = fluxTable.getRecords();
+            for (FluxRecord fluxRecord : records) {
+
+//                System.out.println(fluxRecord.getValues());
+                Object valueObj = fluxRecord.getValueByKey("_value");
+
+                // Add a null check before unboxing
+                if (valueObj != null) {
+                    return (double) valueObj;
+                }
+            }
+        }
+        return 0;
+    }
+
+    public ArrayList<GraphDTO> findCityEnergyForDate(CityGraphDTO graphRequestDTO) {
+        String fluxQuery = String.format(
+                "from(bucket:\"%s\") |> range(start: %s, stop: %s)" +
+                        "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"city-id\"] == \"%s\")" +
+                        "|> aggregateWindow(every: 1m, fn: sum, createEmpty: true)" + // Aggregate over 1-minute intervals using mean
+                        "|> sort(columns: [\"_time\"], desc: false)",
+                this.bucket,
+                graphRequestDTO.getFrom(), graphRequestDTO.getTo(),
+                graphRequestDTO.getMeasurement(), graphRequestDTO.getId()
+        );
+//        System.out.println(fluxQuery);
+        return queryForGraph(fluxQuery);
+    }
+
+    private ArrayList<GraphDTO> queryForGraph(String fluxQuery) {
+        ArrayList<GraphDTO> result = new ArrayList<>();
+        QueryApi queryApi = this.influxDbClient.getQueryApi();
+        List<FluxTable> tables = queryApi.query(fluxQuery);
+        for (FluxTable fluxTable : tables) {
+            List<FluxRecord> records = fluxTable.getRecords();
+            for (FluxRecord fluxRecord : records) {
+                Map<String, Object> tagValues = fluxRecord.getValues();
+
+                // tags
+
+                result.add(new GraphDTO(fluxRecord.getTime() == null ? null : Date.from(fluxRecord.getTime()).getTime(),
+                        fluxRecord.getValue() == null ? 0 : ((double) fluxRecord.getValue())));
+            }
+        }
+        return result;
+    }
+
+    public ArrayList<BarChartDTO> findPropertyEnergyByMonth(Integer propertyId, int year, String measurement) {
+        ArrayList<BarChartDTO> result = new ArrayList<>();
+
+        for (int month = 1; month <= 12; month++) {
+            // Calculate the start and end timestamps for each month
+            Date startOfMonth = Date.from(YearMonth.of(year, month).atDay(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
+            Date endOfMonth = Date.from(YearMonth.of(year, month).atEndOfMonth().atStartOfDay(ZoneId.systemDefault()).toInstant());
+
+            String fluxQuery = String.format(
+                    "from(bucket:\"%s\") |> range(start: %d, stop: %d)" +
+                            "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"property-id\"] == \"%s\")" +
+                            "|> sum(column: \"_value\")", // Summing the values
+                    this.bucket, startOfMonth.getTime()/1000, endOfMonth.getTime()/1000, measurement, propertyId);
+
+            System.out.println(fluxQuery);
+            double sum = this.returnSum(fluxQuery);
+
+            BarChartDTO barChartDTO = new BarChartDTO(getMonthName(month), Math.abs(sum));
+            result.add(barChartDTO);
+        }
+
+        return result;
+    }
+
+    private String getMonthName(int month) {
+        SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM", Locale.ENGLISH);
+        LocalDate firstDayOfMonth = LocalDate.of(2024, Month.of(month), 1);  // 2000 is an arbitrary year, you can use any year
+        return monthFormat.format(Date.from(firstDayOfMonth.atStartOfDay().atZone(java.time.ZoneId.systemDefault()).toInstant()));
+    }
+
+    public ByTimeOfDayDTO getByTimeOfDayForPropertyInRange(Integer propertyId, Long start, Long end) {
+        ByTimeOfDayDTO electro = naIzmakuSam(propertyId, start, end, "property-electricity");
+        ByTimeOfDayDTO dist = naIzmakuSam(propertyId, start, end, "electrodeposition");
+        electro.setDayDist(dist.getDayElec());
+        electro.setNightDist(dist.getNightElec());
+        return electro;
+    }
+
+    private ByTimeOfDayDTO naIzmakuSam(Integer propertyId, Long start, Long end, String measurement){
+        long interval = 12 * 60 * 60;  // 12 hours in milliseconds
+        double firstInterval = 0.0;
+        double secondInterval = 0.0;
+        boolean isFirst = true;
+        for (long currentTime = start; currentTime <= end; currentTime += interval) {
+            long currentIntervalEnd = currentTime + interval;
+
+            String fluxQuery = String.format(
+                    "from(bucket:\"%s\") |> range(start: %d, stop: %d)" +
+                            "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"property-id\"] == \"%s\")" +
+                            "|> sum(column: \"_value\")", // Summing the values
+                    this.bucket, currentTime, currentIntervalEnd, measurement, propertyId);
+
+            double sum = this.returnSum(fluxQuery);
+
+            if (isFirst) {
+                firstInterval += sum;
+            } else {
+                secondInterval += sum;
+            }
+
+            isFirst = !isFirst;
+        }
+        return new ByTimeOfDayDTO(firstInterval, secondInterval, 0.0, 0.0);
+    }
 }

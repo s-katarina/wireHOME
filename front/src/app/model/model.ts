@@ -9,6 +9,13 @@ export interface CountryDTO {
     name: string;
 }
 
+export interface CityOverview {
+    city: CityDTO
+    propertyesNum: number
+    energy: number
+    electodistribution: number
+}
+
 export interface PropertyRequestDTO {
     propertyType: string;
     address: string;
@@ -53,9 +60,17 @@ export interface PropertyDTO {
     area: number | null;
     floorCount: number | null;
     propertyStatus: string;
+    energy?: number
+    electodistribution?: number
+
 }
 
-
+export interface ByTimeOfDay {
+    dayElec: number
+    nightElec: number
+    dayDist: number
+    nightDist: number
+}
 
 export interface LoginDTO {
     email: string;
@@ -134,6 +149,11 @@ export interface PyChartDTO {
     y: number
 }
 
+export interface BarChartDTO {
+    label: string
+    y: number
+}
+
 
 export interface AmbientSensorDateValueDTO {
     dates: string[],
@@ -167,4 +187,9 @@ export interface Car {
     batterySize: number,
     percentage: number,
     energyConsumed: number
+}
+
+export interface StartEnd {
+    start: number
+    end: number
 }

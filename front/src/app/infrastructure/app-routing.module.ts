@@ -19,6 +19,9 @@ import { BatteryComponent } from '../modules/devices/large-energy/battery/batter
 import { AmbientSensorComponent } from '../modules/devices/ambient-sensor/ambient-sensor.component';
 import { AirConditionerComponent } from '../modules/devices/air-conditioner/air-conditioner.component';
 import { ChargerComponent } from '../modules/devices/large-energy/charger/charger.component';
+import { AdminPropertyOverviewComponent } from '../modules/property/admin-property-overview/admin-property-overview.component';
+import { CityOverviewComponent } from '../modules/property/city-overview/city-overview.component';
+import { PropertConsumptionOverviewComponent } from '../modules/property/propert-consumption-overview/propert-consumption-overview.component';
 
 const routes: Routes = [
   { path: 'properties', component: PropertyOverviewComponent, canActivate: [TokenGuard, RoleGuard ], data: {roles: ["AUTH_USER"]}  },
@@ -29,6 +32,9 @@ const routes: Routes = [
   { path: 'register', component: RegisterComponent, canActivate: [UnregisteredGuard] },
   { path: 'property-requests', component: PropertyRequestsComponent, canActivate: [TokenGuard, RoleGuard ], data: {roles: ["SUPER_ADMIN", "ADMIN"]}  },
   { path: 'register-admin', component: RegisterComponent, canActivate: [TokenGuard, RoleGuard ], data: {roles: ["SUPER_ADMIN"]} },
+  { path: 'admin-overview', component: AdminPropertyOverviewComponent, canActivate: [TokenGuard, RoleGuard ], data: {roles: ["SUPER_ADMIN", "ADMIN"]}},
+  { path: 'city-overview', component: CityOverviewComponent, canActivate: [TokenGuard, RoleGuard ], data: {roles: ["SUPER_ADMIN", "ADMIN"]}},
+  { path: 'property-consumption-overview', component: PropertConsumptionOverviewComponent, canActivate: [TokenGuard, RoleGuard ], data: {roles: ["SUPER_ADMIN", "ADMIN"]}},
   { path: 'lamp', component: LampComponent },
   { path: 'gate', component: GateComponent },
   { path: 'energy-overwiev', component:EnergyOverviewComponent},

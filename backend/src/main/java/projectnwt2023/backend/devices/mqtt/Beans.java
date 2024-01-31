@@ -92,8 +92,8 @@ public class Beans {
             @Override
             public void handleMessage(Message<?> message) throws MessagingException {
                 String topic = (String) message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC);
-                System.out.println(message.getPayload());
-                System.out.println(topic);
+//                System.out.println(message.getPayload());
+//                System.out.println(topic);
                 PayloadDTO payloadDTO = getPayload(message, PayloadDTO.class);
                 if (topic == null){
                     System.out.println("null je topic");

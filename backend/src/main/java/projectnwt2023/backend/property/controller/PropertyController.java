@@ -11,6 +11,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import projectnwt2023.backend.devices.dto.GraphDTO;
+import projectnwt2023.backend.devices.dto.GraphRequestDTO;
+import projectnwt2023.backend.devices.dto.PyChartDTO;
 import projectnwt2023.backend.helper.ApiResponse;
 import projectnwt2023.backend.property.City;
 import projectnwt2023.backend.property.Property;
@@ -21,7 +24,9 @@ import projectnwt2023.backend.property.service.interfaces.IPropertyService;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/property")
@@ -78,15 +83,100 @@ public class PropertyController {
 
     @GetMapping(value = "/accepted", produces = "application/json")
     @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
-    ResponseEntity<List<PropertyResponseDTO>> getPropertiesForAdminOverview(){
+    ResponseEntity<List<PropertyResponseDTO>> getPropertiesForAdminOverview(@RequestParam Long start,
+                                                                            @RequestParam Long end){
 
         Page<Property> properties = propertyService.getPropertiesByStatus(PropertyStatus.ACCEPTED, Pageable.unpaged());
         List<PropertyResponseDTO> dtos = new ArrayList<>();
         for (Property p : properties.getContent()) {
-            dtos.add(new PropertyResponseDTO(p));
+            double electricity = propertyService.getElictricityForProperty(p.getId(), start, end, "property-electricity");
+            double electrodi = propertyService.getElictricityForProperty(p.getId(), start, end, "electrodeposition");
+            dtos.add(new PropertyResponseDTO(p, electricity, electrodi));
         }
 
         return new ResponseEntity<>(dtos, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/byCity", produces = "application/json")
+    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
+    ResponseEntity<List<CityOverviewDTO>> getPropertiesByCity(@RequestParam Long start,
+                                                              @RequestParam Long end){
+        System.out.println("parametri " + start + "  " + end);
+        Page<Property> properties = propertyService.getPropertiesByStatus(PropertyStatus.ACCEPTED, Pageable.unpaged());
+
+        // Group properties by city using Java streams
+        Map<City, List<Property>> propertiesByCity = properties.getContent()
+                .stream()
+                .collect(Collectors.groupingBy(Property::getCity));
+
+        ArrayList<PyChartDTO> grapgData = propertyService.getPychartForCities(propertiesByCity, start, end, "property-electricity");
+        ArrayList<PyChartDTO> grapgData2 = propertyService.getPychartForCities(propertiesByCity, start, end, "electrodeposition");
+//        System.out.println("akumulirani podaci " + grapgData);
+        // Create a list of PropertyResponseDTO objects for each group
+        List<CityOverviewDTO> dtos = propertiesByCity.entrySet().stream()
+                .map(entry -> new CityOverviewDTO(new CityDTO(entry.getKey()), entry.getValue().size(), getValueForLabel(grapgData, entry.getKey().getName()), getValueForLabel(grapgData2, entry.getKey().getName())))
+                .collect(Collectors.toList());
+
+
+        return new ResponseEntity<>(dtos, HttpStatus.OK);
+    }
+    @PostMapping(value = "/propertyEnergy", produces = "application/json") // koristi i za elektrodistribuciju i za samu potrosnju
+    ResponseEntity<ArrayList<GraphDTO>> getElectroByCity(@RequestBody CityGraphDTO graphRequestDTO){
+//        System.out.println("striglo je " + graphRequestDTO);
+        ArrayList<GraphDTO> grapgData = propertyService.findPropertyEnergyForDate(graphRequestDTO);
+        return new ResponseEntity<>(grapgData, HttpStatus.OK);
+    }
+
+
+    private double getValueForLabel(ArrayList<PyChartDTO> graphData, String city) {
+        for (PyChartDTO pyChartDTO : graphData) {
+            if (city.equals(pyChartDTO.getIndexLabel())) {
+                // Found the object with label 'abc'
+                return pyChartDTO.getY();
+            }
+        }
+        return 0;
+    }
+
+    @GetMapping(value = "/byCityChart", produces = "application/json")
+    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
+    ResponseEntity<ArrayList<PyChartDTO>> getPyChartByCity(@RequestParam Long start,
+                                                           @RequestParam Long end){
+
+        Page<Property> properties = propertyService.getPropertiesByStatus(PropertyStatus.ACCEPTED, Pageable.unpaged());
+
+        Map<City, List<Property>> propertiesByCity = properties.getContent()
+                .stream()
+                .collect(Collectors.groupingBy(Property::getCity));
+
+
+        ArrayList<PyChartDTO> grapgData = propertyService.getPychartForCities(propertiesByCity, start, end, "property-electricity");
+        return new ResponseEntity<>(grapgData, HttpStatus.OK);
+
+    }
+
+    @GetMapping(value = "/byMonthProperty/{propertyId}", produces = "application/json")
+    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
+    ResponseEntity<ArrayList<BarChartDTO>> getPyChartByCity(@PathVariable Integer propertyId,
+                                                           @RequestParam int year,
+                                                            @RequestParam String measurement){
+
+
+        ArrayList<BarChartDTO> grapgData = propertyService.getBarChartForPropertyForYear(propertyId, year, measurement);
+        return new ResponseEntity<>(grapgData, HttpStatus.OK);
+
+    }
+
+    @GetMapping(value = "/byTimeOfDay/{propertyId}", produces = "application/json")
+    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
+    ResponseEntity<ByTimeOfDayDTO> getByTimeOfDay(@PathVariable Integer propertyId,
+                                                            @RequestParam Long start,
+                                                            @RequestParam Long end){
+
+
+        ByTimeOfDayDTO timeOfDayDTO = propertyService.getByTimeOfDayForPropertyInRange(propertyId, start, end);
+        return new ResponseEntity<>(timeOfDayDTO, HttpStatus.OK);
+
     }
 
     @GetMapping(value = "/pending", produces = "application/json")

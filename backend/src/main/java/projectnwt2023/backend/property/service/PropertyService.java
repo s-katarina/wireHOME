@@ -6,23 +6,26 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import projectnwt2023.backend.appUser.AppUser;
 import projectnwt2023.backend.appUser.service.interfaces.IAppUserService;
+import projectnwt2023.backend.devices.dto.GraphDTO;
+import projectnwt2023.backend.devices.dto.PyChartDTO;
+import projectnwt2023.backend.devices.service.InfluxDBService;
 import projectnwt2023.backend.exceptions.EntityNotFoundException;
 import projectnwt2023.backend.exceptions.UserForbiddenOperationException;
-import projectnwt2023.backend.helper.Constants;
 import projectnwt2023.backend.mail.MailService;
 import projectnwt2023.backend.property.City;
 import projectnwt2023.backend.property.Property;
 import projectnwt2023.backend.property.PropertyStatus;
 import projectnwt2023.backend.property.PropertyType;
+import projectnwt2023.backend.property.dto.BarChartDTO;
+import projectnwt2023.backend.property.dto.ByTimeOfDayDTO;
+import projectnwt2023.backend.property.dto.CityGraphDTO;
 import projectnwt2023.backend.property.dto.PropertyRequestDTO;
 import projectnwt2023.backend.property.repository.CityRepository;
 import projectnwt2023.backend.property.repository.PropertyRepository;
 import projectnwt2023.backend.property.service.interfaces.IPropertyService;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class PropertyService implements IPropertyService {
@@ -38,6 +41,9 @@ public class PropertyService implements IPropertyService {
 
     @Autowired
     IAppUserService appUserService;
+
+    @Autowired
+    InfluxDBService influxDBService;
 
     @Override
     public Property getById(Long id) {
@@ -164,6 +170,38 @@ public class PropertyService implements IPropertyService {
         return propertyRepository.findAll();
     }
 
+    @Override
+    public ArrayList<PyChartDTO> getPychartForCities(Map<City, List<Property>> propertiesByCity, Long start, Long end, String measurement) {
+        ArrayList<PyChartDTO> valueByCity = new ArrayList<>();
+        for (Map.Entry<City,List<Property>> entry : propertiesByCity.entrySet()){
+            double sum = 0;
+            for (Property property: entry.getValue()) {
+                sum += influxDBService.getElectricityForPropertyInRange(property.getId(), start, end, measurement);
+            }
+            valueByCity.add(new PyChartDTO(entry.getKey().getName(), sum));
+        }
+        return valueByCity;
+    }
+
+    @Override
+    public double getElictricityForProperty(Long id, Long start, Long end, String measurement) {
+        return influxDBService.getElectricityForPropertyInRange(id, start, end, measurement);
+    }
+
+    @Override
+    public ArrayList<GraphDTO> findPropertyEnergyForDate(CityGraphDTO graphRequestDTO) {
+        return influxDBService.findCityEnergyForDate(graphRequestDTO);
+    }
+
+    @Override
+    public ArrayList<BarChartDTO> getBarChartForPropertyForYear(Integer propertyId, int year, String measurement) {
+        return influxDBService.findPropertyEnergyByMonth(propertyId, year, measurement);
+    }
+
+    @Override
+    public ByTimeOfDayDTO getByTimeOfDayForPropertyInRange(Integer propertyId, Long start, Long end) {
+        return influxDBService.getByTimeOfDayForPropertyInRange(propertyId, start, end);
+    }
 
 
 }
