@@ -244,7 +244,6 @@ public class InfluxDBService {
 
     private List<Measurement> queryLightSensor(String fluxQuery) {
         List<Measurement> result = new ArrayList<>();
-        System.out.println(fluxQuery);
         QueryApi queryApi = this.influxDbClient.getQueryApi();
         List<FluxTable> tables = queryApi.query(fluxQuery);
         for (FluxTable fluxTable : tables) {
@@ -279,7 +278,6 @@ public class InfluxDBService {
                         "|> aggregateWindow(every: %s, fn: mean, createEmpty: false)",
 //                        "|> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")",
                 this.bucket, startTimestamp/1000, endTimestamp/1000, "light-sensor", deviceId, interval);
-        System.out.println(fluxQuery);
         return this.queryLightSensor(fluxQuery);
     }
 
