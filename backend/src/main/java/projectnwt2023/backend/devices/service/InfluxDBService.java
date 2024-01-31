@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import projectnwt2023.backend.devices.Measurement.BulbOnOffMeasurement;
 import projectnwt2023.backend.devices.dto.*;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -243,29 +244,42 @@ public class InfluxDBService {
 
     private List<Measurement> queryLightSensor(String fluxQuery) {
         List<Measurement> result = new ArrayList<>();
+        System.out.println(fluxQuery);
         QueryApi queryApi = this.influxDbClient.getQueryApi();
         List<FluxTable> tables = queryApi.query(fluxQuery);
         for (FluxTable fluxTable : tables) {
             List<FluxRecord> records = fluxTable.getRecords();
             for (FluxRecord fluxRecord : records) {
                 String measurementName = fluxRecord.getMeasurement();
-                Double value = fluxRecord.getValueByKey("value") == null ? null : (Double) fluxRecord.getValueByKey("value");
+                Double value = fluxRecord.getValueByKey("_value") == null ? null : (Double) fluxRecord.getValueByKey("_value");
                 LocalDateTime timestamp = fluxRecord.getTime() == null ? null : LocalDateTime.ofInstant(fluxRecord.getTime(), ZoneId.systemDefault());
-                result.add(new Measurement(measurementName, value, timestamp));
+                result.add(new Measurement(measurementName, value == null ? 0 : value, timestamp));
             }
         }
         return result;
     }
 
     public List<Measurement> findDateRangeLightSensor(String deviceId, Long startTimestamp, Long endTimestamp) {
-        System.out.println(deviceId);
-        System.out.println(startTimestamp);
-        System.out.println(endTimestamp);
+        LocalDateTime startDateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(startTimestamp / 1000), ZoneId.systemDefault());
+        LocalDateTime endDateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(endTimestamp / 1000), ZoneId.systemDefault());
+        endDateTime = endDateTime.withMinute(0).withSecond(0).withNano(0);
+        startDateTime = startDateTime.withMinute(0).withSecond(0).withNano(0);
+
+        Duration duration = Duration.between(startDateTime, endDateTime);
+        String interval = "1m";       // Aggregate window
+        if (duration.getSeconds() > 60 * 60 * 24) {
+            interval = "30m";      // Calculate percentage every 24 hours
+        }
+        if (duration.getSeconds() > 60 * 60 * 24 * 7) {
+            interval = "1h";      // Calculate percentage every 24 hours
+        }
         String fluxQuery = String.format(
                 "from(bucket:\"%s\") |> range(start: %d, stop: %d)" +
                         "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"device-id\"] == \"%s\")" +
-                        "|> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")",
-                this.bucket, startTimestamp/1000, endTimestamp/1000, "light-sensor", deviceId);
+                        "|> aggregateWindow(every: %s, fn: mean, createEmpty: false)",
+//                        "|> pivot(rowKey: [\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")",
+                this.bucket, startTimestamp/1000, endTimestamp/1000, "light-sensor", deviceId, interval);
+        System.out.println(fluxQuery);
         return this.queryLightSensor(fluxQuery);
     }
 
