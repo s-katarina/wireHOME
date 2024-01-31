@@ -107,8 +107,10 @@ distTotal: number = 0;
     this.propertyService.getPropertyByDayReadingFrom(this.property?.id || "0", datee.start, datee.end, "property-electricity").subscribe((res: any) => {
       console.log(res)
       this.labledGraphData = res
+      let i = 0
       for (const  labeledData of this.labledGraphData) {
-        let chart = new CanvasJS.Chart(labeledData.label, 
+        i = i +1
+        const chart = new CanvasJS.Chart(labeledData.label, 
         {
           zoomEnabled: true,
           exportEnabled: true,
@@ -122,7 +124,12 @@ distTotal: number = 0;
           dataPoints: [labeledData.graphDTOS]
           }]
         })
-        chart.render();
+        // chart.render();
+        this.dayCharts.push(chart)
+      }
+
+      for (const  chaart of this.dayCharts){
+        chaart.render()
       }
 
     })

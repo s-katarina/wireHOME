@@ -91,14 +91,14 @@
             <ng-container matColumnDef="energy">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Energy Consumed(kw)</th>
                 <td mat-cell *matCellDef="let element">
-                    {{ element.energy }}
+                    {{ element.energy | number:'1.2-2'}}
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="electodistribution">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Electrodistibution(kw)</th>
                 <td mat-cell *matCellDef="let element">
-                    {{ element.electodistribution }}
+                    {{ element.electodistribution | number:'1.2-2'}}
                 </td>
             </ng-container>
 
@@ -194,14 +194,14 @@
             <ng-container matColumnDef="energy">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Energy Consumed(kw)</th>
                 <td mat-cell *matCellDef="let element">
-                    {{ element.energy }}
+                    {{ element.energy | number:'1.2-2'}}
                 </td>
             </ng-container>
 
             <ng-container matColumnDef="electodistribution">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Electrodistibution(kw)</th>
                 <td mat-cell *matCellDef="let element">
-                    {{ element.electodistribution }}
+                    {{ element.electodistribution | number:'1.2-2'}}
                 </td>
             </ng-container>
 

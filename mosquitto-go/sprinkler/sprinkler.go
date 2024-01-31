@@ -267,7 +267,7 @@ func getSprinkler(deviceId int) Sprinkler {
 
 }
 
-var sprinkler Sprinkler = getSprinkler(7)
+var sprinkler Sprinkler = getSprinkler(11)
 
 
 var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {

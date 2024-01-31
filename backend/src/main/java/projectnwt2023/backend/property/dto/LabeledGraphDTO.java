@@ -1,10 +1,7 @@
 package projectnwt2023.backend.property.dto;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import projectnwt2023.backend.devices.dto.GraphDTO;
 
 import java.util.ArrayList;
@@ -13,6 +10,7 @@ import java.util.ArrayList;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class LabeledGraphDTO {
 
     private String label;

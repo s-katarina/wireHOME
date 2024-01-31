@@ -144,6 +144,7 @@ export interface GateEvent  {
     caller: string,
     eventType: string
     timestamp: string
+    callerUsername?: string,
 }
 
 export interface SprinklerCommand  {

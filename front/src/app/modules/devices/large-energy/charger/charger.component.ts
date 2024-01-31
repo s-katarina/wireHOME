@@ -22,7 +22,7 @@ export class ChargerComponent implements OnInit {
   chargerId: string = ""
   selectedOption: string = ""
 
-  displayedColumns : string[] = ['eventType', 'caller', 'timestamp']
+  displayedColumns : string[] = ['eventType', 'caller', 'callerUsername', 'timestamp']
   dataSource!: MatTableDataSource<GateEvent>;
   events : GateEvent[] = []
   recentEvents: GateEvent[] = []

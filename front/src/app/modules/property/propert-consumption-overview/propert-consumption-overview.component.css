@@ -94,3 +94,21 @@
 .margin-top {
   margin-top: 5vh;
 }
+
+
+.day-section {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.day-section > div {
+  width: 40%; /* Each div takes 25% of the container width */
+}
+
+.dayChart {
+  /* Your styles for the dayChart divs */
+  height: 200px; /* Example height */
+  margin:auto;
+  width: 100%; /* Each div takes 25% of the container width */
+
+}

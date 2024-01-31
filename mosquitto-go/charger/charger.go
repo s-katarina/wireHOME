@@ -6,6 +6,7 @@ import (
 	"io"
 	"math/rand"
 	"strconv"
+	"strings"
 	"time"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
@@ -38,9 +39,10 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 
 	if helper.IsTopicMatch(patternPort, msg.Topic()) {
 		fmt.Println(string(msg.Payload()))
-		number, _ := strconv.Atoi(string(msg.Payload()))
+		payload := string(msg.Payload())
+		number, _ := strconv.Atoi(strings.Split(payload, ";")[0])
 		if number > 0 && number <= 100 {
-			pubChargerEvent(client, "percent-change", "USER")
+			pubChargerEvent(client, "percent change to " + strings.Split(payload, ";")[0], strings.Split(payload, ";")[1])
 			charger.Percentage = int32(number)
 		}
 	}

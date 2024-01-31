@@ -654,22 +654,32 @@ public class InfluxDBService {
     }
 
     public ArrayList<LabeledGraphDTO> findPropertyEnergyByDayForDate(CityGraphDTO graphRequestDTO) {
-        Long start = graphRequestDTO.getFrom();
+        Long start = graphRequestDTO.getFrom() * 1000;
         ArrayList<LabeledGraphDTO> labeledGraph = new ArrayList<>();
-        long interval = 24 * 60 * 60 * 10;  // 24 hours in milliseconds
-        long end = start + interval * 6;  //7 days
+        long interval = 24 * 60 * 60 * 1000;  // 24 hours in milliseconds
+        long end = start + interval * 6;  // 7 days
+
+
         for (long currentTime = start; currentTime <= end; currentTime += interval) {
             long currentIntervalEnd = currentTime + interval;
+            Date date = new Date(currentTime);
+            System.out.println(date);
+
+            date = new Date(currentIntervalEnd);
+            System.out.println(date);
+
             String fluxQuery = String.format(
                     "from(bucket:\"%s\") |> range(start: %s, stop: %s)" +
                             "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"property-id\"] == \"%s\")" +
-                            "|> aggregateWindow(every: 1h, fn: sum, createEmpty: true)" + // Aggregate over 1-hour intervals using sum
+                            "|> aggregateWindow(every: 1h, fn: sum, createEmpty: true)" +
                             "|> sort(columns: [\"_time\"], desc: false)",
                     this.bucket,
-                    currentTime, currentIntervalEnd,
+                    currentTime/1000, currentIntervalEnd/1000,
                     graphRequestDTO.getMeasurement(), graphRequestDTO.getId()
             );
+
             System.out.println(fluxQuery);
+
             Instant instant = Instant.ofEpochMilli(currentTime);
             LocalDate localDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
 
@@ -678,9 +688,10 @@ public class InfluxDBService {
             labeledGraph.add(new LabeledGraphDTO(dayOfWeekString, queryForGraph(fluxQuery)));
             System.out.println(queryForGraph(fluxQuery).size());
         }
-//        System.out.println(fluxQuery);
+        System.out.println(labeledGraph);
         return labeledGraph;
     }
+
     private List<SprinklerCommandMeasurement> querySprinklerCommand(String fluxQuery) {
         List<SprinklerCommandMeasurement> result = new ArrayList<>();
         QueryApi queryApi = this.influxDbClient.getQueryApi();
