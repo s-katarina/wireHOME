@@ -62,6 +62,10 @@
       <canvas id="reportHumChart">{{ reportHumChart }}</canvas>
     </div>
 
+    <div class="chart-div-online">
+      <app-online-offline-chart class="chart" #onlineOfflineChart [deviceId]="ambientSensor!.id"></app-online-offline-chart>
+    </div>
+
 </div>
 
 <!-- <div>
