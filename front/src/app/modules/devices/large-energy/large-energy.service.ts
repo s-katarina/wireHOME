@@ -78,10 +78,24 @@ export class LargeEnergyService {
   }
 
 
-  getDeviceOnlineOfflinePyChart(id: string) : Observable<PyChartDTO[]> {
-    return this.http.get<PyChartDTO[]>(environment.apiHost + `device/onlinePercent/${id}`)
+  getDeviceOnlineOfflinePyChart(id: string, start: string, end: string) : Observable<PyChartDTO[]> {
+    const params = new HttpParams().set('start', start)
+                                    .set('end', end);
+    return this.http.get<PyChartDTO[]>(environment.apiHost + `device/onlinePercent/${id}`, {params})
+  }
+
+  getDeviceOnlineOfflineIntervalChart(id: string, start: string, end: string) : Observable<ApiResponse> {
+    const params = new HttpParams().set('start', start)
+                                    .set('end', end);
+    return this.http.get<ApiResponse>(environment.apiHost + `device/onlineIntervals/${id}`, {params})
   }
   
+  getDeviceOnlineOfflineTimeUnitChart(id: string, start: string, end: string) : Observable<ApiResponse> {
+    const params = new HttpParams().set('start', start)
+                                    .set('end', end);
+    return this.http.get<ApiResponse>(environment.apiHost + `device/onlinePerUnit/${id}`, {params})
+  }
+
   constructor(private readonly http: HttpClient) { }
 
   private selectedDevice = new BehaviorSubject<string>("");

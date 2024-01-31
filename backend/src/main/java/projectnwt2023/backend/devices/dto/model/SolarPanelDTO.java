@@ -1,16 +1,17 @@
-package projectnwt2023.backend.devices.dto;
+package projectnwt2023.backend.devices.dto.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import projectnwt2023.backend.devices.SolarPanel;
+import projectnwt2023.backend.devices.dto.model.DeviceDTO;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SolarPanelDTO extends DeviceDTO{
+public class SolarPanelDTO extends DeviceDTO {
 
     private double surfaceSize;
 

@@ -7,17 +7,16 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import projectnwt2023.backend.devices.*;
 import projectnwt2023.backend.devices.dto.*;
-import projectnwt2023.backend.devices.mqtt.Gateway;
+import projectnwt2023.backend.devices.dto.model.BatteryDTO;
 import projectnwt2023.backend.devices.dto.GraphDTO;
 import projectnwt2023.backend.devices.dto.GraphRequestDTO;
-import projectnwt2023.backend.devices.dto.SolarPanelDTO;
+import projectnwt2023.backend.devices.dto.model.SolarPanelDTO;
+import projectnwt2023.backend.devices.mqtt.Gateway;
 import projectnwt2023.backend.devices.service.InfluxDBService;
 import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
 import projectnwt2023.backend.helper.ApiResponse;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 @RestController

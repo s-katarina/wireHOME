@@ -101,6 +101,15 @@ export interface Gate extends DeviceDTO {
     licencePlates: string[]
 }
 
+export interface Sprinkler extends DeviceDTO {
+    scheduleMode: boolean
+    scheduleDTO: {
+        startHour: number,
+        endHour: number,
+        weekdays: number[]
+    }
+}
+
 export interface SolarPanel extends DeviceDTO {
     surfaceSize: number;
     efficiency: number;
@@ -121,6 +130,13 @@ export interface Charger extends DeviceDTO {
 export interface GateEvent  {
     caller: string,
     eventType: string
+    timestamp: string
+}
+
+export interface SprinklerCommand  {
+    caller: string,
+    callerUsername: string,
+    command: string
     timestamp: string
 }
 

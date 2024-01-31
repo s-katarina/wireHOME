@@ -8,6 +8,7 @@ import projectnwt2023.backend.devices.Device;
 import projectnwt2023.backend.devices.Gate;
 import projectnwt2023.backend.devices.Lamp;
 import projectnwt2023.backend.devices.dto.*;
+import projectnwt2023.backend.devices.dto.model.GateDTO;
 import projectnwt2023.backend.devices.mqtt.Beans;
 import projectnwt2023.backend.devices.repository.DeviceRepository;
 import projectnwt2023.backend.devices.service.interfaces.IGateService;
@@ -36,10 +37,10 @@ public class GateService implements IGateService {
     public void parseRequest(String topic, Message<?> message) {
         System.out.println(topic);
         if (isStringMatchingPattern(topic, "gate/\\d+/regime")) {
-            PayloadDTO payloadDTO = Beans.getPayload(message, GateEventPayloadDTO.class);
+            PayloadDTO payloadDTO = Beans.getPayload(message, PayloadWithCallerDTO.class);
             changeGateRegime((long) payloadDTO.getDeviceId(), payloadDTO.getUsedFor());
         } else if (isStringMatchingPattern(topic, "gate/\\d+/open")) {
-            PayloadDTO payloadDTO = Beans.getPayload(message, GateEventPayloadDTO.class);
+            PayloadDTO payloadDTO = Beans.getPayload(message, PayloadWithCallerDTO.class);
             changeGateOpen((long) payloadDTO.getDeviceId(), payloadDTO.getUsedFor());
         } else if (isStringMatchingPattern(topic, "gate/\\d+/event")) {
             processEvent((String) message.getPayload());

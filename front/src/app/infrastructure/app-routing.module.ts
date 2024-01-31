@@ -22,6 +22,7 @@ import { ChargerComponent } from '../modules/devices/large-energy/charger/charge
 import { AdminPropertyOverviewComponent } from '../modules/property/admin-property-overview/admin-property-overview.component';
 import { CityOverviewComponent } from '../modules/property/city-overview/city-overview.component';
 import { PropertConsumptionOverviewComponent } from '../modules/property/propert-consumption-overview/propert-consumption-overview.component';
+import { SprinklerComponent } from '../modules/devices/outdoor/sprinkler/sprinkler.component';
 
 const routes: Routes = [
   { path: 'properties', component: PropertyOverviewComponent, canActivate: [TokenGuard, RoleGuard ], data: {roles: ["AUTH_USER"]}  },
@@ -37,6 +38,7 @@ const routes: Routes = [
   { path: 'property-consumption-overview', component: PropertConsumptionOverviewComponent, canActivate: [TokenGuard, RoleGuard ], data: {roles: ["SUPER_ADMIN", "ADMIN"]}},
   { path: 'lamp', component: LampComponent },
   { path: 'gate', component: GateComponent },
+  { path: 'sprinkler', component: SprinklerComponent },
   { path: 'energy-overwiev', component:EnergyOverviewComponent},
   { path: 'solarPanel', component:SolarPanelComponent},
   { path: 'battery', component: BatteryComponent},

@@ -1,6 +1,6 @@
 .page {
     margin: 5%;
-    margin-bottom: 10vh !important;
+    margin-bottom: 10vh;
     padding-bottom: 30vh !important;
 }
 
@@ -104,3 +104,110 @@ img {
     padding-top: 40px;
     padding-bottom: 200px;
 }
+
+
+.make-schedule {
+    margin: 12px;
+    padding-left: 70px;
+    padding-top: 10px;
+    width: fit-content;
+}
+
+.make-schedule > * {
+    margin: 10px 0;
+}
+
+.make-schedule h5 {
+    margin-bottom: 20px !important;
+}
+
+p {
+    font-size: 14px;
+}
+
+#save-schedule {
+    font-size: 15px;
+    background-color: rgba(105, 126, 159, 0.697);
+    font-family: 'Sora-semibold', sans-serif !important;;
+    width: 160px;
+    margin-top: 25px;
+}
+
+.timepicker {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    padding-left: 15px;
+}
+.timepicker input {
+    height: 28px;
+    width: 70px;
+    font-weight: 600;
+    font-size: 15px;
+    border: 0 !important;
+}
+
+.day-clicked {
+    background-color: rgba(120, 137, 155, 0.402);
+}
+
+.weekday-btn {
+    margin: 0 5px;
+}
+
+.table-div {
+    width: 80%;
+    display: block;
+    margin-top: 5vh !important;
+}
+
+::ng-deep .mat-table {
+    width: 100% !important;
+}
+
+.table-div .mat-form-field {
+    margin: 20px !important;
+    width: 30% !important;
+}
+  
+  
+::ng-deep .table-div .mat-form-field-appearance-outline .mat-form-field-outline {
+    color: rgb(57, 57, 57) !important;
+}
+
+::ng-deep .table-div .mat-form-field.mat-focused .mat-form-field-label {
+    color: black !important ;
+}
+
+.mat-raised-button {
+    margin: 20px;
+    height: 2.8em;
+    min-width: 160px;
+    width: 6vw;
+}
+
+.mat-tooltip {
+    font-family: 'Heebo-regular', Roboto, "Helvetica Neue", sans-serif !important; 
+    /* padding: 15px 28px !important;  */
+    padding: 0 !important;
+    font-size: medium;
+}
+
+.filter-section {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.filter-section .mat-form-field {
+    flex: 1; 
+}
+
+.filter-section-button {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+  

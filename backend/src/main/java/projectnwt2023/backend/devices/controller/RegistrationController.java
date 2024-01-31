@@ -8,7 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import projectnwt2023.backend.devices.*;
 import projectnwt2023.backend.devices.dto.DeviceRequestDTO;
-import projectnwt2023.backend.devices.dto.DeviceDTO;
+import projectnwt2023.backend.devices.dto.model.DeviceDTO;
 import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
 import projectnwt2023.backend.helper.ApiResponse;
 import projectnwt2023.backend.property.Property;

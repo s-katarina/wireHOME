@@ -28,9 +28,6 @@ public interface IPropertyService {
 
     Property rejectProperty(Long id, String reason);
 
-    String sendMailApproved(Property property);
-    String sendMailRejected(Property property, String reason);
-
     List<Property> getAllPropertyes();
 
     ArrayList<PyChartDTO> getPychartForCities(Map<City, List<Property>> propertiesByCity, Long start, Long end, String measurement);

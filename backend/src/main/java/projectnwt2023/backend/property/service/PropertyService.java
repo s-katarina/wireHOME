@@ -107,7 +107,11 @@ public class PropertyService implements IPropertyService {
             property.setPropertyStatus(PropertyStatus.ACCEPTED);
         else throw new UserForbiddenOperationException();
 
-        this.sendMailApproved(property);
+        try {
+            mailService.sendApprovalEmail(property);
+        } catch (IOException ex) {
+            System.out.println("SENDGRIG ERROR FOR ACCEPTING");
+        }
 
         return propertyRepository.save(property);
     }
@@ -123,43 +127,13 @@ public class PropertyService implements IPropertyService {
             property.setPropertyStatus(PropertyStatus.REJECTED);
         else throw new UserForbiddenOperationException();
 
-        this.sendMailRejected(property, reason);
+        try {
+            mailService.sendRejectionEmail(property, reason);
+        } catch (IOException ex) {
+            System.out.println("SENDGRIG ERROR FOR REJECTING PROPERTY");
+        }
 
         return propertyRepository.save(property);
-    }
-
-    public String sendMailApproved(Property p){
-        try {
-            String title = "Property approval";
-            String content = String.format("Your %s property at %s, %s has been approved. \uD83C\uDF89 \n" +
-                            "Get ready to register devices for your smart Wire HOME experience!",
-                    p.getPropertyType().toString().toLowerCase(),
-                    p.getAddress(),
-                    p.getCity().getName());
-            return mailService.sendTextEmail(p.getPropertyOwner().getEmail(), title, content);
-        } catch (IOException ex) {
-            return "";
-        }
-    }
-
-    public String sendMailRejected(Property p, String reason){
-        try {
-            String title = "Property rejection";
-            String content = String.format("We regret to inform you that after careful consideration, " +
-                            "your registration request for %s property at %s, %s " +
-                            "has been declined for the following reason:\n%s" +
-                            "\nWe apologize for the inconvenience and hope you consider trying again in the future " +
-                            "after revising your request." +
-                            "\nBest regards,\nAdmin",
-                    p.getPropertyType().toString().toLowerCase(),
-                    p.getAddress(),
-                    p.getCity().getName(),
-                    reason
-                    );
-            return mailService.sendTextEmail(p.getPropertyOwner().getEmail(), title, content);
-        } catch (IOException ex) {
-            return "";
-        }
     }
 
     @Override

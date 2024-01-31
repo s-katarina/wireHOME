@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import projectnwt2023.backend.devices.Device;
 import projectnwt2023.backend.devices.Gate;
 import projectnwt2023.backend.devices.mqtt.Gateway;
-import projectnwt2023.backend.devices.dto.GateDTO;
+import projectnwt2023.backend.devices.dto.model.GateDTO;
 import projectnwt2023.backend.devices.dto.GateEventDTO;
 import projectnwt2023.backend.devices.dto.GateEventMeasurement;
 import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
@@ -95,7 +95,7 @@ public class GateController {
         return new ResponseEntity<>(new ApiResponse<>(400, new ArrayList<>()), HttpStatus.BAD_REQUEST);
     }
 
-        @PutMapping(value = "/{deviceId}/licencePlate", produces = "application/json")
+    @PutMapping(value = "/{deviceId}/licencePlate", produces = "application/json")
     ResponseEntity<GateDTO> addLicencePlate(@PathVariable Integer deviceId,
                                             @RequestParam("val") String licencePlate){
         Gate gate = gateService.addLicencePlate(Long.valueOf(deviceId), licencePlate);

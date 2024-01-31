@@ -48,6 +48,9 @@ public class Beans {
     @Autowired
     IChargerService chargerService;
 
+    @Autowired
+    ISprinklerService sprinklerService;
+
     @Value("${mosquitto.username}")
     private String username;
 
@@ -121,6 +124,8 @@ public class Beans {
                     airConditionerService.parseRequest(topic, message);
                 } else if (topic.contains("charger")) {
                     chargerService.parseRequest(topic, message);
+                }   else if (topic.contains("sprinkler")) {
+                    sprinklerService.parseRequest(topic, message);
                 }
 
 //                System.out.println(message.getPayload());

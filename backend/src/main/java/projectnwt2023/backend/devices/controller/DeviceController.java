@@ -10,10 +10,13 @@ import projectnwt2023.backend.devices.RegimeAirConditioner;
 import projectnwt2023.backend.devices.RegimeType;
 import projectnwt2023.backend.devices.RegimeWashingMachine;
 import projectnwt2023.backend.devices.dto.*;
+import projectnwt2023.backend.devices.dto.model.DeviceDTO;
 import projectnwt2023.backend.devices.mqtt.Gateway;
 import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
+import projectnwt2023.backend.helper.ApiResponse;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/device")
@@ -122,9 +125,40 @@ public class DeviceController {
 
 
     @GetMapping(value = "/onlinePercent/{deviceId}", produces = "application/json") // koristi i za elektrodistribuciju i za samu potrosnju
-    ResponseEntity<ArrayList<PyChartDTO>> getElectoByProperty(@PathVariable Integer deviceId){
-        ArrayList<PyChartDTO> grapgData = deviceService.getOnlineOfflineTime(deviceId);
-        return new ResponseEntity<>(grapgData, HttpStatus.OK);
+    ResponseEntity<ArrayList<PyChartDTO>> getOnlinePercentageInRange(@PathVariable Integer deviceId,
+                                                                     @RequestParam String start,
+                                                                     @RequestParam String end){
+        ArrayList<PyChartDTO> graphData = deviceService.getOnlineOfflineTime(deviceId, start, end);
+        if (graphData == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(graphData, HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/onlineIntervals/{deviceId}", produces = "application/json")
+    ResponseEntity<ApiResponse<List<ValueTimestampDTO>>> getOnlineIntervals(@PathVariable Integer deviceId,
+                                                                     @RequestParam String start,
+                                                                     @RequestParam String end){
+        ArrayList<GateEventMeasurement> res = deviceService.getOnlineOfflineIntervals(deviceId, start, end);
+        List<ValueTimestampDTO> ret = new ArrayList<>();
+        if (res != null) {
+            for (GateEventMeasurement measurement : res) {
+                ret.add(new ValueTimestampDTO(String.valueOf(measurement.getValue()), String.valueOf(measurement.getTimestamp().getTime())));
+            }
+            return new ResponseEntity<>(new ApiResponse<>(200, ret), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new ApiResponse<>(400, new ArrayList<>()), HttpStatus.BAD_REQUEST);
+    }
+
+    @GetMapping(value = "/onlinePerUnit/{deviceId}", produces = "application/json")
+    ResponseEntity<ApiResponse<List<ValueTimestampDTO>>> getOnlinePerUnit(@PathVariable Integer deviceId,
+                                                                            @RequestParam String start,
+                                                                            @RequestParam String end){
+        List<ValueTimestampDTO> ret = deviceService.getOnlinePerTimeUnit(deviceId, start, end);
+        if (ret != null) {
+            return new ResponseEntity<>(new ApiResponse<>(200, ret), HttpStatus.OK);
+        }
+        return new ResponseEntity<>(new ApiResponse<>(400, new ArrayList<>()), HttpStatus.BAD_REQUEST);
     }
 
 }

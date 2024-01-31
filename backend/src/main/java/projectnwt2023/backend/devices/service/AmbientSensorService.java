@@ -4,10 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
-import projectnwt2023.backend.devices.dto.GateDTO;
-import projectnwt2023.backend.devices.dto.GateEventPayloadDTO;
-import projectnwt2023.backend.devices.dto.PayloadDTO;
-import projectnwt2023.backend.devices.mqtt.Beans;
 import projectnwt2023.backend.devices.repository.DeviceRepository;
 import projectnwt2023.backend.devices.service.interfaces.IAmbientSensorService;
 

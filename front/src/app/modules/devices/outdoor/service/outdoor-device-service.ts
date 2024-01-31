@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { ApiResponse, Gate, Lamp } from 'src/app/model/model';
+import { ApiResponse, DeviceDTO, Gate, Lamp, Sprinkler } from 'src/app/model/model';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -18,20 +18,33 @@ export class OutdoorDeviceService {
 
   constructor(private readonly http: HttpClient) { }
 
-  getLamp(id:string): Observable<Lamp[]> {
-    return this.http.get<Lamp[]>(environment.apiHost + `lamp/${id}`)
+  getLamp(id:string): Observable<Lamp> {
+    return this.http.get<Lamp>(environment.apiHost + `lamp/${id}`)
   }
 
-  getGate(id:string): Observable<Gate[]> {
-    return this.http.get<Gate[]>(environment.apiHost + `gate/${id}`)
+  getGate(id:string): Observable<Gate> {
+    return this.http.get<Gate>(environment.apiHost + `gate/${id}`)
   }
 
+  getSprinkler(id:string): Observable<Sprinkler> {
+    return this.http.get<Sprinkler>(environment.apiHost + `sprinkler/${id}`)
+  }
   
-  postOn(id:string): Observable<any> {
-    return this.http.post<any>(environment.apiHost + `device/on/${id}`, {})
+  putSprinklerOnOff(id: string, newOn: boolean): Observable<any> {
+    const params = new HttpParams().set('val', newOn);
+    return this.http.put<any>(environment.apiHost + `sprinkler/${id}/on`, {}, {params})
   }
-  postOff(id:string): Observable<any> {
-    return this.http.post<any>(environment.apiHost + `device/off/${id}`, {})
+
+  putSprinklerSchedule(id: string, startHour: number, endHour: number, weekdays: number[]): Observable<any> {
+    return this.http.put<any>(environment.apiHost + `sprinkler/${id}/schedule`, {
+      "startHour": startHour,
+      "endHour": endHour,
+      "weekdays": weekdays
+    }, {})
+  }
+
+  putSprinklerTurnOffSchedule(id: string): Observable<any> {
+    return this.http.put<any>(environment.apiHost + `sprinkler/${id}/schedule/off`, {}, {})
   }
 
   postBulbOn(id:string): Observable<any> {
@@ -90,5 +103,15 @@ export class OutdoorDeviceService {
     return this.http.get<ApiResponse>(environment.apiHost + `lamp/${id}/range/bulb`, {params})
   }
 
+  getSprinklerCommands(id: string): Observable<ApiResponse> {
+    return this.http.get<ApiResponse>(environment.apiHost + `sprinkler/${id}/recent`)
+  }
+
+  getRangeSprinklerCommands(id: string, start: string, end: string): Observable<ApiResponse> {
+    const params = new HttpParams().set('start', start)
+                                    .set('end', end);
+
+    return this.http.get<ApiResponse>(environment.apiHost + `sprinkler/${id}/range`, {params})
+  }
 
 }

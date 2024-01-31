@@ -26,6 +26,8 @@ import { DatePipe } from '@angular/common';
 import { BatteryComponent } from './modules/devices/large-energy/battery/battery.component';
 import { OnlineOfflineChartComponent } from './modules/devices/online-offline-chart/online-offline-chart.component';
 import { ChargerComponent } from './modules/devices/large-energy/charger/charger.component';
+import { SprinklerComponent } from './modules/devices/outdoor/sprinkler/sprinkler.component';
+import {NgxMaterialTimepickerModule} from 'ngx-material-timepicker';
 
 @NgModule({
   declarations: [
@@ -41,7 +43,8 @@ import { ChargerComponent } from './modules/devices/large-energy/charger/charger
     OnlineOfflineChartComponent,
     AmbientSensorComponent,
     AirConditionerComponent,
-    ChargerComponent
+    ChargerComponent,
+    SprinklerComponent
   ],
   imports: [
     BrowserModule,
@@ -53,7 +56,8 @@ import { ChargerComponent } from './modules/devices/large-energy/charger/charger
     ReactiveFormsModule,
     FormsModule,
     HttpClientModule,
-    CanvasJSAngularChartsModule
+    CanvasJSAngularChartsModule,
+    NgxMaterialTimepickerModule
   ],
   providers: [
     {

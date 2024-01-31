@@ -120,6 +120,7 @@ public class BatteryScheduler {
             //ovde treba plus i nista vise
 
             double electrisity = battery.getCurrentFill() + perBattery;
+
             if (electrisity<0){
                 battery.setCurrentFill(0);
                 finalElectisity += electrisity;
