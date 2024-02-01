@@ -15,7 +15,7 @@ export class ImageServiceService {
   uploadPropertyImage(file: File, name:string): Observable<any> {
     const formData: FormData = new FormData();
     formData.append('file', file);
-    formData.append('customFileName', name);
+    formData.append('propertyId', name);
     console.log(name)
     return this.http.post<any>(`${environment.apiHost}images/property/upload`, formData);
   }

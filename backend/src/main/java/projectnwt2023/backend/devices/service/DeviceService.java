@@ -227,7 +227,7 @@ public class DeviceService implements IDeviceService {
             LocalDateTime intervalStart = LocalDateTime.of(startDateTime.toLocalDate(), startDateTime.toLocalTime());
             intervalStart = intervalStart.minusHours(interval.equals("1h") ? 1 : 24);
             int windowIndex = 0;
-            double lastOnlineValue = 0.0;
+            double lastOnlineValue = 1.0;
             do {
                 if (data.size() == 0) {
                     return ret;
@@ -271,9 +271,6 @@ public class DeviceService implements IDeviceService {
                     lastOnlineValue = window.get(window.size()-1).getValue();
                     if (lastOnlineValue == 1.0) {
                         LocalDateTime endInterval = intervalStart.plusHours(interval.equals("1h") ? 1 : 24);
-                        if (interval.equals("24h")) {
-                            endInterval = window.get(window.size()-1).getTimestamp().withHour(endInterval.getHour());
-                        }
                         double secondsDistance = (Duration.between((window.get(window.size()-1).getTimestamp()).atZone(ZoneId.systemDefault()).toInstant(), endInterval.atZone(ZoneId.systemDefault()).toInstant())).getSeconds();
                         onlineAmount += abs(secondsDistance);
 //                        System.out.println("At end, Last online value is 1, add online amount , " + secondsDistance);
@@ -293,11 +290,16 @@ public class DeviceService implements IDeviceService {
                     } else {
                         intervals.put(intervalTime, 0.0);
                     }
+                    continue;
                 }
                 double secondsAmount = (Duration.between((intervalStart.atZone(ZoneId.systemDefault()).toInstant()), (intervalStart.plusHours(interval.equals("1h") ? 1 : 24)).atZone(ZoneId.systemDefault()).toInstant())).getSeconds();
 //                System.out.println("Seconds amount: " + secondsAmount);
 //                System.out.println("Online amount: " + onlineAmount);
-                intervals.put(intervalTime, onlineAmount / secondsAmount);
+                double percentage = onlineAmount / secondsAmount;
+                if (onlineAmount > secondsAmount) {
+                    percentage = 1.0;   // Scale to 100% in case of small amount of greatness caused by time calculations
+                }
+                intervals.put(intervalTime, percentage);
 
             } while (intervalStart.compareTo(endDateTime) < 0);
 
@@ -339,9 +341,11 @@ public class DeviceService implements IDeviceService {
                     res.add(new GateEventMeasurement(lastResult.get(0).getName(), lastResult.get(0).getValue(), Date.from(Instant.now()), ""));
                 }
             }else{
-                res.add(data.get(data.size()-1));
-                res.add(new GateEventMeasurement(data.get(data.size()-1).getName(), data.get(data.size()-1).getValue(), Date.from(Instant.now()), ""));
-
+//                Calendar calendar = Calendar.getInstance();
+//                calendar.setTime(data.get(data.size()-1).getTimestamp());
+//                calendar.add(Calendar.SECOND, -1);
+//                Date oneSecondBefore = calendar.getTime();
+                res.add(new GateEventMeasurement(data.get(data.size()-1).getName(), data.get(data.size()-1).getValue(), data.get(data.size()-1).getTimestamp(), ""));
             }
             return res;
 

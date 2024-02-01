@@ -138,12 +138,10 @@ export class OnlineOfflineChartComponent implements OnInit {
 
   this.largeEnergyDeviceService.getDeviceOnlineOfflineTimeUnitChart(this.deviceId, (Math.floor(dayBeforeTimestamp)).toString(), (Math.floor((new Date()).getTime())).toString()).subscribe((res: any) => {
 		if (res.status == 200) {
-      console.log(res.data)
       const dataPoints = res.data.map((item: { timestamp: string; value: string; }) => ({
         x: parseInt(item.timestamp),
         y: parseFloat(item.value)  * 100
       }));
-      console.log(dataPoints)
       const offlineDataPoints = res.data.map((item: { timestamp: string; value: string; }) => ({
         x: parseInt(item.timestamp),
         y: 100 - (parseFloat(item.value) * 100)
@@ -171,11 +169,9 @@ export class OnlineOfflineChartComponent implements OnInit {
           const timeDifference = Math.abs(dateToTimestamp - dateFromTimestamp);
           const daysDifference = timeDifference / (1000 * 60 * 60 * 24);
           if (daysDifference > 30) {
-            console.log("Date range is more than 30 days apart");
             this.rangeOver30Days = true
             return;
           } else {
-            console.log("Date range is within 30 days");
             this.rangeOver30Days = false
           }
 
@@ -193,6 +189,7 @@ export class OnlineOfflineChartComponent implements OnInit {
         x: parseInt(item.timestamp),
         y: Math.floor(parseFloat(item.value))
       }));
+      console.log(dataPoints)
       this.intervalChart.options.data[0].dataPoints = dataPoints;
       this.intervalChart.render();
     }
@@ -200,7 +197,6 @@ export class OnlineOfflineChartComponent implements OnInit {
 
   this.largeEnergyDeviceService.getDeviceOnlineOfflineTimeUnitChart(this.deviceId, this.dateFrom, this.dateTo).subscribe((res: any) => {
 		if (res.status == 200) {
-      console.log(res.data)
       const dataPoints = res.data.map((item: { timestamp: string; value: string; }) => ({
         x: parseInt(item.timestamp),
         y: parseFloat(item.value) * 100
@@ -209,7 +205,6 @@ export class OnlineOfflineChartComponent implements OnInit {
         x: parseInt(item.timestamp),
         y: 100 - (parseFloat(item.value) * 100)
       }));
-      console.log(dataPoints)
       this.timeUnitChart.options.data[0].dataPoints = dataPoints;
       this.timeUnitChart.options.data[1].dataPoints = offlineDataPoints;
       this.timeUnitChart.render();
@@ -223,7 +218,6 @@ export class OnlineOfflineChartComponent implements OnInit {
   onDropdownChange() {
     let dateBefore = new Date().getTime()
     const currentDate = new Date();
-    console.log('Selected Value:', this.selectedOption);
     if (this.selectedOption.includes("d")) {
       const stringWithoutD = this.selectedOption.replace('d', '');
       const resultNumber = Number(stringWithoutD);
@@ -236,7 +230,6 @@ export class OnlineOfflineChartComponent implements OnInit {
     }
     this.dateFrom = (Math.floor(dateBefore)).toString();
     this.dateTo = (Math.floor(currentDate.getTime())).toString();
-    console.log('Date Range:', this.dateFrom, this.dateTo);
   }
 
 }
