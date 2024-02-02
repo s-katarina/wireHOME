@@ -38,7 +38,7 @@ export class CityOverviewComponent implements OnInit {
       exportEnabled: true,
       theme: "light2",
       title: {
-      text: "Property consumption"
+      text: "City consumption"
       },
       data: [{
       type: "line",

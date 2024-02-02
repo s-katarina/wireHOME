@@ -101,7 +101,7 @@ public class PropertyController {
     @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
     ResponseEntity<List<CityOverviewDTO>> getPropertiesByCity(@RequestParam Long start,
                                                               @RequestParam Long end){
-        System.out.println("parametri " + start + "  " + end);
+//        System.out.println("parametri " + start + "  " + end);
         Page<Property> properties = propertyService.getPropertiesByStatus(PropertyStatus.ACCEPTED, Pageable.unpaged());
 
         // Group properties by city using Java streams

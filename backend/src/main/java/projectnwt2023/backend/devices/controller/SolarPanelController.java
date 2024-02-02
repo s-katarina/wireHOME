@@ -104,7 +104,14 @@ public class SolarPanelController {
         List<GateEventMeasurement> res = deviceService.getDateRangeEvents(Long.valueOf(deviceId), start, end, measurement);
         List<GateEventDTO> ret = new ArrayList<>();
         for (GateEventMeasurement event : res) {
-            ret.add(new GateEventDTO(event.getCaller(), event.getValue(), String.valueOf(event.getTimestamp().getTime())));
+            String caller = event.getCaller();
+            String callerName = "";
+            Optional<AppUser> user = appUserService.findByEmail(event.getCaller());
+            if (user.isPresent()) {
+//                caller = user.get().getName() + " " + user.get().getLastName();
+                callerName = user.get().getName() + " " + user.get().getLastName();
+            }
+            ret.add(new GateEventDTO(event.getCaller(), event.getValue(), String.valueOf(event.getTimestamp().getTime()), callerName));
         }
         return new ResponseEntity<>(new ApiResponse<>(200, ret), HttpStatus.OK);
     }

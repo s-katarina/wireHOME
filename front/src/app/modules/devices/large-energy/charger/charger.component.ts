@@ -111,7 +111,25 @@ export class ChargerComponent implements OnInit {
       this.length = this.events.length;
     })
 
-   
+    this.renderChart();
+  }
+
+  renderChart(){
+    this.chart = new CanvasJS.Chart("chartContainerr", 
+    {
+      zoomEnabled: true,
+      exportEnabled: true,
+      theme: "light2",
+      title: {
+      text: "Energy spent"
+      },
+      data: [{
+      type: "line",
+      xValueType: "dateTime",
+      dataPoints: []
+      }]
+    })
+    this.chart.render();
   }
   ngAfterViewInit(): void {
     const stompClient: any = this.socketService.initWebSocket()
@@ -259,8 +277,9 @@ export class ChargerComponent implements OnInit {
         this.largeEnergyDeviceService.getRangeGateEvents(this.charger!.id, Math.floor(this.range2.value.start!.getTime()).toString(), Math.floor(this.range2.value.end!.getTime()).toString(), "charger-event").subscribe((res: ApiResponse) => {
           if (res.status == 200) {
             console.log(res.data)
-            filteredEvents = res.data.filter((event: { caller: string; eventType: string; }) =>
-              event.caller.toLowerCase().includes(this.filterInitiator.toLowerCase()) &&
+            filteredEvents = res.data.filter((event: { caller: string; eventType: string; callerUsername: string;}) =>
+              (event.caller.toLowerCase().includes(this.filterInitiator.toLowerCase())||
+              event.callerUsername.toLowerCase().includes(this.filterInitiator.toLowerCase())) &&
               event.eventType.toLowerCase().includes(this.filterEvent.toLowerCase())
               );
             this.events = filteredEvents

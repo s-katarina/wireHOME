@@ -48,6 +48,7 @@ public class RegistrationController {
     @PostMapping(value = "/ambientSensor", produces = "application/json", consumes = "application/json")
     @PreAuthorize(value = "hasRole('AUTH_USER')")
     public ResponseEntity<ApiResponse<DeviceDTO>> saveAmbientSensor(@Valid @RequestBody DeviceRequestDTO deviceRequestDTO){
+//        System.out.println("AAAAAAAAAAa");
         Device device = new AmbientSensor(deviceRequestDTO);
         return saveDevice(deviceRequestDTO, device);
 

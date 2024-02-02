@@ -12,6 +12,24 @@
   margin: 5%;
 }
 
+h2 {
+  font-size: 2em;
+  line-height: 1.3em;
+  font-family: 'Sora-semibold', Roboto, "Helvetica Neue", sans-serif !important; 
+  color: rgb(0, 0, 0);
+}
+h3 {
+  font-size: 1.6em;
+  line-height: 1.1em;
+  font-family: 'Sora-regular', Roboto, "Helvetica Neue", sans-serif !important; 
+  color: rgb(0, 0, 0);
+}
+
+.mat-divider {
+  border-top: 2px solid rgb(190, 190, 190);
+  margin-bottom: 10px;
+}
+
 .filter-section {
     display: flex;
     flex-wrap: wrap;

@@ -177,7 +177,7 @@ public class InfluxDBService {
                 String caller = fluxRecord.getValueByKey("caller") == null ? null : fluxRecord.getValueByKey("caller").toString();
                 Date timestamp = fluxRecord.getTime() == null ? null : Date.from(fluxRecord.getTime());
                 result.add(new GateEventMeasurement(measurementName, value, timestamp, caller));
-                System.out.println(value);
+//                System.out.println(value);
             }
         }
         return result;
@@ -305,9 +305,9 @@ public class InfluxDBService {
     }
 
     public List<BulbOnOffMeasurement> findDateRangeBulb(String deviceId, Long startTimestamp, Long endTimestamp) {
-        System.out.println(deviceId);
-        System.out.println(startTimestamp);
-        System.out.println(endTimestamp);
+//        System.out.println(deviceId);
+//        System.out.println(startTimestamp);
+//        System.out.println(endTimestamp);
         String fluxQuery = String.format(
                 "from(bucket: \"%s\")" +
                         "  |> range(start: %d, stop: %d)" +
@@ -327,9 +327,9 @@ public class InfluxDBService {
     }
 
     public List<GateEventMeasurement> findDateRangeEvents(String deviceId, Long startTimestamp, Long endTimestamp,  String measurement) {
-        System.out.println(deviceId);
-        System.out.println(startTimestamp);
-        System.out.println(endTimestamp);
+//        System.out.println(deviceId);
+//        System.out.println(startTimestamp);
+//        System.out.println(endTimestamp);
         String fluxQuery = String.format(
                 "from(bucket:\"%s\") |> range(start: %d, stop: %d)" +
                         "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"device-id\"] == \"%s\")" +
@@ -394,14 +394,14 @@ public class InfluxDBService {
         Integer step = (int) Math.ceil((double) dto.getValues().size() / 70);
         if (step == 0)
             step = 1;
-        System.out.println(step);
+//        System.out.println(step);
         AmbientSensorDateValueDTO ret = new AmbientSensorDateValueDTO(new ArrayList<>(), new ArrayList<>());
 
         for (int i = 0; i < dto.getValues().size(); i += step) {
             ret.getDates().add(dto.getDates().get(i));
             ret.getValues().add(dto.getValues().get(i));
         }
-        System.out.println(ret.getValues().size());
+//        System.out.println(ret.getValues().size());
 
         return ret;
     }
@@ -510,8 +510,8 @@ public class InfluxDBService {
             }
         }
 
-        System.out.println(dto.getDates().size());
-        System.out.println(dto.getValues().size());
+//        System.out.println(dto.getDates().size());
+//        System.out.println(dto.getValues().size());
 
         Integer step = (int) Math.ceil((double) dto.getValues().size() / 70);
         if (step == 0)
@@ -533,7 +533,8 @@ public class InfluxDBService {
                         "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"property-id\"] == \"%s\")" +
                         "|> sum(column: \"_value\")", // Summing the values
                 this.bucket, start, end, measurement, propertyId);
-        return Math.abs(this.returnSum(fluxQuery));
+        //abs
+        return this.returnSum(fluxQuery);
     }
 
     private double returnSum(String fluxQuery) {
@@ -560,7 +561,7 @@ public class InfluxDBService {
         String fluxQuery = String.format(
                 "from(bucket:\"%s\") |> range(start: %s, stop: %s)" +
                         "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"city-id\"] == \"%s\")" +
-                        "|> aggregateWindow(every: 1m, fn: sum, createEmpty: true)" + // Aggregate over 1-minute intervals using mean
+                        "|> aggregateWindow(every: 10m, fn: sum, createEmpty: true)" + // Aggregate over 1-minute intervals using mean
                         "|> sort(columns: [\"_time\"], desc: false)",
                 this.bucket,
                 graphRequestDTO.getFrom(), graphRequestDTO.getTo(),
@@ -595,6 +596,10 @@ public class InfluxDBService {
             // Calculate the start and end timestamps for each month
             Date startOfMonth = Date.from(YearMonth.of(year, month).atDay(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
             Date endOfMonth = Date.from(YearMonth.of(year, month).atEndOfMonth().atStartOfDay(ZoneId.systemDefault()).toInstant());
+//            System.out.println("mesec " + month);
+//            System.out.println(startOfMonth);
+//            System.out.println(endOfMonth);
+//            System.out.println(startOfMonth.getTime());
 
             String fluxQuery = String.format(
                     "from(bucket:\"%s\") |> range(start: %d, stop: %d)" +
@@ -627,18 +632,18 @@ public class InfluxDBService {
     }
 
     private ByTimeOfDayDTO naIzmakuSam(Integer propertyId, Long start, Long end, String measurement){
-        long interval = 12 * 60 * 60;  // 12 hours in milliseconds
+        long interval = 12 * 60 * 60 * 1000;  // 12 hours in milliseconds
         double firstInterval = 0.0;
         double secondInterval = 0.0;
         boolean isFirst = true;
-        for (long currentTime = start; currentTime <= end; currentTime += interval) {
+        for (long currentTime = start * 1000; currentTime <= end * 1000; currentTime += interval) {
             long currentIntervalEnd = currentTime + interval;
 
             String fluxQuery = String.format(
                     "from(bucket:\"%s\") |> range(start: %d, stop: %d)" +
                             "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"property-id\"] == \"%s\")" +
                             "|> sum(column: \"_value\")", // Summing the values
-                    this.bucket, currentTime, currentIntervalEnd, measurement, propertyId);
+                    this.bucket, currentTime/1000, currentIntervalEnd/1000, measurement, propertyId);
 
             double sum = this.returnSum(fluxQuery);
 
@@ -655,6 +660,11 @@ public class InfluxDBService {
 
     public ArrayList<LabeledGraphDTO> findPropertyEnergyByDayForDate(CityGraphDTO graphRequestDTO) {
         Long start = graphRequestDTO.getFrom() * 1000;
+        Instant instant = Instant.ofEpochMilli(start);
+        LocalDate localDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
+        // Set the time to midnight (00:00:00)
+        LocalDateTime startOfDay = localDate.atStartOfDay();
+        start = startOfDay.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         ArrayList<LabeledGraphDTO> labeledGraph = new ArrayList<>();
         long interval = 24 * 60 * 60 * 1000;  // 24 hours in milliseconds
         long end = start + interval * 6;  // 7 days
@@ -663,10 +673,10 @@ public class InfluxDBService {
         for (long currentTime = start; currentTime <= end; currentTime += interval) {
             long currentIntervalEnd = currentTime + interval;
             Date date = new Date(currentTime);
-            System.out.println(date);
+//            System.out.println(date);
 
             date = new Date(currentIntervalEnd);
-            System.out.println(date);
+//            System.out.println(date);
 
             String fluxQuery = String.format(
                     "from(bucket:\"%s\") |> range(start: %s, stop: %s)" +
@@ -678,17 +688,17 @@ public class InfluxDBService {
                     graphRequestDTO.getMeasurement(), graphRequestDTO.getId()
             );
 
-            System.out.println(fluxQuery);
+//            System.out.println(fluxQuery);
 
-            Instant instant = Instant.ofEpochMilli(currentTime);
-            LocalDate localDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
+            instant = Instant.ofEpochMilli(currentTime);
+            localDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
 
             // Get the day of the week as a string
             String dayOfWeekString = localDate.getDayOfWeek().name();
             labeledGraph.add(new LabeledGraphDTO(dayOfWeekString, queryForGraph(fluxQuery)));
-            System.out.println(queryForGraph(fluxQuery).size());
+//            System.out.println(queryForGraph(fluxQuery).size());
         }
-        System.out.println(labeledGraph);
+//        System.out.println(labeledGraph);
         return labeledGraph;
     }
 

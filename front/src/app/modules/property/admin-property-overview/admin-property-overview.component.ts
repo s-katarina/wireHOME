@@ -66,6 +66,7 @@ filterCity2: string = ''
 
   ngOnInit(): void {
     let datee: StartEnd = this.getDate()
+    console.log(datee)
     this.fillChart(datee);
 
     this.propertyTable(datee);

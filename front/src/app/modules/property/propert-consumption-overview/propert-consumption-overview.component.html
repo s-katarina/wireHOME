@@ -1,5 +1,11 @@
 
 <div class="page">
+  <h2>Property in {{property?.city?.name}} {{property?.address}}</h2>
+  <h2>Owner {{property?.propertyOwner?.name}} {{property?.propertyOwner?.lastName}}</h2>
+
+
+  <h3>Energy overview by month</h3>
+  <mat-divider></mat-divider>
 <div class="filter-section">
     <mat-form-field>
         <mat-label>Year for monthly report</mat-label>
@@ -12,7 +18,8 @@
     <div class="barChart" id="barChartt"></div>    
 </div>
 
-<mat-divider class="margin-top"></mat-divider>
+<h3 class="margin-top">Energy overview by time of day</h3>
+<mat-divider></mat-divider>
 <div class="filter-section">
     <mat-form-field>
         <mat-label>Enter a date range</mat-label>
@@ -67,7 +74,10 @@
 
     </mat-card-footer>
   </mat-card>
-<mat-divider class="margin-top"></mat-divider>
+
+
+<h3 class="margin-top">Energy overview by day of week</h3>
+<mat-divider></mat-divider>
 
 <!-- <div *ngFor="let labeledChart of labledGraphData" class="filter-section"> -->
 <div class="day-section">
@@ -91,6 +101,36 @@
   </div>
   <div>   
     <div class="dayChart" id="SUNDAY"></div>    
+
+</div>
+</div>
+
+
+<h3 class="margin-top">Electrodeposition overview by day of week</h3>
+<mat-divider></mat-divider>
+
+<!-- <div *ngFor="let labeledChart of labledGraphData" class="filter-section"> -->
+<div class="day-section">
+  <div>
+    <div class="dayChart" id="MONDAY2"></div>  
+  </div>
+  <div>  
+    <div class="dayChart" id="TUESDAY2"></div> 
+  </div>  
+  <div> 
+    <div class="dayChart" id="WEDNESDAY2"></div> 
+  </div> 
+  <div>  
+    <div class="dayChart" id="THURSDAY2"></div> 
+  </div>  
+  <div> 
+    <div class="dayChart" id="FRIDAY2"></div> 
+  </div>   
+  <div>
+    <div class="dayChart" id="SATURDAY2"></div> 
+  </div>
+  <div>   
+    <div class="dayChart" id="SUNDAY2"></div>    
 
 </div>
 </div>

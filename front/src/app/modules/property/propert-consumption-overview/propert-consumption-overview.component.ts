@@ -51,10 +51,10 @@ distTotal: number = 0;
       animationEnabled: true,
       colorSet: "appColors",
 
-		title:{
-			text: "Consumption By Month",
-			fontFamily: 'Sora-semibold'
-		},
+		// title:{
+		// 	text: "Consumption By Month",
+		// 	fontFamily: 'Sora-semibold'
+		// },
       
       toolTip: {
       shared: true
@@ -100,6 +100,7 @@ distTotal: number = 0;
 
     })
     this.fillDayGrafs(datee)
+    this.fillDayGrafsElec(datee)
 
   }
 
@@ -113,7 +114,6 @@ distTotal: number = 0;
         const chart = new CanvasJS.Chart(labeledData.label, 
         {
           zoomEnabled: true,
-          exportEnabled: true,
           theme: "light2",
           title: {
           text: labeledData.label
@@ -121,7 +121,7 @@ distTotal: number = 0;
           data: [{
           type: "line",
           xValueType: "dateTime",
-          dataPoints: [labeledData.graphDTOS]
+          dataPoints: labeledData.graphDTOS
           }]
         })
         // chart.render();
@@ -131,6 +131,38 @@ distTotal: number = 0;
       for (const  chaart of this.dayCharts){
         chaart.render()
       }
+
+    })
+
+  }
+
+  public fillDayGrafsElec(datee: StartEnd) { 
+    this.propertyService.getPropertyByDayReadingFrom(this.property?.id || "0", datee.start, datee.end, "electrodeposition").subscribe((res: any) => {
+      console.log(res)
+      this.labledGraphData = res
+      let i = 0
+      for (const  labeledData of this.labledGraphData) {
+        i = i +1
+        const chart = new CanvasJS.Chart(labeledData.label + "2", 
+        {
+          zoomEnabled: true,
+          theme: "light2",
+          title: {
+          text: labeledData.label
+          },
+          data: [{
+          type: "line",
+          xValueType: "dateTime",
+          dataPoints: labeledData.graphDTOS
+          }]
+        })
+        chart.render();
+        // this.dayCharts.push(chart)
+      }
+
+      // for (const  chaart of this.dayCharts){
+      //   chaart.render()
+      // }
 
     })
 

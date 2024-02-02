@@ -146,7 +146,7 @@ func simulateCarComming(client mqtt.Client) {
 	energy := 0.0
 	pubChargerEvent(client, "charging-start", plateNumber)
 	for i := 0; i <= int(charger.Percentage) - chargingLevel; i++ {
-		sendElecticity(client)
+		sendElecticity(client, float64(batteryCapacity))
 		energy += charger.ChargingStrength/20
 		pubChargingStatus(client, plateNumber, batteryCapacity, chargingLevel+i, energy)
 		time.Sleep(time.Second * 3)
@@ -156,9 +156,9 @@ func simulateCarComming(client mqtt.Client) {
 
 }
 
-func sendElecticity(client mqtt.Client) {
+func sendElecticity(client mqtt.Client, batteryCapacity float64) {
 	topic := fmt.Sprintf("energy/%d/%s", charger.Id, "any-device")
-	data := fmt.Sprintf("energy-maintaining,device-id=%d,property-id=%d value=%f", charger.Id, charger.PropertyId, -charger.ChargingStrength)
+	data := fmt.Sprintf("energy-maintaining,device-id=%d,property-id=%d,device-type=%s value=%f", charger.Id, charger.PropertyId, charger.DeviceType, -batteryCapacity/100)
 	token := client.Publish(topic, 0, false, data)
 	token.Wait()
 }
