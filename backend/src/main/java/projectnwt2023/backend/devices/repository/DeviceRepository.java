@@ -16,4 +16,5 @@ public interface DeviceRepository extends JpaRepository<Device, Long> {
 
     ArrayList<Battery> findByTopicAndState(String battery, State online);
 
+    ArrayList<Device> findByState(State online);
 }

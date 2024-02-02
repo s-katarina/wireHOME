@@ -8,6 +8,7 @@ import com.influxdb.client.domain.WritePrecision;
 import com.influxdb.client.write.Point;
 import com.influxdb.query.FluxRecord;
 import com.influxdb.query.FluxTable;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -148,20 +149,17 @@ public class InfluxDBService {
     public ArrayList<GraphDTO> findDeviceEnergyForDate(GraphRequestDTO graphRequestDTO) {
 //        System.out.println("graphRequestDTO.getF
 
-
+        String interval = findAgregationWindowInterval(Long.parseLong(graphRequestDTO.getFrom()), Long.parseLong(graphRequestDTO.getTo()));
         // Print the result
         String fluxQuery = String.format(
                 "from(bucket:\"%s\") |> range(start: %s, stop: %s)" +
                         "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"device-id\"] == \"%s\")" +                 // where measurement name (_measurement) equals value measurementName
+                        "|> aggregateWindow(every: %s, fn: sum, createEmpty: true)" +
                         "|> sort(columns: [\"_time\"], desc: false)", this.bucket,
                 graphRequestDTO.getFrom(), graphRequestDTO.getTo(),
-                graphRequestDTO.getMeasurement(), graphRequestDTO.getId());
-        ArrayList<EnergyDTO> energies = queryForEnergy(fluxQuery);
-        ArrayList<GraphDTO> grapfValue = new ArrayList<>();
-        for (EnergyDTO energyDTO: energies){
-            grapfValue.add(new GraphDTO(energyDTO.getTimestamp().getTime(), energyDTO.getConsumptionAmount()));
-        }
-        return grapfValue;
+                graphRequestDTO.getMeasurement(), graphRequestDTO.getId(), interval);
+
+        return queryForGraph(fluxQuery);
     }
 
 
@@ -233,12 +231,14 @@ public class InfluxDBService {
 
 
     public ArrayList<GraphDTO> findPropertyEnergyForDate(GraphRequestDTO graphRequestDTO) {
+        String interval = findAgregationWindowInterval(Long.parseLong(graphRequestDTO.getFrom()), Long.parseLong(graphRequestDTO.getTo()));
         String fluxQuery = String.format(
                 "from(bucket:\"%s\") |> range(start: %s, stop: %s)" +
                         "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"property-id\"] == \"%s\")" +                 // where measurement name (_measurement) equals value measurementName
+                        "|> aggregateWindow(every: %s, fn: sum, createEmpty: true)"+
                         "|> sort(columns: [\"_time\"], desc: false)", this.bucket,
                 graphRequestDTO.getFrom(), graphRequestDTO.getTo(),
-                graphRequestDTO.getMeasurement(), graphRequestDTO.getId());
+                graphRequestDTO.getMeasurement(), graphRequestDTO.getId(), interval);
         ArrayList<EnergyDTO> energies = queryForEnergy(fluxQuery);
         ArrayList<GraphDTO> grapfValue = new ArrayList<>();
         for (EnergyDTO energyDTO: energies){
@@ -528,6 +528,7 @@ public class InfluxDBService {
     }
 
     public double getElectricityForPropertyInRange(Long propertyId, Long start, Long end, String measurement) {
+
         String fluxQuery = String.format(
                 "from(bucket:\"%s\") |> range(start: %d, stop: %d)" +
                         "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"property-id\"] == \"%s\")" +
@@ -558,17 +559,39 @@ public class InfluxDBService {
     }
 
     public ArrayList<GraphDTO> findCityEnergyForDate(CityGraphDTO graphRequestDTO) {
+        String interval = findAgregationWindowInterval(graphRequestDTO.getFrom(), graphRequestDTO.getTo());
         String fluxQuery = String.format(
                 "from(bucket:\"%s\") |> range(start: %s, stop: %s)" +
                         "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"city-id\"] == \"%s\")" +
-                        "|> aggregateWindow(every: 10m, fn: sum, createEmpty: true)" + // Aggregate over 1-minute intervals using mean
+                        "|> aggregateWindow(every: %s, fn: sum, createEmpty: true)" + // Aggregate over 1-minute intervals using mean
                         "|> sort(columns: [\"_time\"], desc: false)",
                 this.bucket,
                 graphRequestDTO.getFrom(), graphRequestDTO.getTo(),
-                graphRequestDTO.getMeasurement(), graphRequestDTO.getId()
+                graphRequestDTO.getMeasurement(), graphRequestDTO.getId(), interval
         );
 //        System.out.println(fluxQuery);
         return queryForGraph(fluxQuery);
+    }
+
+    @NotNull
+    private static String findAgregationWindowInterval(Long from, Long to) {
+        LocalDateTime startDateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(from), ZoneId.systemDefault());
+        LocalDateTime endDateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(to), ZoneId.systemDefault());
+        endDateTime = endDateTime.withMinute(0).withSecond(0).withNano(0);
+        startDateTime = startDateTime.withMinute(0).withSecond(0).withNano(0);
+
+        Duration duration = Duration.between(startDateTime, endDateTime);
+        String interval = "10m";       // Aggregate window
+        if (duration.getSeconds() > 60 * 60 * 24) {
+            interval = "30m";      // Calculate percentage every 24 hours
+        }
+        if (duration.getSeconds() >= 60 * 60 * 24 * 7) {
+            interval = "3h";      // Calculate percentage every 24 hours
+        }
+        if (duration.getSeconds() > 60 * 60 * 24 * 7*2) {
+            interval = "10h";      // Calculate percentage every 24 hours
+        }
+        return interval;
     }
 
     private ArrayList<GraphDTO> queryForGraph(String fluxQuery) {

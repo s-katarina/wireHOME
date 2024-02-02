@@ -34,4 +34,8 @@ public interface IDeviceService {
     ArrayList<GateEventMeasurement> getOnlineOfflineIntervals(Integer deviceId, String start, String end);
 
     ArrayList<Device> findAllByOwnerOfProperty(AppUser owner);
+
+    void preprocessDevices();
+
+    void preprocessCharger();
 }

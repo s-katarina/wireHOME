@@ -17,14 +17,14 @@
               </div>
   
               <div  class="changeable-section" [ngClass]="{'disabled-section': !charger!.state}">
-                  <div class="settings-group">
+                  <!-- <div class="settings-group">
                       <button  mat-button 
                        [ngClass]="{'disabled-button': !charger!.state}"
                        (click)="onOffClick()">
                        <mat-icon *ngIf="!isButtonHovered && !charger!.on">offline_bolt</mat-icon>
                        <mat-icon *ngIf="!isButtonHovered && charger!.on">brightness_medium</mat-icon></button>
                       <button class="placeholder-btn" mat-button >Charger is {{ charger && charger.on ? 'on' : 'off' }}</button>
-                  </div>
+                  </div> -->
       
                  
               </div>

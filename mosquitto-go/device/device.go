@@ -58,7 +58,7 @@ func (device BaseDevice) SendHeartBeat(client mqtt.Client) {
 			// log.Fatal(err)
 			fmt.Println("jbg")
 		}
-	
+		// fmt.Println("jbg")
         // text := fmt.Sprintf("Heartbeat %v", currentTime)
         token := client.Publish("heartbeat", 0, false, jsonData)
         token.Wait()

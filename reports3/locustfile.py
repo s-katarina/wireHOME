@@ -31,7 +31,7 @@ class MyUser(HttpUser):
         self.logIn_admin()
 
         self.admin_overview_page()
-
+    
     def FOURadmin_overview_property(self):
         self.logIn_admin()
 
@@ -58,7 +58,6 @@ class MyUser(HttpUser):
         self.turn_off_device()
 
 
-    @task
     def SEVEN_battery(self):
         self.logIn()        
 
@@ -78,6 +77,7 @@ class MyUser(HttpUser):
         self.get_user_electricity()
 
     
+    @task
     def NINE_charger_port(self):
         self.logIn()        
 
@@ -162,7 +162,7 @@ class MyUser(HttpUser):
 
     def admin_overview_page(self):
         
-        params = {"start": 1706206137, "end": 1706810937}   
+        params = {"start": 1706396400, "end": 1706914800}   
         with self.client.get("/api/property/accepted", headers={'Authorization': self.token}, params=params, catch_response=True) as response:
             try:
                 if (response.status_code != 200):
@@ -186,7 +186,7 @@ class MyUser(HttpUser):
             except JSONDecodeError:
                 response.failure("Response could not be decoded as JSON - get property fail")
 
-        params = {"start": 1706206137, "end": 1706810937}   
+        params = {"start": 1706396400, "end": 1706914800}   
         with self.client.get("/api/property/byTimeOfDay/1", headers={'Authorization': self.token}, params=params, catch_response=True) as response:
             try:
                 if (response.status_code != 200):
@@ -210,8 +210,8 @@ class MyUser(HttpUser):
 
     def admin_city(self):
         payload = {"id": 1,
-            "from": 1706206137,
-            "to": 1706810937,
+            "from": 1706853441,
+            "to": 1706875041,
             "measurement": "electrodeposition"}
         with self.client.post("/api/property/propertyEnergy", json=payload, headers={'Authorization': self.token}, catch_response=True) as response:
             try:
@@ -223,8 +223,8 @@ class MyUser(HttpUser):
                 response.failure("Response could not be decoded as JSON - login fail")
 
         payload = {"id": 1,
-            "from": 1706206137,
-            "to": 1706810937,
+            "from": 1706853441,
+            "to": 1706875041,
             "measurement": "property-electricity"}
         with self.client.post("/api/property/propertyEnergy", json=payload, headers={'Authorization': self.token}, catch_response=True) as response:
             try:
@@ -247,8 +247,8 @@ class MyUser(HttpUser):
 
     def getGraphData(self):
         payload = {"id": "1",
-            "from": "1706206137",
-            "to": "1706810937",
+            "from": "1704287085",
+            "to": "1706879085",
             "measurement": "property-electricity"}
         with self.client.post("/api/device/largeEnergy/panelReadings", json=payload, headers={'Authorization': self.token}, catch_response=True) as response:
             try:
@@ -272,8 +272,8 @@ class MyUser(HttpUser):
 
     def get_user_electricity(self):
         payload = {"id": "1",
-            "from": "1706206137",
-            "to": "1706810937",
+            "from": "1704288627",
+            "to": "1706880627",
             "measurement": "property-electricity"}
         with self.client.post("/api/device/largeEnergy/propertyEnergy", json=payload, headers={'Authorization': self.token}, catch_response=True) as response:
             try:
@@ -285,8 +285,8 @@ class MyUser(HttpUser):
                 response.failure("Response could not be decoded as JSON - login fail")
 
         payload = {"id": "1",
-            "from": "1706206137",
-            "to": "1706810937",
+            "from": "1704288627",
+            "to": "1706880627",
             "measurement": "electrodeposition"}
         with self.client.post("/api/device/largeEnergy/propertyEnergy", json=payload, headers={'Authorization': self.token}, catch_response=True) as response:
             try:
@@ -309,9 +309,11 @@ class MyUser(HttpUser):
 
 
     def get_charging_history(self):
-        params = {"measurement": "charger-event"}   
+        params = {"start": "1705359600",
+            "end": "1705964400",
+            "measurement": "charger-event"}   
 
-        with self.client.get("/api/device/largeEnergy/charger/6/recent", headers={'Authorization': self.token}, params=params, catch_response=True) as response:
+        with self.client.get("/api/device/largeEnergy/6/range", headers={'Authorization': self.token}, params=params, catch_response=True) as response:
             try:
                 if (response.status_code != 200):
                     response.failure(f"Response status code {response.status_code} - get property fail")

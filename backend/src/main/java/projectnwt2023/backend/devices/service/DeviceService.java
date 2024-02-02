@@ -7,6 +7,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import projectnwt2023.backend.appUser.AppUser;
 import projectnwt2023.backend.appUser.service.interfaces.IAppUserService;
+import projectnwt2023.backend.devices.Charger;
 import projectnwt2023.backend.devices.Device;
 import projectnwt2023.backend.devices.Lamp;
 import projectnwt2023.backend.devices.State;
@@ -14,6 +15,7 @@ import projectnwt2023.backend.devices.dto.GateEventMeasurement;
 import projectnwt2023.backend.devices.dto.Measurement;
 import projectnwt2023.backend.devices.dto.PyChartDTO;
 import projectnwt2023.backend.devices.dto.ValueTimestampDTO;
+import projectnwt2023.backend.devices.repository.ChargerRepository;
 import projectnwt2023.backend.devices.repository.DeviceRepository;
 import projectnwt2023.backend.devices.service.interfaces.IDeviceService;
 import projectnwt2023.backend.exceptions.EntityNotFoundException;
@@ -27,8 +29,12 @@ import static java.lang.Math.abs;
 @Service
 public class DeviceService implements IDeviceService {
 
+
     @Autowired
     DeviceRepository deviceRepository;
+
+    @Autowired
+    ChargerRepository chargerRepository;
 
     @Autowired
     InfluxDBService influxDBService;
@@ -97,7 +103,6 @@ public class DeviceService implements IDeviceService {
     public Device changeDeviceOnOff(long deviceId, boolean isOn) {
         Device device = getById(deviceId);
         if (device.getState() == State.offline){
-            System.out.println("offline je");
             return null;
         }
         device.setDeviceOn(isOn);
@@ -357,6 +362,22 @@ public class DeviceService implements IDeviceService {
             if (device.getProperty().getPropertyOwner().getId() == owner.getId())
                 ret.add(device);
         return ret;
+    }
+
+    @Override
+    public void preprocessDevices() {
+        for (Device device : deviceRepository.findByState(State.online)){
+            device.setState(State.offline);
+            deviceRepository.save(device);
+        }
+    }
+
+    @Override
+    public void preprocessCharger() {
+        for (Charger device : chargerRepository.findByTopic("charger")){
+            device.setAvailablePortNumber(device.getPortNumber());
+            deviceRepository.save(device);
+        }
     }
 
 
