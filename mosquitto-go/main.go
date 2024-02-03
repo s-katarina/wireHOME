@@ -7,72 +7,61 @@ import (
 	"strconv"
 	"sync"
 
-	// "tim10/mqtt/washingMachine"
-	// battery "tim10/mqtt/battery"
+	airConditioner "tim10/mqtt/airConditioner"
+	ambientSensor "tim10/mqtt/ambientSensor"
+	battery "tim10/mqtt/battery"
+	charger "tim10/mqtt/charger"
 	"tim10/mqtt/gate"
-	// solarPanel "tim10/mqtt/solarPanel"
-	// ambientSensor "tim10/mqtt/ambientSensor"
-	// airConditioner "tim10/mqtt/airConditioner"
-	// charger "tim10/mqtt/charger"
-	// airConditioner "tim10/mqtt/airConditioner"
-	// ambientSensor "tim10/mqtt/ambientSensor"
-	// battery "tim10/mqtt/battery"
-	// "tim10/mqtt/gate"
 	lamp "tim10/mqtt/lamp"
-	// solarPanel "tim10/mqtt/solarPanel"
+	solarPanel "tim10/mqtt/solarPanel"
 	"tim10/mqtt/sprinkler"
-	// "tim10/mqtt/airConditioner"
+	"tim10/mqtt/washingMachine"
 )
 
 func main() {
 	var wg sync.WaitGroup
 
-	// Add the number of goroutines you want to wait for
 	var deviceIdString = os.Args[1]
-	var deviceId, _ = strconv.Atoi(deviceIdString)
-	fmt.Println(deviceId)
-	wg.Add(3)
+	var choice, _ = strconv.Atoi(deviceIdString)
+	fmt.Println(choice)
 
-	lamp.SetLamp(17)
-	go lamp.RunLamp()
-	// lamp.SetLamp(2)
+	// Add the number of goroutines you want to wait for
+	wg.Add(9)
 
-	gate.SetGate(16)
-	go gate.RunGate()
-	// gate.SetGate(1)
-	// go gate.RunGate()
+	if choice == 0 {
+		lamp.SetLamp(2)
+		go lamp.RunLamp()
+		gate.SetGate(1)
+		go gate.RunGate()
+		sprinkler.SetSprinkler(7)
+		go sprinkler.RunSprinkler()
+	
+		go solarPanel.RunSolarPanel(4);
+		go charger.RunCharger(21)
+		go battery.RunBattery(3)
+	
+		go airConditioner.RunAirConditioner(6)
+		go ambientSensor.RunAmbientSensor(5);
+		go washingMachine.RunWashingMachine(20);
+	}
 
-	sprinkler.SetSprinkler(11)
-	go sprinkler.RunSprinkler()
-	// sprinkler.SetSprinkler(7)
-	// go sprinkler.RunSprinkler()
-
-	// go battery.RunBattery(7)
-	// for i := 0; i < 2000; i++ {
-	// }
-	// go battery.RunBattery(3);
-
-	// go solarPanel.RunSolarPanel(1);
-
-	// go solarPanel.RunSolarPanel(1);
-
-	// go airConditioner.RunAirConditioner()
-	// go ambientSensor.RunAmbientSensor();
-	// go charger.RunCharger(6)
-	// go charger.RunCharger(9)
-	// go charger.RunCharger(6)
-	// go gate.RunGate()
-	// go lamp.RunLamp()
-	// go battery.RunBattery(3)
-	// go solarPanel.RunSolarPanel(4);
-	// go airConditioner.RunAirConditioner()
-	// go ambientSensor.RunAmbientSensor();
-	// go gate.RunGate()
-	// go battery.RunBattery(3)
-	// go solarPanel.RunSolarPanel(4);
-	// go airConditioner.RunAirConditioner();
-	// go ambientSensor.RunAmbientSensor();
-	// go washingMachine.RunWashingMachine();
+	if choice == 1 {
+		lamp.SetLamp(17)
+		go lamp.RunLamp()
+		gate.SetGate(16)
+		go gate.RunGate()
+		sprinkler.SetSprinkler(11)
+		go sprinkler.RunSprinkler()
+	
+		go solarPanel.RunSolarPanel(18);
+		go charger.RunCharger(12)
+		go battery.RunBattery(19)
+	
+		go airConditioner.RunAirConditioner(14);
+		go ambientSensor.RunAmbientSensor(13);
+		go washingMachine.RunWashingMachine(15);
+	}
+	
 	wg.Wait()
 
 	// fmt.Println("All scripts completed")

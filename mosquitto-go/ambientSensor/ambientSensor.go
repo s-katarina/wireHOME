@@ -3,7 +3,6 @@ package ambientSensor
 import (
 	"encoding/json"
 	"fmt"
-	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"io"
 	"io/ioutil"
 	"log"
@@ -13,13 +12,15 @@ import (
 	"tim10/mqtt/device"
 	"tim10/mqtt/helper"
 	"time"
+
+	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
 
 type AmbientSensor struct {
 	device.BaseDevice
 	CurrentTemp float32 `json:"currentTemp"`
-	CurrentHum float32 `json:"CurrentHum"`
-	Client mqtt.Client
+	CurrentHum  float32 `json:"CurrentHum"`
+	Client      mqtt.Client
 }
 
 var connectHandler mqtt.OnConnectHandler = func(client mqtt.Client) {
@@ -61,7 +62,7 @@ func getAmbientSensor(deviceId int) AmbientSensor {
 
 }
 
-var ambientSensor AmbientSensor = getAmbientSensor(5)
+var ambientSensor AmbientSensor = AmbientSensor{}
 
 func SetAmbientSensor(id int) {
 	ambientSensor = getAmbientSensor(id)
@@ -88,7 +89,8 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 	}
 }
 
-func RunAmbientSensor() {
+func RunAmbientSensor(id int) {
+	SetAmbientSensor(id)
 
 	opts := mqtt.NewClientOptions()
 	opts.AddBroker(fmt.Sprintf("tcp://%s:%d", constants.Broker, constants.Port))
@@ -124,18 +126,18 @@ func RunAmbientSensor() {
 }
 
 func getTemp() float32 {
-	var diff = rand.Intn(5 + 5) - 5
+	var diff = rand.Intn(5+5) - 5
 	return ambientSensor.CurrentTemp + float32(diff)
 }
 
 func getHum() float32 {
-	var diff = rand.Intn(5 + 5) - 5
+	var diff = rand.Intn(5+5) - 5
 	return ambientSensor.CurrentHum + float32(diff)
 }
 
 type WeatherData struct {
 	CurrentConditions struct {
-		Temp float32 `json:"temp"`
+		Temp     float32 `json:"temp"`
 		Humidity float32 `json:"humidity"`
 	} `json:"currentConditions"`
 }
@@ -205,7 +207,6 @@ func pubAmbientSensorValue(client mqtt.Client) {
 			log.Fatal(token.Error())
 		}
 		fmt.Println("Message from hum published successfully")
-
 
 		time.Sleep(time.Second * 3)
 	}

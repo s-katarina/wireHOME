@@ -104,10 +104,15 @@ func getWMTasks(deviceId int32) []WMTask {
 	return wmtasks
 }
 
-var washingMachine WashingMachine = getWashingMachine(8)
-var wmtasks []WMTask = getWMTasks(8)
+var washingMachine WashingMachine = WashingMachine{}
+var wmtasks []WMTask
 var onAutomatic = false
 var email = ""
+
+func SetWashingMachine(id int) {
+	washingMachine = getWashingMachine(id)
+	wmtasks = getWMTasks(int32(id))
+}
 
 var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
 
@@ -191,7 +196,8 @@ func PubEvent(action string, email string, client mqtt.Client) {
 	fmt.Printf("Message event published successfully\n")
 }
 
-func RunWashingMachine() {
+func RunWashingMachine(id int) {
+	SetWashingMachine(id)
 
 	opts := mqtt.NewClientOptions()
 	opts.AddBroker(fmt.Sprintf("tcp://%s:%d", constants.Broker, constants.Port))

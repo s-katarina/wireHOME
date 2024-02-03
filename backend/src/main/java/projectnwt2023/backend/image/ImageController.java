@@ -3,6 +3,7 @@ package projectnwt2023.backend.image;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,6 +22,7 @@ public class ImageController {
     private ImageService imageService;
 
     @PostMapping(value="/property/upload", consumes = { "multipart/form-data" })
+    @PreAuthorize(value = "hasRole('AUTH_USER')")
     public ResponseEntity<ApiResponse<MessageDTO>> uploadPropertyImage(@RequestParam("file") MultipartFile file,
                                                                        @RequestParam("propertyId") String propertyId) {
         try {
@@ -32,6 +34,7 @@ public class ImageController {
     }
 
     @PostMapping(value="/device/upload", consumes = { "multipart/form-data" })
+    @PreAuthorize(value = "hasRole('AUTH_USER')")
     public ResponseEntity<ApiResponse<MessageDTO>> uploadDeviceImage(@RequestParam("file") MultipartFile file,
                                                                        @RequestParam("customFileName") String customFileName) {
         try {

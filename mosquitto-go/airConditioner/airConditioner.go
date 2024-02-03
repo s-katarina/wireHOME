@@ -101,8 +101,8 @@ func getAcIntervals(deviceId int32) []ACInterval {
 	return intervals
 }
 
-var airConditioner AirConditioner = getAirConditioner(8)
-var intervals []ACInterval = getAcIntervals(8)
+var airConditioner AirConditioner = AirConditioner{}
+var intervals []ACInterval
 var onAutomatic = false
 var email = ""
 
@@ -206,7 +206,8 @@ func PubEvent(action string, email string, client mqtt.Client) {
 	fmt.Printf("Message event published successfully\n")
 }
 
-func RunAirConditioner() {
+func RunAirConditioner(id int) {
+	SetAirConditioner(id)
 
 	opts := mqtt.NewClientOptions()
 	opts.AddBroker(fmt.Sprintf("tcp://%s:%d", constants.Broker, constants.Port))

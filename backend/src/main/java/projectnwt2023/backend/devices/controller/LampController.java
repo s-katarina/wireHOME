@@ -3,6 +3,7 @@ package projectnwt2023.backend.devices.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.parameters.P;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -50,6 +51,7 @@ public class LampController {
     }
 
     @PutMapping(value = "/{deviceId}/bulb-on", produces = "application/json")
+    @PreAuthorize(value = "hasRole('AUTH_USER')")
     ResponseEntity<?> turnBulbOn(@PathVariable Integer deviceId){
         try {
             mqttGateway.sendToMqtt("ON", "lamp/" + String.valueOf(deviceId)+"/bulb/set");
@@ -61,6 +63,7 @@ public class LampController {
     }
 
     @PutMapping(value = "/{deviceId}/bulb-off", produces = "application/json")
+    @PreAuthorize(value = "hasRole('AUTH_USER')")
     ResponseEntity<?> turnBulbOff(@PathVariable Integer deviceId){
         try {
             mqttGateway.sendToMqtt("OFF", "lamp/" +String.valueOf(deviceId)+"/bulb/set");
@@ -72,6 +75,7 @@ public class LampController {
     }
 
     @PutMapping(value = "/{deviceId}/automatic", produces = "application/json")
+    @PreAuthorize(value = "hasRole('AUTH_USER')")
     ResponseEntity<?>setAutomatic(@PathVariable Integer deviceId,
                                    @RequestParam("val") boolean automatic){
         try {
@@ -85,6 +89,7 @@ public class LampController {
     }
 
     @GetMapping(value = "/{deviceId}/range", produces = "application/json")
+    @PreAuthorize(value = "hasRole('AUTH_USER')")
     ResponseEntity<ApiResponse<List<ValueTimestampDTO>>> getRangeLightSensor(@PathVariable Integer deviceId,
                                                                              @RequestParam String start,
                                                                              @RequestParam String end){
@@ -101,6 +106,7 @@ public class LampController {
     }
 
     @GetMapping(value = "/{deviceId}/range/bulb", produces = "application/json")
+    @PreAuthorize(value = "hasRole('AUTH_USER')")
     ResponseEntity<ApiResponse<List<BulbOnOffMeasurement>>> getDateRangeBulb(@PathVariable Integer deviceId,
                                                                              @RequestParam String start,
                                                                              @RequestParam String end){
