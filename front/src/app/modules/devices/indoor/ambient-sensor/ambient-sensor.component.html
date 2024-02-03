@@ -5,25 +5,35 @@
     <div class="cols">
         <div class="left-column">
 
-          <h4>Current temperature: {{currentTemp}}</h4>
-          <h4>Current humidity: {{currentHum}}</h4>
-
-          <div class="chart-container">
-            <canvas id="realtimeTempChart">{{ realtimeTempChart }}</canvas>
+          <div class="settings-group">
+              <button class="placeholder-btn"  mat-button><mat-icon>linear_scale</mat-icon></button>
+              <button  class="placeholder-btn" mat-button>Current temperature: {{currentTemp}}</button>
           </div>
 
-          <div class="chart-container">
-            <canvas id="realtimeHumChart">{{ realtimeHumChart }}</canvas>
+          
+          <div class="settings-group">
+            <button class="placeholder-btn"  mat-button><mat-icon>settings_system_daydream</mat-icon></button>
+            <button  class="placeholder-btn" mat-button>Current humidity: {{currentHum}}</button>
           </div>
-        </div>
         
-        <div class="right-column">
+      </div>
+
+      <div class="right-column">
         <img class="img-card" [src]="ambientSensor!.imagePath" alt="Ambient Sensor Image">
-        </div>
+      </div>
     </div>
 
+    <h4>Real-time updates via charts</h4>
+    <mat-divider></mat-divider>
+    <div class="chart-container">
+      <canvas id="realtimeTempChart">{{ realtimeTempChart }}</canvas>
+    </div>
+
+    <div class="chart-container">
+      <canvas id="realtimeHumChart">{{ realtimeHumChart }}</canvas>
+    </div>
     
-    <h4 matTooltip="Get intel on generated report data">Report charts</h4>
+    <h5 matTooltip="Graphical chart displaying of data for true accessibility">Chart insights</h5>
     <mat-divider></mat-divider>
     
     <div class="same-row">
@@ -65,8 +75,9 @@
     <div class="chart-div-online">
       <app-online-offline-chart class="chart" #onlineOfflineChart [deviceId]="ambientSensor!.id"></app-online-offline-chart>
     </div>
-
+    
 </div>
+
 
 <!-- <div>
   <h2>Current temperature: {{currentTemp}}</h2>

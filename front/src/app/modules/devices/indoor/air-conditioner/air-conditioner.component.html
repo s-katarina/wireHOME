@@ -4,15 +4,28 @@
     <mat-divider></mat-divider>
     <div class="cols">
         <div class="left-column">
-            
-          <h4>Current temperature: {{currentTemp}}</h4>
-          <h4>Current action: {{currentAction}}</h4>
-          <h4>Action status: {{actionStatus}}</h4>
 
           <div class="settings-group">
+            <button class="placeholder-btn"  mat-button><mat-icon>linear_scale</mat-icon></button>
+            <button  class="placeholder-btn" mat-button>Current temperature: {{currentTemp}}</button>
+          </div>
+
+        
+          <div class="settings-group">
+            <button class="placeholder-btn"  mat-button><mat-icon>swap_vertical_circle</mat-icon></button>
+            <button  class="placeholder-btn" mat-button>Current action: {{currentAction}}</button>
+          </div>
+
+          <div class="settings-group">
+            <button class="placeholder-btn"  mat-button></button>
+            <button  class="placeholder-btn" mat-button>Action status: {{actionStatus}}</button>
+          </div>
+
+          <div class="settings-group">
+            <button class="placeholder-btn"  mat-button></button>
 
             <mat-form-field class="margin-left">
-              <mat-label>Select action</mat-label>
+              <mat-label>Set new action</mat-label>
               <mat-select [(ngModel)]="selectedOption" (selectionChange)="onDropdownChange()">
                   <mat-option value="temp">Set temperature</mat-option>
                   <mat-option *ngFor="let regime of airConditioner?.regimes" [value]="regime">
@@ -62,7 +75,7 @@
     </div>
 
     
-    <h4 matTooltip="Get intel on generated report data">Report</h4>
+    <h4 matTooltip="Get intel on generated report data">Historical data</h4>
     <mat-divider></mat-divider>
     
     <div class="same-row">
@@ -119,7 +132,10 @@
       </mat-paginator>
     </div>
 
-    <div class="chart-div-online">
+    <h4 matTooltip="Get intel on generated real-time event data" style="margin-top:80px">Detailed data values</h4>
+    <h5 matTooltip="Graphical chart displaying of data for true accessibility">Chart insights</h5>
+    <mat-divider></mat-divider>
+    <div class="chart-div-online" style="margin-top: 50px;">
       <app-online-offline-chart class="chart" #onlineOfflineChart [deviceId]="airConditioner!.id"></app-online-offline-chart>
     </div>
 

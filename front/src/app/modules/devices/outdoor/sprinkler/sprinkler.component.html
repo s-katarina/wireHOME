@@ -112,6 +112,12 @@
 
         <p *ngIf="filterApplied">*Filter is applied.</p>
 
+        <div style="display: flex; 
+        justify-content: center; 
+        align-items: center; padding: 40px;">
+            <mat-spinner *ngIf="loadingNotDone"></mat-spinner>
+        </div>
+
         <table
             mat-table
             #eventTable
