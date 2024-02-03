@@ -130,3 +130,35 @@ h3 {
   width: 100%; /* Each div takes 25% of the container width */
 
 }
+
+
+
+.same-row{
+  display: flex;
+  justify-content: flex-start;
+}
+.margin-left{
+  margin-left: 2vw;
+}
+
+
+.chart {
+  height: 370px; width: 100%; margin:auto;
+  margin-top: 3vh;
+}
+.view-data {
+  margin-left: 20px;
+}
+
+
+.mat-divider {
+  border-top: 2px solid rgb(190, 190, 190);
+  margin-bottom: 10px;
+}
+.page {
+  margin: 5%;
+}
+
+.view-data {
+  margin-left: 20px;
+}
