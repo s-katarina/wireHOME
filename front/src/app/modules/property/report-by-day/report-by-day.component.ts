@@ -11,6 +11,8 @@ import { PropertyServiceService } from '../service/property-service.service';
 export class ReportByDayComponent implements OnInit {
 
   @Input() id = ""
+  @Input() whatId = 'property-id'
+
 
   timeOfDay: ByTimeOfDay | undefined
 
@@ -25,7 +27,7 @@ distTotal: number = 0;
 
   ngOnInit(): void {
     let datee: StartEnd = this.getDate()
-    this.propertyService.getTimeOfDay(this.id, datee.start, datee.end).subscribe((res: any) => {
+    this.propertyService.getTimeOfDay(this.id, datee.start, datee.end, this.whatId).subscribe((res: any) => {
       console.log(res)
       this.timeOfDay = res
       this.elecTotal = (this.timeOfDay?.dayElec || 0 )+ (this.timeOfDay?.nightElec || 0)
@@ -51,7 +53,7 @@ distTotal: number = 0;
     && this.rangeProperty.controls.start.valid && this.rangeProperty.controls.end.valid) { 
       let start = Math.floor(this.rangeProperty.value.start!.getTime())/1000
       let end = Math.floor(this.rangeProperty.value.end!.getTime())/1000
-      this.propertyService.getTimeOfDay(this.id, start, end).subscribe((res: any) => {
+      this.propertyService.getTimeOfDay(this.id, start, end, this.whatId).subscribe((res: any) => {
         console.log(res)
         this.timeOfDay = res
         this.elecTotal = (this.timeOfDay?.dayElec || 0 )+ (this.timeOfDay?.nightElec || 0)

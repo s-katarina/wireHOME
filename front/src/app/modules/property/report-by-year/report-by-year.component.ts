@@ -8,7 +8,8 @@ import { PropertyServiceService } from '../service/property-service.service';
   styleUrls: ['./report-by-year.component.css']
 })
 export class ReportByYearComponent implements OnInit {
-  @Input() id = "";
+  @Input() id: string = "";
+  @Input() whatId = 'property-id'
   year: number = 2024;
   barChartElec: any
   constructor(private readonly propertyService: PropertyServiceService) { }
@@ -71,13 +72,13 @@ export class ReportByYearComponent implements OnInit {
   }
 
   private renderBars() {
-    this.propertyService.getByMonthProperty(this.id || '', this.year, "property-electricity").subscribe((res: any) => {
+    this.propertyService.getByMonthProperty(this.id || '', this.year, "property-electricity", this.whatId).subscribe((res: any) => {
       console.log(res);
       this.barChartElec.options.data[0].dataPoints = res;
       this.barChartElec.render();
     });
 
-    this.propertyService.getByMonthProperty(this.id || '', this.year, "electrodeposition").subscribe((res: any) => {
+    this.propertyService.getByMonthProperty(this.id || '', this.year, "electrodeposition", this.whatId).subscribe((res: any) => {
       console.log(res);
       this.barChartElec.options.data[1].dataPoints = res;
       this.barChartElec.render();

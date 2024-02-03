@@ -39,9 +39,9 @@ public interface IPropertyService {
     ArrayList<LabeledGraphDTO> findPropertyEnergyByDayForDate(CityGraphDTO graphRequestDTO);
 
 
-    ArrayList<BarChartDTO> getBarChartForPropertyForYear(Integer propertyId, int year, String measurement);
+    ArrayList<BarChartDTO> getBarChartForPropertyForYear(Integer propertyId, int year, String measurement,String whatId);
 
-    ByTimeOfDayDTO getByTimeOfDayForPropertyInRange(Integer propertyId, Long start, Long end);
+    ByTimeOfDayDTO getByTimeOfDayForPropertyInRange(Integer propertyId, Long start, Long end, String whatId);
 
     ArrayList<PyChartDTO> getPychartByDeviceType(Integer id, Long start, Long end, String s);
 }

@@ -112,15 +112,17 @@ export class PropertyServiceService {
     return this.http.get<PyChartDTO[]>(environment.apiHost + 'property/byCityChart', {params})
   }
 
-  getByMonthProperty(id: string, year: number, measurement:string): Observable<BarChartDTO[]> {
+  getByMonthProperty(id: string, year: number, measurement:string, whatId:string): Observable<BarChartDTO[]> {
     const params = new HttpParams().set('year', year)
                                   .set("measurement", measurement)
+                                  .set("whatId", whatId)
     return this.http.get<BarChartDTO[]>(environment.apiHost + `property/byMonthProperty/${id}`, {params})
   }
 
-  getTimeOfDay(id: string | undefined, start: number, end: number): Observable<ByTimeOfDay[]> {
+  getTimeOfDay(id: string | undefined, start: number, end: number, whatId: string): Observable<ByTimeOfDay[]> {
     const params = new HttpParams().set('start', start)
                                   .set("end", end)
+                                  .set('whatId', whatId)
     return this.http.get<ByTimeOfDay[]>(environment.apiHost + `property/byTimeOfDay/${id}`, {params})
   }
   getByDeviceTypeForProperty(start: number, end: number, id: string): Observable<PyChartDTO[]> {
@@ -143,17 +145,17 @@ export class PropertyServiceService {
     }, options)  
   }
 
-  getPropertyByDayReadingFrom(cityId: string, dateFrom: number, dateTo: number, measurment: string) {
+  getPropertyByDayReadingFrom(cityId: string, dateFrom: number, dateTo: number, measurment: string, whatId:string) {
     const options: any = {
       responseType: 'json'
     }
-    
     return this.http.post<LabeledGraphDTO[]>(environment.apiHost + 'property/propertyByDay', 
     {
       id: cityId,
       from: dateFrom,
       to: dateTo,
       measurement: measurment,
+      whatId: whatId
     }, options)  
   }
 }

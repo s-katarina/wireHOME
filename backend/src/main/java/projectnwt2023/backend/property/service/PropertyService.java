@@ -170,13 +170,13 @@ public class PropertyService implements IPropertyService {
     }
 
     @Override
-    public ArrayList<BarChartDTO> getBarChartForPropertyForYear(Integer propertyId, int year, String measurement) {
-        return influxDBService.findPropertyEnergyByMonth(propertyId, year, measurement);
+    public ArrayList<BarChartDTO> getBarChartForPropertyForYear(Integer propertyId, int year, String measurement, String whatId) {
+        return influxDBService.findPropertyEnergyByMonth(propertyId, year, measurement, whatId);
     }
 
     @Override
-    public ByTimeOfDayDTO getByTimeOfDayForPropertyInRange(Integer propertyId, Long start, Long end) {
-        return influxDBService.getByTimeOfDayForPropertyInRange(propertyId, start, end);
+    public ByTimeOfDayDTO getByTimeOfDayForPropertyInRange(Integer propertyId, Long start, Long end, String whatId) {
+        return influxDBService.getByTimeOfDayForPropertyInRange(propertyId, start, end, whatId);
     }
 
     @Override

@@ -11,6 +11,8 @@ import { CanvasJS } from '@canvasjs/angular-charts';
 export class ReportByWeekComponent implements OnInit {
 
   @Input() id = "";
+  @Input() whatId = 'property-id'
+
   labledGraphData: LabeledGraphDTO[] = []
   dayCharts: any[] = []
 
@@ -24,7 +26,7 @@ export class ReportByWeekComponent implements OnInit {
     this.fillDayGrafsElec(datee)
   }
   public fillDayGrafs(datee: StartEnd) { 
-    this.propertyService.getPropertyByDayReadingFrom(this.id || "0", datee.start, datee.end, "property-electricity").subscribe((res: any) => {
+    this.propertyService.getPropertyByDayReadingFrom(this.id || "0", datee.start, datee.end, "property-electricity", this.whatId).subscribe((res: any) => {
       console.log(res)
       this.labledGraphData = res
       let i = 0
@@ -56,7 +58,7 @@ export class ReportByWeekComponent implements OnInit {
   }
 
   public fillDayGrafsElec(datee: StartEnd) { 
-    this.propertyService.getPropertyByDayReadingFrom(this.id || "0", datee.start, datee.end, "electrodeposition").subscribe((res: any) => {
+    this.propertyService.getPropertyByDayReadingFrom(this.id || "0", datee.start, datee.end, "electrodeposition", this.whatId).subscribe((res: any) => {
       console.log(res)
       this.labledGraphData = res
       let i = 0

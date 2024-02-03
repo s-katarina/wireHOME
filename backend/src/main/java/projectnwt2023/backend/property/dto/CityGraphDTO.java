@@ -13,4 +13,5 @@ public class CityGraphDTO {
     private Long from;
     private Long to;
     private String measurement;
+    private String whatId;
 }

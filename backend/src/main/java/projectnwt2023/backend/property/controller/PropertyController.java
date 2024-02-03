@@ -179,10 +179,11 @@ public class PropertyController {
     @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN') or hasRole('AUTH_USER')")
     ResponseEntity<ArrayList<BarChartDTO>> getPyChartByCity(@PathVariable Integer propertyId,
                                                            @RequestParam int year,
-                                                            @RequestParam String measurement){
+                                                            @RequestParam String measurement,
+                                                            @RequestParam String whatId){
 
 
-        ArrayList<BarChartDTO> grapgData = propertyService.getBarChartForPropertyForYear(propertyId, year, measurement);
+        ArrayList<BarChartDTO> grapgData = propertyService.getBarChartForPropertyForYear(propertyId, year, measurement, whatId);
         return new ResponseEntity<>(grapgData, HttpStatus.OK);
 
     }
@@ -191,10 +192,11 @@ public class PropertyController {
     @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN') or hasRole('AUTH_USER')")
     ResponseEntity<ByTimeOfDayDTO> getByTimeOfDay(@PathVariable Integer propertyId,
                                                             @RequestParam Long start,
-                                                            @RequestParam Long end){
+                                                            @RequestParam Long end,
+                                                            @RequestParam String whatId){
 
 
-        ByTimeOfDayDTO timeOfDayDTO = propertyService.getByTimeOfDayForPropertyInRange(propertyId, start, end);
+        ByTimeOfDayDTO timeOfDayDTO = propertyService.getByTimeOfDayForPropertyInRange(propertyId, start, end, whatId);
         return new ResponseEntity<>(timeOfDayDTO, HttpStatus.OK);
 
     }
