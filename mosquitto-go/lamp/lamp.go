@@ -282,8 +282,6 @@ func simulateLightSensor() int {
 		}
 	}
 
-	fmt.Println("Season coefs: ", seasonHourCoeficient)
-	
 	// Use sinus function for simulation of continous change
 	// Daylight hours (06h to 18h) will be taken into account, because sin()>0
 	intensity := int(70000*(math.Sin((hour-seasonHourCoeficient)*math.Pi/float64(seasonPiCoeficient))) + rand.Float64()*5000)
