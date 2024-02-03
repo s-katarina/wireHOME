@@ -171,7 +171,11 @@ func getGate(deviceId int) Gate {
 
 }
 
-var gate Gate = getGate(1)
+var gate Gate 
+
+func SetGate(id int) {
+	gate = getGate(id)
+}
 
 var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
 

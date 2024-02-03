@@ -110,7 +110,7 @@ func (lamp Lamp) SubToAutomaticSet(client mqtt.Client) {
 }
 
 
-func getLamp(deviceId int) Lamp {
+func GetLamp(deviceId int) Lamp {
 
 	apiUrl := fmt.Sprintf("%s/lamp/%d", constants.ApiUrl, deviceId)
 	fmt.Println(apiUrl)
@@ -141,10 +141,10 @@ func getLamp(deviceId int) Lamp {
 
 }
 
-var lamp Lamp = getLamp(2)
+var lamp Lamp
 
 func SetLamp(id int) {
-	lamp = getLamp(id)
+	lamp = GetLamp(id)
 }
 
 var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
@@ -243,7 +243,7 @@ func RunLamp() {
 	lamp.SubToAutomaticSet(client)
 	go pubLightSensorValue(client)
 	go lamp.TakesElectisity(client)
-	lamp.SendHeartBeat(client)
+	go lamp.SendHeartBeat(client)
 }
 
 func simulateLightSensor() int {

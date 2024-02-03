@@ -3,6 +3,7 @@ package projectnwt2023.backend.devices.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import projectnwt2023.backend.devices.Lamp;
@@ -39,8 +40,13 @@ public class LampController {
     @GetMapping(value = "/{deviceId}", produces = "application/json")
     ResponseEntity<DeviceDTO> getLamp(@PathVariable Integer deviceId){
 
-        Lamp device = (Lamp) deviceService.getById(deviceId.longValue());
-        return new ResponseEntity<>(new LampDTO(device), HttpStatus.OK);
+        try {
+            Lamp device = (Lamp) deviceService.getById(deviceId.longValue());
+            return new ResponseEntity<>(new LampDTO(device), HttpStatus.OK);
+
+        } catch (ClassCastException ex) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PutMapping(value = "/{deviceId}/bulb-on", produces = "application/json")

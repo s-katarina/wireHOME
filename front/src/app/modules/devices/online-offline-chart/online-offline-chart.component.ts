@@ -175,8 +175,10 @@ export class OnlineOfflineChartComponent implements OnInit {
             this.rangeOver30Days = false
           }
 
-        }
+      }
     }
+
+  console.log("date range: "  + this.dateFrom + " " + this.dateTo)
 	  
 	this.largeEnergyDeviceService.getDeviceOnlineOfflinePyChart(this.deviceId, this.dateFrom, this.dateTo).subscribe((res: any) => {
 		this.pyChart.options.data[0].dataPoints = res
@@ -189,7 +191,6 @@ export class OnlineOfflineChartComponent implements OnInit {
         x: parseInt(item.timestamp),
         y: Math.floor(parseFloat(item.value))
       }));
-      console.log(dataPoints)
       this.intervalChart.options.data[0].dataPoints = dataPoints;
       this.intervalChart.render();
     }
