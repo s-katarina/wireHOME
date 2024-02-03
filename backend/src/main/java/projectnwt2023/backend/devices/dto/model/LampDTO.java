@@ -16,6 +16,8 @@ public class LampDTO extends DeviceDTO {
 
     private boolean bulbState;
     private boolean isAutomatic;
+    private double latitude;
+    private double longitude;
 
     public LampDTO(Lamp lamp) {
         this.setId(Math.toIntExact(lamp.getId()));
@@ -28,5 +30,7 @@ public class LampDTO extends DeviceDTO {
         this.setDeviceType(lamp.getTopic());
         this.setBulbState(lamp.isBulbState());
         this.setAutomatic(lamp.isAutomatic());
+        this.setLatitude(lamp.getProperty().getCity().getLatitude());
+        this.setLongitude(lamp.getProperty().getCity().getLongitude());
     }
 }
