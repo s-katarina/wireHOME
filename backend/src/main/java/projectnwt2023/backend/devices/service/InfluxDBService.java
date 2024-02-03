@@ -175,7 +175,6 @@ public class InfluxDBService {
                 String caller = fluxRecord.getValueByKey("caller") == null ? null : fluxRecord.getValueByKey("caller").toString();
                 Date timestamp = fluxRecord.getTime() == null ? null : Date.from(fluxRecord.getTime());
                 result.add(new GateEventMeasurement(measurementName, value, timestamp, caller));
-//                System.out.println(value);
             }
         }
         return result;

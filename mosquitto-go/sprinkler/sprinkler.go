@@ -267,7 +267,7 @@ func getSprinkler(deviceId int) Sprinkler {
 
 }
 
-var sprinkler Sprinkler = getSprinkler(11)
+var sprinkler Sprinkler
 
 
 var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
@@ -337,6 +337,10 @@ var connectHandler mqtt.OnConnectHandler = func(client mqtt.Client) {
 
 var connectLostHandler mqtt.ConnectionLostHandler = func(client mqtt.Client, err error) {
 	fmt.Printf("Connect lost: %v", err)
+}
+
+func SetSprinkler(id int) {
+	sprinkler = getSprinkler(id)
 }
 
 func RunSprinkler() {

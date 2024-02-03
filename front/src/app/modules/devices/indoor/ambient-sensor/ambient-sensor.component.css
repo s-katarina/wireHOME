@@ -110,13 +110,16 @@ img {
   margin-bottom: 40px;
 }
 
-#chartOnlineContainer > * {
-  color: rgb(190, 19, 19) !important;
-  font: 400 16px/24px 'Sora-semibold', sans-serif !important;
-}
-
 .chart-div-online {
   display: block;
   padding-top: 40px;
   padding-bottom: 200px;
+}
+
+h5 {
+  font-size: 1.3em;
+  line-height: 1.1em;
+  font-family: 'Sora-regular', Roboto, "Helvetica Neue", sans-serif !important; 
+  color: rgb(0, 0, 0);
+  cursor: default;
 }

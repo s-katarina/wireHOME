@@ -57,6 +57,7 @@ export class SprinklerComponent implements OnInit, AfterViewInit {
   dataSource!: MatTableDataSource<SprinklerCommand>;
   commands : SprinklerCommand[] = [];
   recentCommands: SprinklerCommand[] = [];
+  loadingNotDone: boolean = false;
 
   @ViewChild(MatPaginator) paginator! : MatPaginator;
   @ViewChild(MatSort) sort! : MatSort;
@@ -218,8 +219,10 @@ export class SprinklerComponent implements OnInit, AfterViewInit {
     // Filter for date
     if ((this.range.value.start != null && this.range.value.start != null) 
         && this.range.controls.start.valid && this.range.controls.end.valid) { 
+        this.loadingNotDone = true;
         this.sprinklerService.getRangeSprinklerCommands(this.sprinkler!.id, Math.floor(this.range.value.start!.getTime()).toString(), Math.floor(this.range.value.end!.getTime()).toString()).subscribe((res: ApiResponse) => {
           if (res.status == 200) {
+            this.loadingNotDone = false;
             console.log(res)
             filteredEvents = res.data.filter((event: { caller: string; command: string; callerUsername: string;}) =>
               (event.caller.toLowerCase().includes(this.filterInitiator.toLowerCase()) ||

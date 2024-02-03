@@ -127,15 +127,15 @@ img {
 }
   
 
-.chart {
-    height: 370px; width: 100%; margin:auto;
-    margin-top: 3vh;
+.chart-div {
+    margin-top: 40px;
+    margin-bottom: 40px;
 }
 
-.chart-div {
-    display: block;
-    margin-top: 90px;
-    margin-bottom: 90px;
+.chart-div-online {
+display: block;
+padding-top: 40px;
+padding-bottom: 200px;
 }
 
 .car-plate {
@@ -166,3 +166,9 @@ img {
     color: #007bff; /* You can customize the color */
   }
   
+  .chart-container {
+    display: block;
+    margin-bottom: 50px;
+    padding-top: 40px;
+    padding-bottom: 200px;
+  }

@@ -22,9 +22,9 @@ public class ImageController {
 
     @PostMapping(value="/property/upload", consumes = { "multipart/form-data" })
     public ResponseEntity<ApiResponse<MessageDTO>> uploadPropertyImage(@RequestParam("file") MultipartFile file,
-                                                                       @RequestParam("customFileName") String customFileName) {
+                                                                       @RequestParam("propertyId") String propertyId) {
         try {
-            imageService.savePropertyImage(file, customFileName);
+            imageService.savePropertyImage(file, propertyId);
             return new ResponseEntity<>(new ApiResponse<>(200, new MessageDTO("Image upload success.")), HttpStatus.OK);
         } catch (IOException e) {
             return new ResponseEntity<>(new ApiResponse<>(400, new MessageDTO("Image upload fail.")), HttpStatus.BAD_REQUEST);

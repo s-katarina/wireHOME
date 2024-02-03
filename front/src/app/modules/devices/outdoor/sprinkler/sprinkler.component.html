@@ -110,7 +110,13 @@
             <button mat-raised-button (click)="clearFilter()">Clear Filter</button>
         </div>
 
-        <p *ngIf="filterApplied">*Filter is applied. Clear filter to view new real-time gate events, as they happen.</p>
+        <p *ngIf="filterApplied">*Filter is applied.</p>
+
+        <div style="display: flex; 
+        justify-content: center; 
+        align-items: center; padding: 40px;">
+            <mat-spinner *ngIf="loadingNotDone"></mat-spinner>
+        </div>
 
         <table
             mat-table
