@@ -65,6 +65,7 @@ public class DeviceService implements IDeviceService {
 
     @Override
     public Device changeDeviceState(Long id, State state) {
+//        if (id == 0) return null;
         Device device = getById(id);
         if (device.getState() != state) {
             //        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

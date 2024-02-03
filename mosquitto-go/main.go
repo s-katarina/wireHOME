@@ -28,9 +28,9 @@ func main() {
 	// go gate.RunGate()
 	// go lamp.RunLamp()
 	// go battery.RunBattery(7)
-	for i := 0; i < 80; i++ {
+	// for i := 0; i < 2000; i++ {
 		go charger.RunCharger(6)
-	}
+	// }
 	// go battery.RunBattery(3);
 
 	// go solarPanel.RunSolarPanel(1);
