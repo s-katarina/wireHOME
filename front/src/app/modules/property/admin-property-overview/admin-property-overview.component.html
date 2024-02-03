@@ -46,6 +46,12 @@
 
         <p *ngIf="filterAppliedProperty">*Filter is applied. Clear filter to view all propertyes.</p>
 
+        <div style="display: flex; 
+        justify-content: center; 
+        align-items: center; padding: 40px;">
+            <mat-spinner *ngIf="loadingNotDoneProperty"></mat-spinner>
+        </div>
+
         <table
             mat-table
             #eventTable
@@ -160,6 +166,12 @@
         </div>
 
         <p *ngIf="filterAppliedCity">*Filter is applied. Clear filter to view all properties.</p>
+
+        <div style="display: flex; 
+        justify-content: center; 
+        align-items: center; padding: 40px;">
+            <mat-spinner *ngIf="loadingNotDoneCity"></mat-spinner>
+        </div>
 
         <table
             mat-table

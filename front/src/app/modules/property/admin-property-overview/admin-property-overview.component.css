@@ -16,11 +16,18 @@ h2 {
     font-family: 'Sora-semibold', Roboto, "Helvetica Neue", sans-serif !important; 
     color: rgb(0, 0, 0);
 }
+::ng-deep .mat-progress-spinner circle, .mat-spinner circle {
+    stroke: #4d6f76;
+}
 h3 {
     font-size: 1.6em;
     line-height: 1.1em;
     font-family: 'Sora-regular', Roboto, "Helvetica Neue", sans-serif !important; 
     color: rgb(0, 0, 0);
+}
+
+.view-data {
+    margin-left: 20px;
 }
 
 .mat-divider {

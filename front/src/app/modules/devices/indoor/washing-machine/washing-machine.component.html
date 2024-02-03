@@ -83,7 +83,11 @@
 
     <button class="report-btn" (click)="fetch()">Load actions</button>
   </div>
-
+  <div style="display: flex; 
+  justify-content: center; 
+  align-items: center; padding: 40px;">
+      <mat-spinner *ngIf="loadingNotDone"></mat-spinner>
+</div>
   <div class="mat-elevation-z8">
     <table mat-table class="moja-mat-tabela" [dataSource]="dataSource">
   
@@ -113,6 +117,8 @@
                    aria-label="Select page of periodic elements">
     </mat-paginator>
   </div>
+
+ 
 
   <div class="chart-div-online">
     <app-online-offline-chart class="chart" #onlineOfflineChart [deviceId]="washingMachine!.id"></app-online-offline-chart>

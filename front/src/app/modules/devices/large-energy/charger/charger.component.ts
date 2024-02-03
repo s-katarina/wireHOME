@@ -18,7 +18,7 @@ import { MatSort } from '@angular/material/sort';
 })
 export class ChargerComponent implements OnInit {
 
-
+  loadingNotDone: boolean = false;
   chargerId: string = ""
   selectedOption: string = ""
 
@@ -274,8 +274,12 @@ export class ChargerComponent implements OnInit {
     // Date range filter
     if ((this.range2.value.start != null && this.range2.value.start != null) 
         && this.range2.controls.start.valid && this.range2.controls.end.valid) { 
-        this.largeEnergyDeviceService.getRangeGateEvents(this.charger!.id, Math.floor(this.range2.value.start!.getTime()).toString(), Math.floor(this.range2.value.end!.getTime()).toString(), "charger-event").subscribe((res: ApiResponse) => {
+          this.loadingNotDone = true;
+        
+          this.largeEnergyDeviceService.getRangeGateEvents(this.charger!.id, Math.floor(this.range2.value.start!.getTime()).toString(), Math.floor(this.range2.value.end!.getTime()).toString(), "charger-event").subscribe((res: ApiResponse) => {
           if (res.status == 200) {
+            this.loadingNotDone = false;
+
             console.log((this.range2.value.start!.getTime()).toString() + " " + (this.range2.value.end!.getTime()).toString())
             filteredEvents = res.data.filter((event: { caller: string; eventType: string; callerUsername: string;}) =>
               (event.caller.toLowerCase().includes(this.filterInitiator.toLowerCase())||
