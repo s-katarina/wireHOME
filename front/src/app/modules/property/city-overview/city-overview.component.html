@@ -72,4 +72,11 @@
         <button (click)="onSubmit('electrodeposition')"></button>
       </div>
     </div>
+
+    <app-report-by-year [id]="cityId.toString()" [whatId]="'city-id'" ></app-report-by-year>
+   
+    <app-report-by-day [id]="cityId.toString()" [whatId]="'city-id'" ></app-report-by-day>
+
+    <app-report-by-week [id]="cityId.toString()" [whatId]="'city-id'" ></app-report-by-week>
+
     </div>

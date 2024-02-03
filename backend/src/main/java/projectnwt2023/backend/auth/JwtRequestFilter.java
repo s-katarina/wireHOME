@@ -28,8 +28,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         if (request.getRequestURL().toString().contains("/api/")) {
-            System.out.println("####" + request.getMethod() + ":" + request.getRequestURL());
-            System.out.println("#### Authorization: " + request.getHeader("Authorization"));
+//            System.out.println("####" + request.getMethod() + ":" + request.getRequestURL());
+//            System.out.println("#### Authorization: " + request.getHeader("Authorization"));
 
             String requestTokenHeader = request.getHeader("Authorization");
             String username = null;
@@ -37,7 +37,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
 
             if (requestTokenHeader != null && requestTokenHeader.contains("Bearer")) {
                 jwtToken = requestTokenHeader.substring(requestTokenHeader.indexOf("Bearer ") + 7).replaceAll("\"", "");
-                System.out.println(">>>>>JWT TOKEN: " + jwtToken);
+//                System.out.println(">>>>>JWT TOKEN: " + jwtToken);
 
                 try {
                     username = jwtTokenUtil.getUsernameFromToken(jwtToken);
@@ -48,7 +48,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                                 userDetails, null, userDetails.getAuthorities());
                         usernamePasswordAuthenticationToken
                                 .setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                        System.out.println("Username: " + userDetails.getUsername() + ", role: " + userDetails.getAuthorities());
+//                        System.out.println("Username: " + userDetails.getUsername() + ", role: " + userDetails.getAuthorities());
                         SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
                     }
                 } catch (IllegalArgumentException e) {

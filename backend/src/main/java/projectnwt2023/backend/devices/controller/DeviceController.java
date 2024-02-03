@@ -39,7 +39,7 @@ public class DeviceController {
     ResponseEntity<DeviceDTO> getDevice(@PathVariable Integer deviceId){
 
         Device device = deviceService.getById(deviceId.longValue());
-        System.out.println(deviceId);
+        //System.out.Println(deviceId);
         return new ResponseEntity<>(new DeviceDTO(device), HttpStatus.OK);
     }
 
@@ -47,11 +47,11 @@ public class DeviceController {
     ResponseEntity<MessageDTO> turnOn(@PathVariable Integer deviceId){
         Device device = deviceService.getById(deviceId.longValue());
         try {
-            System.out.println(deviceId);
+            //System.out.Println(deviceId);
             mqttGateway.sendToMqtt("ON", String.valueOf(deviceId));
             return new ResponseEntity<>(new MessageDTO("uspeo je", "on"), HttpStatus.OK);
         } catch (Exception e){
-            System.out.println("greeeska");
+            //System.out.Println("greeeska");
             e.printStackTrace();
             return new ResponseEntity<>(new MessageDTO("nije uspeo", "on"), HttpStatus.OK);
         }

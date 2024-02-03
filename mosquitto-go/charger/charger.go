@@ -6,6 +6,7 @@ import (
 	"io"
 	"math/rand"
 	"strconv"
+	"strings"
 	"time"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
@@ -38,9 +39,10 @@ var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Me
 
 	if helper.IsTopicMatch(patternPort, msg.Topic()) {
 		fmt.Println(string(msg.Payload()))
-		number, _ := strconv.Atoi(string(msg.Payload()))
+		payload := string(msg.Payload())
+		number, _ := strconv.Atoi(strings.Split(payload, ";")[0])
 		if number > 0 && number <= 100 {
-			pubChargerEvent(client, "percent-change", "USER")
+			pubChargerEvent(client, "percent change to " + strings.Split(payload, ";")[0], strings.Split(payload, ";")[1])
 			charger.Percentage = int32(number)
 		}
 	}
@@ -144,7 +146,7 @@ func simulateCarComming(client mqtt.Client) {
 	energy := 0.0
 	pubChargerEvent(client, "charging-start", plateNumber)
 	for i := 0; i <= int(charger.Percentage) - chargingLevel; i++ {
-		sendElecticity(client)
+		sendElecticity(client, float64(batteryCapacity))
 		energy += charger.ChargingStrength/20
 		pubChargingStatus(client, plateNumber, batteryCapacity, chargingLevel+i, energy)
 		time.Sleep(time.Second * 3)
@@ -154,9 +156,9 @@ func simulateCarComming(client mqtt.Client) {
 
 }
 
-func sendElecticity(client mqtt.Client) {
+func sendElecticity(client mqtt.Client, batteryCapacity float64) {
 	topic := fmt.Sprintf("energy/%d/%s", charger.Id, "any-device")
-	data := fmt.Sprintf("energy-maintaining,device-id=%d,property-id=%d value=%f", charger.Id, charger.PropertyId, -charger.ChargingStrength)
+	data := fmt.Sprintf("energy-maintaining,device-id=%d,property-id=%d,device-type=%s value=%f", charger.Id, charger.PropertyId, charger.DeviceType, -batteryCapacity/100)
 	token := client.Publish(topic, 0, false, data)
 	token.Wait()
 }

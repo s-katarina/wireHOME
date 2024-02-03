@@ -1,10 +1,15 @@
 package projectnwt2023.backend.devices.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import projectnwt2023.backend.appUser.AppUser;
+import projectnwt2023.backend.appUser.service.interfaces.IAppUserService;
 import projectnwt2023.backend.devices.*;
 import projectnwt2023.backend.devices.dto.*;
 import projectnwt2023.backend.devices.dto.model.BatteryDTO;
@@ -18,6 +23,7 @@ import projectnwt2023.backend.helper.ApiResponse;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/device/largeEnergy")
@@ -32,6 +38,9 @@ public class SolarPanelController {
 
     @Autowired
     Gateway mqttGateway;
+
+    @Autowired
+    IAppUserService appUserService;
 
     @GetMapping(value = "/solar/{deviceId}", produces = "application/json")
     ResponseEntity<SolarPanelDTO> getSolarPanel(@PathVariable Integer deviceId){
@@ -95,7 +104,14 @@ public class SolarPanelController {
         List<GateEventMeasurement> res = deviceService.getDateRangeEvents(Long.valueOf(deviceId), start, end, measurement);
         List<GateEventDTO> ret = new ArrayList<>();
         for (GateEventMeasurement event : res) {
-            ret.add(new GateEventDTO(event.getCaller(), event.getValue(), String.valueOf(event.getTimestamp().getTime())));
+            String caller = event.getCaller();
+            String callerName = "";
+            Optional<AppUser> user = appUserService.findByEmail(event.getCaller());
+            if (user.isPresent()) {
+//                caller = user.get().getName() + " " + user.get().getLastName();
+                callerName = user.get().getName() + " " + user.get().getLastName();
+            }
+            ret.add(new GateEventDTO(event.getCaller(), event.getValue(), String.valueOf(event.getTimestamp().getTime()), callerName));
         }
         return new ResponseEntity<>(new ApiResponse<>(200, ret), HttpStatus.OK);
     }
@@ -106,7 +122,11 @@ public class SolarPanelController {
         Charger charger = (Charger) deviceService.getById(Long.valueOf(deviceId));
         charger.setPercentage(percentage);
         deviceService.save(charger);
-        mqttGateway.sendToMqtt(String.valueOf(percentage), "charger/"+String.valueOf(deviceId)+"/port-set");
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
+                .getPrincipal();
+        Optional<AppUser> user = appUserService.findByEmail(userDetails.getUsername());
+        if (!user.isPresent()) return  new ResponseEntity<>(new ChargerDTO((charger)), HttpStatus.OK);
+        mqttGateway.sendToMqtt(String.valueOf(percentage) + ";" + user.get().getEmail(), "charger/"+String.valueOf(deviceId)+"/port-set");
         return new ResponseEntity<>(new ChargerDTO((charger)), HttpStatus.OK);
     }
 

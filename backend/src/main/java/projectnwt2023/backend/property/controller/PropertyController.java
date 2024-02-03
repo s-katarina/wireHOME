@@ -98,10 +98,10 @@ public class PropertyController {
     }
 
     @GetMapping(value = "/byCity", produces = "application/json")
-    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
+    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN') or hasRole('AUTH_USER')")
     ResponseEntity<List<CityOverviewDTO>> getPropertiesByCity(@RequestParam Long start,
                                                               @RequestParam Long end){
-        System.out.println("parametri " + start + "  " + end);
+//        System.out.println("parametri " + start + "  " + end);
         Page<Property> properties = propertyService.getPropertiesByStatus(PropertyStatus.ACCEPTED, Pageable.unpaged());
 
         // Group properties by city using Java streams
@@ -128,7 +128,7 @@ public class PropertyController {
     }
 
     @PostMapping(value = "/propertyByDay", produces = "application/json") // koristi i za elektrodistribuciju i za samu potrosnju
-    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
+    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN') or hasRole('AUTH_USER')")
     ResponseEntity<ArrayList<LabeledGraphDTO>> getElectroByDay(@RequestBody CityGraphDTO graphRequestDTO){
 //        System.out.println("striglo je " + graphRequestDTO);
         ArrayList<LabeledGraphDTO> grapgData = propertyService.findPropertyEnergyByDayForDate(graphRequestDTO);
@@ -147,7 +147,7 @@ public class PropertyController {
     }
 
     @GetMapping(value = "/byCityChart", produces = "application/json")
-    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
+    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN') or hasRole('AUTH_USER')")
     ResponseEntity<ArrayList<PyChartDTO>> getPyChartByCity(@RequestParam Long start,
                                                            @RequestParam Long end){
 
@@ -163,26 +163,40 @@ public class PropertyController {
 
     }
 
+    @GetMapping(value = "/byDeviceType/{id}", produces = "application/json")
+    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN') or hasRole('AUTH_USER')")
+    ResponseEntity<ArrayList<PyChartDTO>> getPyChartByDeviceType(@PathVariable Integer id,
+                                                                 @RequestParam Long start,
+                                                                 @RequestParam Long end){
+
+
+        ArrayList<PyChartDTO> grapgData = propertyService.getPychartByDeviceType(id, start, end, "energy-maintaining");
+        return new ResponseEntity<>(grapgData, HttpStatus.OK);
+
+    }
+
     @GetMapping(value = "/byMonthProperty/{propertyId}", produces = "application/json")
-    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
+    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN') or hasRole('AUTH_USER')")
     ResponseEntity<ArrayList<BarChartDTO>> getPyChartByCity(@PathVariable Integer propertyId,
                                                            @RequestParam int year,
-                                                            @RequestParam String measurement){
+                                                            @RequestParam String measurement,
+                                                            @RequestParam String whatId){
 
 
-        ArrayList<BarChartDTO> grapgData = propertyService.getBarChartForPropertyForYear(propertyId, year, measurement);
+        ArrayList<BarChartDTO> grapgData = propertyService.getBarChartForPropertyForYear(propertyId, year, measurement, whatId);
         return new ResponseEntity<>(grapgData, HttpStatus.OK);
 
     }
 
     @GetMapping(value = "/byTimeOfDay/{propertyId}", produces = "application/json")
-    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
+    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN') or hasRole('AUTH_USER')")
     ResponseEntity<ByTimeOfDayDTO> getByTimeOfDay(@PathVariable Integer propertyId,
                                                             @RequestParam Long start,
-                                                            @RequestParam Long end){
+                                                            @RequestParam Long end,
+                                                            @RequestParam String whatId){
 
 
-        ByTimeOfDayDTO timeOfDayDTO = propertyService.getByTimeOfDayForPropertyInRange(propertyId, start, end);
+        ByTimeOfDayDTO timeOfDayDTO = propertyService.getByTimeOfDayForPropertyInRange(propertyId, start, end, whatId);
         return new ResponseEntity<>(timeOfDayDTO, HttpStatus.OK);
 
     }

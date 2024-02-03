@@ -12,6 +12,7 @@ import { CanvasJS } from '@canvasjs/angular-charts';
 export class CityOverviewComponent implements OnInit {
   public city: CityOverview| undefined
 
+  cityId = 0
   selectedOption: string = ""
   selectedOptionElectro: string = ''
   
@@ -29,7 +30,10 @@ export class CityOverviewComponent implements OnInit {
 
   ngOnInit(): void {
     this.propertyService.currentCity.subscribe(
-      (city: CityOverview | undefined) => (this.city = city)
+      (city: CityOverview | undefined)=> {
+        this.city = city;
+        this.cityId = city?.city.id || 0
+      }
     );
     
     this.chart = new CanvasJS.Chart("cityConsumtion", 
@@ -38,7 +42,7 @@ export class CityOverviewComponent implements OnInit {
       exportEnabled: true,
       theme: "light2",
       title: {
-      text: "Property consumption"
+      text: "City consumption"
       },
       data: [{
       type: "line",

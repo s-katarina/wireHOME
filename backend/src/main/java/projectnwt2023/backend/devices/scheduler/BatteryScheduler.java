@@ -84,6 +84,9 @@ public class BatteryScheduler {
     }
 
     private boolean isDeviceOnline(int deviceId) {
+        if (deviceId == 0) {
+            return false;
+        }
         Device device = deviceService.getById((long) deviceId);
         if (device.getTopic().equals("solarPanel")) return device.isDeviceOn();
         return device.getState() == State.online;

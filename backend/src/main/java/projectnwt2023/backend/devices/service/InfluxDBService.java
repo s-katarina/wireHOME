@@ -8,6 +8,7 @@ import com.influxdb.client.domain.WritePrecision;
 import com.influxdb.client.write.Point;
 import com.influxdb.query.FluxRecord;
 import com.influxdb.query.FluxTable;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
@@ -148,20 +149,17 @@ public class InfluxDBService {
     public ArrayList<GraphDTO> findDeviceEnergyForDate(GraphRequestDTO graphRequestDTO) {
 //        System.out.println("graphRequestDTO.getF
 
-
+        String interval = findAgregationWindowInterval(Long.parseLong(graphRequestDTO.getFrom()), Long.parseLong(graphRequestDTO.getTo()));
         // Print the result
         String fluxQuery = String.format(
                 "from(bucket:\"%s\") |> range(start: %s, stop: %s)" +
                         "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"device-id\"] == \"%s\")" +                 // where measurement name (_measurement) equals value measurementName
+                        "|> aggregateWindow(every: %s, fn: sum, createEmpty: true)" +
                         "|> sort(columns: [\"_time\"], desc: false)", this.bucket,
                 graphRequestDTO.getFrom(), graphRequestDTO.getTo(),
-                graphRequestDTO.getMeasurement(), graphRequestDTO.getId());
-        ArrayList<EnergyDTO> energies = queryForEnergy(fluxQuery);
-        ArrayList<GraphDTO> grapfValue = new ArrayList<>();
-        for (EnergyDTO energyDTO: energies){
-            grapfValue.add(new GraphDTO(energyDTO.getTimestamp().getTime(), energyDTO.getConsumptionAmount()));
-        }
-        return grapfValue;
+                graphRequestDTO.getMeasurement(), graphRequestDTO.getId(), interval);
+
+        return queryForGraph(fluxQuery);
     }
 
 
@@ -232,12 +230,14 @@ public class InfluxDBService {
 
 
     public ArrayList<GraphDTO> findPropertyEnergyForDate(GraphRequestDTO graphRequestDTO) {
+        String interval = findAgregationWindowInterval(Long.parseLong(graphRequestDTO.getFrom()), Long.parseLong(graphRequestDTO.getTo()));
         String fluxQuery = String.format(
                 "from(bucket:\"%s\") |> range(start: %s, stop: %s)" +
                         "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"property-id\"] == \"%s\")" +                 // where measurement name (_measurement) equals value measurementName
+                        "|> aggregateWindow(every: %s, fn: sum, createEmpty: true)"+
                         "|> sort(columns: [\"_time\"], desc: false)", this.bucket,
                 graphRequestDTO.getFrom(), graphRequestDTO.getTo(),
-                graphRequestDTO.getMeasurement(), graphRequestDTO.getId());
+                graphRequestDTO.getMeasurement(), graphRequestDTO.getId(), interval);
         ArrayList<EnergyDTO> energies = queryForEnergy(fluxQuery);
         ArrayList<GraphDTO> grapfValue = new ArrayList<>();
         for (EnergyDTO energyDTO: energies){
@@ -304,9 +304,9 @@ public class InfluxDBService {
     }
 
     public List<BulbOnOffMeasurement> findDateRangeBulb(String deviceId, Long startTimestamp, Long endTimestamp) {
-        System.out.println(deviceId);
-        System.out.println(startTimestamp);
-        System.out.println(endTimestamp);
+//        System.out.println(deviceId);
+//        System.out.println(startTimestamp);
+//        System.out.println(endTimestamp);
         String fluxQuery = String.format(
                 "from(bucket: \"%s\")" +
                         "  |> range(start: %d, stop: %d)" +
@@ -326,9 +326,9 @@ public class InfluxDBService {
     }
 
     public List<GateEventMeasurement> findDateRangeEvents(String deviceId, Long startTimestamp, Long endTimestamp,  String measurement) {
-        System.out.println(deviceId);
-        System.out.println(startTimestamp);
-        System.out.println(endTimestamp);
+//        System.out.println(deviceId);
+//        System.out.println(startTimestamp);
+//        System.out.println(endTimestamp);
         String fluxQuery = String.format(
                 "from(bucket:\"%s\") |> range(start: %d, stop: %d)" +
                         "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"device-id\"] == \"%s\")" +
@@ -393,14 +393,14 @@ public class InfluxDBService {
         Integer step = (int) Math.ceil((double) dto.getValues().size() / 70);
         if (step == 0)
             step = 1;
-        System.out.println(step);
+//        System.out.println(step);
         AmbientSensorDateValueDTO ret = new AmbientSensorDateValueDTO(new ArrayList<>(), new ArrayList<>());
 
         for (int i = 0; i < dto.getValues().size(); i += step) {
             ret.getDates().add(dto.getDates().get(i));
             ret.getValues().add(dto.getValues().get(i));
         }
-        System.out.println(ret.getValues().size());
+//        System.out.println(ret.getValues().size());
 
         return ret;
     }
@@ -509,8 +509,8 @@ public class InfluxDBService {
             }
         }
 
-        System.out.println(dto.getDates().size());
-        System.out.println(dto.getValues().size());
+//        System.out.println(dto.getDates().size());
+//        System.out.println(dto.getValues().size());
 
         Integer step = (int) Math.ceil((double) dto.getValues().size() / 70);
         if (step == 0)
@@ -527,12 +527,14 @@ public class InfluxDBService {
     }
 
     public double getElectricityForPropertyInRange(Long propertyId, Long start, Long end, String measurement) {
+
         String fluxQuery = String.format(
                 "from(bucket:\"%s\") |> range(start: %d, stop: %d)" +
                         "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"property-id\"] == \"%s\")" +
                         "|> sum(column: \"_value\")", // Summing the values
                 this.bucket, start, end, measurement, propertyId);
-        return Math.abs(this.returnSum(fluxQuery));
+        //abs
+        return this.returnSum(fluxQuery);
     }
 
     private double returnSum(String fluxQuery) {
@@ -556,17 +558,39 @@ public class InfluxDBService {
     }
 
     public ArrayList<GraphDTO> findCityEnergyForDate(CityGraphDTO graphRequestDTO) {
+        String interval = findAgregationWindowInterval(graphRequestDTO.getFrom(), graphRequestDTO.getTo());
         String fluxQuery = String.format(
                 "from(bucket:\"%s\") |> range(start: %s, stop: %s)" +
                         "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"city-id\"] == \"%s\")" +
-                        "|> aggregateWindow(every: 1m, fn: sum, createEmpty: true)" + // Aggregate over 1-minute intervals using mean
+                        "|> aggregateWindow(every: %s, fn: sum, createEmpty: true)" + // Aggregate over 1-minute intervals using mean
                         "|> sort(columns: [\"_time\"], desc: false)",
                 this.bucket,
                 graphRequestDTO.getFrom(), graphRequestDTO.getTo(),
-                graphRequestDTO.getMeasurement(), graphRequestDTO.getId()
+                graphRequestDTO.getMeasurement(), graphRequestDTO.getId(), interval
         );
 //        System.out.println(fluxQuery);
         return queryForGraph(fluxQuery);
+    }
+
+    @NotNull
+    private static String findAgregationWindowInterval(Long from, Long to) {
+        LocalDateTime startDateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(from), ZoneId.systemDefault());
+        LocalDateTime endDateTime = LocalDateTime.ofInstant(Instant.ofEpochSecond(to), ZoneId.systemDefault());
+        endDateTime = endDateTime.withMinute(0).withSecond(0).withNano(0);
+        startDateTime = startDateTime.withMinute(0).withSecond(0).withNano(0);
+
+        Duration duration = Duration.between(startDateTime, endDateTime);
+        String interval = "10m";       // Aggregate window
+        if (duration.getSeconds() > 60 * 60 * 24) {
+            interval = "30m";      // Calculate percentage every 24 hours
+        }
+        if (duration.getSeconds() >= 60 * 60 * 24 * 7) {
+            interval = "3h";      // Calculate percentage every 24 hours
+        }
+        if (duration.getSeconds() > 60 * 60 * 24 * 7*2) {
+            interval = "10h";      // Calculate percentage every 24 hours
+        }
+        return interval;
     }
 
     private ArrayList<GraphDTO> queryForGraph(String fluxQuery) {
@@ -587,19 +611,23 @@ public class InfluxDBService {
         return result;
     }
 
-    public ArrayList<BarChartDTO> findPropertyEnergyByMonth(Integer propertyId, int year, String measurement) {
+    public ArrayList<BarChartDTO> findPropertyEnergyByMonth(Integer propertyId, int year, String measurement, String whatId) {
         ArrayList<BarChartDTO> result = new ArrayList<>();
 
         for (int month = 1; month <= 12; month++) {
             // Calculate the start and end timestamps for each month
             Date startOfMonth = Date.from(YearMonth.of(year, month).atDay(1).atStartOfDay(ZoneId.systemDefault()).toInstant());
             Date endOfMonth = Date.from(YearMonth.of(year, month).atEndOfMonth().atStartOfDay(ZoneId.systemDefault()).toInstant());
+//            System.out.println("mesec " + month);
+//            System.out.println(startOfMonth);
+//            System.out.println(endOfMonth);
+//            System.out.println(startOfMonth.getTime());
 
             String fluxQuery = String.format(
                     "from(bucket:\"%s\") |> range(start: %d, stop: %d)" +
-                            "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"property-id\"] == \"%s\")" +
+                            "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"%s\"] == \"%s\")" +
                             "|> sum(column: \"_value\")", // Summing the values
-                    this.bucket, startOfMonth.getTime()/1000, endOfMonth.getTime()/1000, measurement, propertyId);
+                    this.bucket, startOfMonth.getTime()/1000, endOfMonth.getTime()/1000, measurement, whatId, propertyId);
 
 //            System.out.println(fluxQuery);
             double sum = this.returnSum(fluxQuery);
@@ -617,27 +645,27 @@ public class InfluxDBService {
         return monthFormat.format(Date.from(firstDayOfMonth.atStartOfDay().atZone(java.time.ZoneId.systemDefault()).toInstant()));
     }
 
-    public ByTimeOfDayDTO getByTimeOfDayForPropertyInRange(Integer propertyId, Long start, Long end) {
-        ByTimeOfDayDTO electro = naIzmakuSam(propertyId, start, end, "property-electricity");
-        ByTimeOfDayDTO dist = naIzmakuSam(propertyId, start, end, "electrodeposition");
+    public ByTimeOfDayDTO getByTimeOfDayForPropertyInRange(Integer propertyId, Long start, Long end, String whatId) {
+        ByTimeOfDayDTO electro = naIzmakuSam(propertyId, start, end, "property-electricity", whatId);
+        ByTimeOfDayDTO dist = naIzmakuSam(propertyId, start, end, "electrodeposition", whatId);
         electro.setDayDist(dist.getDayElec());
         electro.setNightDist(dist.getNightElec());
         return electro;
     }
 
-    private ByTimeOfDayDTO naIzmakuSam(Integer propertyId, Long start, Long end, String measurement){
-        long interval = 12 * 60 * 60;  // 12 hours in milliseconds
+    private ByTimeOfDayDTO naIzmakuSam(Integer propertyId, Long start, Long end, String measurement, String whatId){
+        long interval = 12 * 60 * 60 * 1000;  // 12 hours in milliseconds
         double firstInterval = 0.0;
         double secondInterval = 0.0;
         boolean isFirst = true;
-        for (long currentTime = start; currentTime <= end; currentTime += interval) {
+        for (long currentTime = start * 1000; currentTime <= end * 1000; currentTime += interval) {
             long currentIntervalEnd = currentTime + interval;
 
             String fluxQuery = String.format(
                     "from(bucket:\"%s\") |> range(start: %d, stop: %d)" +
-                            "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"property-id\"] == \"%s\")" +
+                            "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"%s\"] == \"%s\")" +
                             "|> sum(column: \"_value\")", // Summing the values
-                    this.bucket, currentTime, currentIntervalEnd, measurement, propertyId);
+                    this.bucket, currentTime/1000, currentIntervalEnd/1000, measurement, whatId, propertyId);
 
             double sum = this.returnSum(fluxQuery);
 
@@ -653,33 +681,49 @@ public class InfluxDBService {
     }
 
     public ArrayList<LabeledGraphDTO> findPropertyEnergyByDayForDate(CityGraphDTO graphRequestDTO) {
-        Long start = graphRequestDTO.getFrom();
+        Long start = graphRequestDTO.getFrom() * 1000;
+        Instant instant = Instant.ofEpochMilli(start);
+        LocalDate localDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
+        // Set the time to midnight (00:00:00)
+        LocalDateTime startOfDay = localDate.atStartOfDay();
+        start = startOfDay.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         ArrayList<LabeledGraphDTO> labeledGraph = new ArrayList<>();
-        long interval = 24 * 60 * 60 * 10;  // 24 hours in milliseconds
-        long end = start + interval * 6;  //7 days
+        long interval = 24 * 60 * 60 * 1000;  // 24 hours in milliseconds
+        long end = start + interval * 6;  // 7 days
+
+
         for (long currentTime = start; currentTime <= end; currentTime += interval) {
             long currentIntervalEnd = currentTime + interval;
+            Date date = new Date(currentTime);
+//            System.out.println(date);
+
+            date = new Date(currentIntervalEnd);
+//            System.out.println(date);
+
             String fluxQuery = String.format(
                     "from(bucket:\"%s\") |> range(start: %s, stop: %s)" +
-                            "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"property-id\"] == \"%s\")" +
-                            "|> aggregateWindow(every: 1h, fn: sum, createEmpty: true)" + // Aggregate over 1-hour intervals using sum
+                            "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"%s\"] == \"%s\")" +
+                            "|> aggregateWindow(every: 1h, fn: sum, createEmpty: true)" +
                             "|> sort(columns: [\"_time\"], desc: false)",
                     this.bucket,
-                    currentTime, currentIntervalEnd,
-                    graphRequestDTO.getMeasurement(), graphRequestDTO.getId()
+                    currentTime/1000, currentIntervalEnd/1000,
+                    graphRequestDTO.getMeasurement(), graphRequestDTO.getWhatId(), graphRequestDTO.getId()
             );
-            System.out.println(fluxQuery);
-            Instant instant = Instant.ofEpochMilli(currentTime);
-            LocalDate localDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
+
+//            System.out.println(fluxQuery);
+
+            instant = Instant.ofEpochMilli(currentTime);
+            localDate = instant.atZone(ZoneId.systemDefault()).toLocalDate();
 
             // Get the day of the week as a string
             String dayOfWeekString = localDate.getDayOfWeek().name();
             labeledGraph.add(new LabeledGraphDTO(dayOfWeekString, queryForGraph(fluxQuery)));
-            System.out.println(queryForGraph(fluxQuery).size());
+//            System.out.println(queryForGraph(fluxQuery).size());
         }
-//        System.out.println(fluxQuery);
+//        System.out.println(labeledGraph);
         return labeledGraph;
     }
+
     private List<SprinklerCommandMeasurement> querySprinklerCommand(String fluxQuery) {
         List<SprinklerCommandMeasurement> result = new ArrayList<>();
         QueryApi queryApi = this.influxDbClient.getQueryApi();
@@ -715,4 +759,35 @@ public class InfluxDBService {
         return this.querySprinklerCommand(fluxQuery);
     }
 
+    public ArrayList<PyChartDTO> getByDeviceTypeForPropertyInRange(Integer id, Long start, Long end, String measurement) {
+        String fluxQuery = String.format(
+                "from(bucket:\"%s\") |> range(start: %d, stop: %d)" +
+                        "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"property-id\"] == \"%s\")" +
+                        "|> group(columns: [\"device-type\"])" +  // Group by device-type
+                        "|> sum(column: \"_value\")",           // Summing the values
+                this.bucket, start, end, measurement, id);
+
+        return this.returnSumGroup(fluxQuery);
+    }
+
+    private ArrayList<PyChartDTO> returnSumGroup(String fluxQuery) {
+        ArrayList<PyChartDTO> dto = new ArrayList<>();
+        QueryApi queryApi = this.influxDbClient.getQueryApi();
+        List<FluxTable> tables = queryApi.query(fluxQuery);
+        for (FluxTable fluxTable : tables) {
+//            System.out.println("Zelim sumu svih property potrosnje " + fluxTable);
+            List<FluxRecord> records = fluxTable.getRecords();
+            for (FluxRecord fluxRecord : records) {
+
+//                System.out.println(fluxRecord.getValues());
+                Object valueObj = fluxRecord.getValueByKey("_value");
+
+                // Add a null check before unboxing
+                if (valueObj != null) {
+                    dto.add(new PyChartDTO((String) fluxRecord.getValueByKey("device-type"), (double) valueObj));
+                }
+            }
+        }
+        return dto;
+    }
 }

@@ -66,6 +66,7 @@ filterCity2: string = ''
 
   ngOnInit(): void {
     let datee: StartEnd = this.getDate()
+    console.log(datee)
     this.fillChart(datee);
 
     this.propertyTable(datee);
@@ -212,6 +213,7 @@ filterCity2: string = ''
       let end = Math.floor(this.rangeProperty.value.end!.getTime())/1000
       this.propertyService.getAcceptedProperties(start, end).subscribe((res: any) => {
         this.propertyes = res
+        console.log('prop' + start + "-" + end + " broj query-a: " + res.length)
         this.allPropertyes = res
         this.fiterProperty()
       })
@@ -266,6 +268,7 @@ filterCity2: string = ''
         });
         this.propertyService.getCityForOverview(start, end).subscribe((res: any) => {
           this.cityes = res
+          console.log('grad' + start + "-" + end + " broj query-a: " + res.length)
           this.allCityes = res
           this.FilterFieldsCity()
         })
