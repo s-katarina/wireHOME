@@ -270,11 +270,14 @@ public class InfluxDBService {
 
         Duration duration = Duration.between(startDateTime, endDateTime);
         String interval = "1m";       // Aggregate window
-        if (duration.getSeconds() > 60 * 60 * 24) {
+        if (duration.getSeconds() > 60 * 60 * 7) {
             interval = "30m";      // Calculate percentage every 24 hours
         }
+        if (duration.getSeconds() > 60 * 60 * 24) {
+            interval = "60m";      // Calculate percentage every 24 hours
+        }
         if (duration.getSeconds() > 60 * 60 * 24 * 7) {
-            interval = "1h";      // Calculate percentage every 24 hours
+            interval = "2h";      // Calculate percentage every 24 hours
         }
         String fluxQuery = String.format(
                 "from(bucket:\"%s\") |> range(start: %d, stop: %d)" +
