@@ -53,4 +53,4 @@ Aplication desinged for monitoring and manipulating smart devices inside of your
 
 
 ## Project status
-Work in progress.
+Complete. 🎉
