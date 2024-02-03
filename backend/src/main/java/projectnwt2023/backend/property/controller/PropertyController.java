@@ -38,6 +38,7 @@ public class PropertyController {
     IPropertyService propertyService;
 
     @GetMapping(value = "/{propertyId}", produces = "application/json")
+    @PreAuthorize(value = "hasRole('AUTH_USER')")
     ResponseEntity<PropertyResponseDTO> getProperty(@PathVariable Integer propertyId){
 
         Property p = propertyService.getById(propertyId.longValue());

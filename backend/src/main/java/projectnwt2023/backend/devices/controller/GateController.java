@@ -3,6 +3,7 @@ package projectnwt2023.backend.devices.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import projectnwt2023.backend.devices.Device;
@@ -41,6 +42,7 @@ public class GateController {
     }
 
     @PutMapping(value = "/{deviceId}/regime", produces = "application/json")
+    @PreAuthorize(value = "hasRole('AUTH_USER')")
     ResponseEntity<?> setRegime(@PathVariable Integer deviceId,
                                 @RequestParam("public") Boolean isPublic){
         Device device = deviceService.getById(deviceId.longValue());
@@ -55,6 +57,7 @@ public class GateController {
     }
 
     @PutMapping(value = "/{deviceId}/open", produces = "application/json")
+    @PreAuthorize(value = "hasRole('AUTH_USER')")
     ResponseEntity<?> setOpen(@PathVariable Integer deviceId,
                                 @RequestParam("val") Boolean shouldOpen){
         Device device = deviceService.getById(deviceId.longValue());
@@ -69,6 +72,7 @@ public class GateController {
     }
 
     @GetMapping(value = "/{deviceId}/recent", produces = "application/json")
+    @PreAuthorize(value = "hasRole('AUTH_USER')")
     ResponseEntity<ApiResponse<List<GateEventDTO>>> getRecentGateEvents(@PathVariable Integer deviceId){
 
         List<GateEventMeasurement> res = gateService.getRecentGateEvents(Long.valueOf(deviceId));
@@ -80,6 +84,7 @@ public class GateController {
     }
 
     @GetMapping(value = "/{deviceId}/range", produces = "application/json")
+    @PreAuthorize(value = "hasRole('AUTH_USER')")
     ResponseEntity<ApiResponse<List<GateEventDTO>>> getRangeGateEvents(@PathVariable Integer deviceId,
                                                                        @RequestParam String start,
                                                                        @RequestParam String end) {
@@ -96,6 +101,7 @@ public class GateController {
     }
 
     @PutMapping(value = "/{deviceId}/licencePlate", produces = "application/json")
+    @PreAuthorize(value = "hasRole('AUTH_USER')")
     ResponseEntity<GateDTO> addLicencePlate(@PathVariable Integer deviceId,
                                             @RequestParam("val") String licencePlate){
         Gate gate = gateService.addLicencePlate(Long.valueOf(deviceId), licencePlate);

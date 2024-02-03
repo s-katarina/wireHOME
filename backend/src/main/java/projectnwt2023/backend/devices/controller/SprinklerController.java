@@ -9,6 +9,7 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
@@ -56,6 +57,7 @@ public class SprinklerController {
     }
 
     @PutMapping(value = "/{deviceId}/on", produces = "application/json")
+    @PreAuthorize(value = "hasRole('AUTH_USER')")
     ResponseEntity<?> setOn(@PathVariable Integer deviceId,
                               @RequestParam("val") Boolean newOn){
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
@@ -76,6 +78,7 @@ public class SprinklerController {
     }
 
     @PutMapping(value = "/{deviceId}/schedule", produces = "application/json")
+    @PreAuthorize(value = "hasRole('AUTH_USER')")
     ResponseEntity<?> setSchedule(@PathVariable Integer deviceId,
                                   @RequestBody SprinklerScheduleDTO scheduleDTO){
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
@@ -95,6 +98,7 @@ public class SprinklerController {
     }
 
     @PutMapping(value = "/{deviceId}/schedule/off", produces = "application/json")
+    @PreAuthorize(value = "hasRole('AUTH_USER')")
     ResponseEntity<?> turnOffSchedule(@PathVariable Integer deviceId){
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication()
                 .getPrincipal();
@@ -113,6 +117,7 @@ public class SprinklerController {
     }
 
     @GetMapping(value = "/{deviceId}/recent", produces = "application/json")
+    @PreAuthorize(value = "hasRole('AUTH_USER')")
     ResponseEntity<ApiResponse<List<SprinklerCommandDTO>>> getRecentCommands(@PathVariable Integer deviceId){
 
         List<SprinklerCommandMeasurement> res = sprinklerService.getRecentCommands(Long.valueOf(deviceId));
@@ -131,6 +136,7 @@ public class SprinklerController {
     }
 
     @GetMapping(value = "/{deviceId}/range", produces = "application/json")
+    @PreAuthorize(value = "hasRole('AUTH_USER')")
     ResponseEntity<ApiResponse<List<SprinklerCommandDTO>>> getRangeCommands(@PathVariable Integer deviceId,
                                                                        @RequestParam String start,
                                                                        @RequestParam String end) {
