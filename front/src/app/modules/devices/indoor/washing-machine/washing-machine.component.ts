@@ -10,6 +10,7 @@ import { AuthService } from 'src/app/modules/auth/service/auth.service';
 import { MatTableDataSource } from '@angular/material/table';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { flush } from '@angular/core/testing';
 
 @Component({
   selector: 'app-washing-machine',
@@ -47,6 +48,7 @@ export class WashingMachineComponent implements OnInit, AfterViewInit, OnDestroy
   addOnBlur = true;
   readonly separatorKeysCodes = [ENTER, COMMA] as const;
   wmtasks: WMTaskDTO[] = []
+  loadingNotDone: boolean = false;
 
   constructor(private socketService: WebsocketService, private readonly http: HttpClient, private authService: AuthService, private indoorService: IndoorDeviceService) { 
 
@@ -137,8 +139,10 @@ export class WashingMachineComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   fetch(): void {
+    this.loadingNotDone = true
     this.fetchReport(Number(this.deviceId)).subscribe((res: AirConditionActionDTO[]) => {
       this.ELEMENT_DATA = res
+      this.loadingNotDone = false
       this.dataSource = new MatTableDataSource<AirConditionActionDTO>(this.ELEMENT_DATA)
       this.dataSource.paginator = this.paginator;
     })

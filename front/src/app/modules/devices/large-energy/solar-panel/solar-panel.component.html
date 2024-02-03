@@ -81,6 +81,12 @@
 
         <p *ngIf="filterApplied">*Filter is applied.</p>
 
+        <div style="display: flex; 
+        justify-content: center; 
+        align-items: center; padding: 40px;">
+            <mat-spinner *ngIf="loadingNotDone"></mat-spinner>
+        </div>
+
         <table
             mat-table
             #eventTable
@@ -153,7 +159,8 @@
     <mat-error *ngIf="range.controls.start.hasError('matStartDateInvalid')">Invalid start date</mat-error>
     <mat-error *ngIf="range.controls.end.hasError('matEndDateInvalid')">Invalid end date</mat-error>
 </mat-form-field>
-<button (click)="onSubmit()"></button>
+<button mat-raised-button (click)="onSubmit()" class="view-data">View data</button>
+
 </div>
 </div>
     <div class="chart-div">

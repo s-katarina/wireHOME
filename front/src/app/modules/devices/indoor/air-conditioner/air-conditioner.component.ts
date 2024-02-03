@@ -49,6 +49,7 @@ export class AirConditionerComponent implements OnInit, AfterViewInit, OnDestroy
   addOnBlur = true;
   readonly separatorKeysCodes = [ENTER, COMMA] as const;
   intervals: ACIntervalDTO[] = []
+  loadingNotDone: boolean = false;
 
   constructor(private socketService: WebsocketService, private readonly http: HttpClient, private authService: AuthService, private indoorService: IndoorDeviceService) {
     this.indoorService.indoorDeviceId.subscribe((res: string) => {
@@ -183,8 +184,10 @@ export class AirConditionerComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   fetch(): void {
+    this.loadingNotDone = true
     this.fetchReport(Number(this.deviceId)).subscribe((res: AirConditionActionDTO[]) => {
       this.ELEMENT_DATA = res
+      this.loadingNotDone = false
       this.dataSource = new MatTableDataSource<AirConditionActionDTO>(this.ELEMENT_DATA)
       this.dataSource.paginator = this.paginator;
     })

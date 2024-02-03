@@ -16,11 +16,17 @@ h2 {
     font-family: 'Sora-semibold', Roboto, "Helvetica Neue", sans-serif !important; 
     color: rgb(0, 0, 0);
 }
+.view-data {
+    margin-left: 20px;
+}
 h3 {
     font-size: 1.6em;
     line-height: 1.1em;
     font-family: 'Sora-regular', Roboto, "Helvetica Neue", sans-serif !important; 
     color: rgb(0, 0, 0);
+}
+::ng-deep .mat-progress-spinner circle, .mat-spinner circle {
+    stroke: #4d6f76;
 }
 
 .mat-divider {
@@ -167,6 +173,7 @@ padding-bottom: 200px;
   }
   
   .chart-container {
+    height: 270px; width: 100%; margin:auto;
     display: block;
     margin-bottom: 50px;
     padding-top: 40px;

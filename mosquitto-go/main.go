@@ -46,6 +46,8 @@ func main() {
 	// go sprinkler.RunSprinkler()
 
 	// go battery.RunBattery(7)
+	// for i := 0; i < 2000; i++ {
+	// }
 	// go battery.RunBattery(3);
 
 	// go solarPanel.RunSolarPanel(1);

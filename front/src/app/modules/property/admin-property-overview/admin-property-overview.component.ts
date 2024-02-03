@@ -60,6 +60,8 @@ filterCity2: string = ''
     start: new FormControl<Date | null>(null),
     end: new FormControl<Date | null>(null),
   });
+loadingNotDoneCity: boolean = false;
+loadingNotDoneProperty: boolean = false;
 
   constructor(private readonly propertyService: PropertyServiceService,
               private readonly router: Router) { }
@@ -211,9 +213,11 @@ filterCity2: string = ''
     && this.rangeProperty.controls.start.valid && this.rangeProperty.controls.end.valid) { 
       let start = Math.floor(this.rangeProperty.value.start!.getTime())/1000
       let end = Math.floor(this.rangeProperty.value.end!.getTime())/1000
+      this.loadingNotDoneProperty = true
       this.propertyService.getAcceptedProperties(start, end).subscribe((res: any) => {
         this.propertyes = res
-        console.log('prop' + start + "-" + end + " broj query-a: " + res.length)
+        this.loadingNotDoneProperty = false
+      console.log('prop' + start + "-" + end + " broj query-a: " + res.length)
         this.allPropertyes = res
         this.fiterProperty()
       })
@@ -266,7 +270,9 @@ filterCity2: string = ''
           this.pyChart.options.data[0].dataPoints = res;
           this.pyChart.render();
         });
+        this.loadingNotDoneCity = true
         this.propertyService.getCityForOverview(start, end).subscribe((res: any) => {
+          this.loadingNotDoneCity = false
           this.cityes = res
           console.log('grad' + start + "-" + end + " broj query-a: " + res.length)
           this.allCityes = res

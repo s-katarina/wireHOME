@@ -69,6 +69,6 @@ if __name__ == "__main__":
         Point("charger-event")
         .tag("device-id", deviceId)
         .tag("caller", email)
-        .field("value", "port changed to " + random.randint(40, 100))
+        .field("value", "port changed to " + str(random.randint(40, 100)))
         .time(timestamp))
         write_api.write(bucket=BUCKET, org=ORG, record=point)

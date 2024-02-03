@@ -102,6 +102,12 @@
       <button class="report-btn" (click)="fetch()">Load actions</button>
     </div>
 
+    <div style="display: flex; 
+        justify-content: center; 
+        align-items: center; padding: 40px;">
+            <mat-spinner *ngIf="loadingNotDone"></mat-spinner>
+    </div>
+    
     <div class="mat-elevation-z8">
       <table mat-table class="moja-mat-tabela" [dataSource]="dataSource">
     
