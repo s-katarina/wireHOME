@@ -42,4 +42,6 @@ public interface IPropertyService {
     ArrayList<BarChartDTO> getBarChartForPropertyForYear(Integer propertyId, int year, String measurement);
 
     ByTimeOfDayDTO getByTimeOfDayForPropertyInRange(Integer propertyId, Long start, Long end);
+
+    ArrayList<PyChartDTO> getPychartByDeviceType(Integer id, Long start, Long end, String s);
 }

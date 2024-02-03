@@ -98,7 +98,7 @@ public class PropertyController {
     }
 
     @GetMapping(value = "/byCity", produces = "application/json")
-    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
+    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN') or hasRole('AUTH_USER')")
     ResponseEntity<List<CityOverviewDTO>> getPropertiesByCity(@RequestParam Long start,
                                                               @RequestParam Long end){
 //        System.out.println("parametri " + start + "  " + end);
@@ -128,7 +128,7 @@ public class PropertyController {
     }
 
     @PostMapping(value = "/propertyByDay", produces = "application/json") // koristi i za elektrodistribuciju i za samu potrosnju
-    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
+    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN') or hasRole('AUTH_USER')")
     ResponseEntity<ArrayList<LabeledGraphDTO>> getElectroByDay(@RequestBody CityGraphDTO graphRequestDTO){
 //        System.out.println("striglo je " + graphRequestDTO);
         ArrayList<LabeledGraphDTO> grapgData = propertyService.findPropertyEnergyByDayForDate(graphRequestDTO);
@@ -147,7 +147,7 @@ public class PropertyController {
     }
 
     @GetMapping(value = "/byCityChart", produces = "application/json")
-    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
+    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN') or hasRole('AUTH_USER')")
     ResponseEntity<ArrayList<PyChartDTO>> getPyChartByCity(@RequestParam Long start,
                                                            @RequestParam Long end){
 
@@ -163,8 +163,20 @@ public class PropertyController {
 
     }
 
+    @GetMapping(value = "/byDeviceType/{id}", produces = "application/json")
+    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN') or hasRole('AUTH_USER')")
+    ResponseEntity<ArrayList<PyChartDTO>> getPyChartByDeviceType(@PathVariable Integer id,
+                                                                 @RequestParam Long start,
+                                                                 @RequestParam Long end){
+
+
+        ArrayList<PyChartDTO> grapgData = propertyService.getPychartByDeviceType(id, start, end, "energy-maintaining");
+        return new ResponseEntity<>(grapgData, HttpStatus.OK);
+
+    }
+
     @GetMapping(value = "/byMonthProperty/{propertyId}", produces = "application/json")
-    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
+    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN') or hasRole('AUTH_USER')")
     ResponseEntity<ArrayList<BarChartDTO>> getPyChartByCity(@PathVariable Integer propertyId,
                                                            @RequestParam int year,
                                                             @RequestParam String measurement){
@@ -176,7 +188,7 @@ public class PropertyController {
     }
 
     @GetMapping(value = "/byTimeOfDay/{propertyId}", produces = "application/json")
-    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN')")
+    @PreAuthorize(value = "hasRole('ADMIN') or hasRole('SUPER_ADMIN') or hasRole('AUTH_USER')")
     ResponseEntity<ByTimeOfDayDTO> getByTimeOfDay(@PathVariable Integer propertyId,
                                                             @RequestParam Long start,
                                                             @RequestParam Long end){

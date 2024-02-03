@@ -8,6 +8,7 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class PropertyServiceService {
+  
 
   private propertySource = new BehaviorSubject<PropertyDTO | undefined>(undefined);
   currentProperty = this.propertySource.asObservable();
@@ -121,6 +122,11 @@ export class PropertyServiceService {
     const params = new HttpParams().set('start', start)
                                   .set("end", end)
     return this.http.get<ByTimeOfDay[]>(environment.apiHost + `property/byTimeOfDay/${id}`, {params})
+  }
+  getByDeviceTypeForProperty(start: number, end: number, id: string): Observable<PyChartDTO[]> {
+    const params = new HttpParams().set('start', start)
+                                  .set("end", end)
+    return this.http.get<PyChartDTO[]>(environment.apiHost + `property/byDeviceType/${id}`, {params})
   }
 
   getCityReadingFrom(cityId: number, dateFrom: number, dateTo: number, measurment: string) {

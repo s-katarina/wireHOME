@@ -74,4 +74,15 @@
     <button (click)="onSubmit('electrodeposition')"></button>
   </div>
 </div>
+
+<app-report-by-year [id]="propertyId || ''"></app-report-by-year>
+
+<app-report-by-day [id]="propertyId || ''"></app-report-by-day>
+
+<app-report-by-week [id]="propertyId || ''"></app-report-by-week>
+
+<div class="chart-div">
+  <app-report-by-device-type class="chart" [deviceId]="propertyId || ''"></app-report-by-device-type>
+</div>
+
 </div>

@@ -179,6 +179,11 @@ public class PropertyService implements IPropertyService {
         return influxDBService.getByTimeOfDayForPropertyInRange(propertyId, start, end);
     }
 
+    @Override
+    public ArrayList<PyChartDTO> getPychartByDeviceType(Integer id, Long start, Long end, String measurement) {
+        return influxDBService.getByDeviceTypeForPropertyInRange(id, start, end, measurement);
+    }
+
 
 }
 

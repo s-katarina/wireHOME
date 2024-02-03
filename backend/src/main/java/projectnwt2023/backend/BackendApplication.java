@@ -31,6 +31,7 @@ public class BackendApplication implements ApplicationRunner {
 	@Override
 	public void run(ApplicationArguments args) throws Exception {
 		deviceService.preprocessDevices();
+		deviceService.preprocessCharger();
 		List<AppUser> superAdmins = appUserService.findAllByRole(Role.SUPER_ADMIN);
 
 		if (superAdmins.size() == 0)

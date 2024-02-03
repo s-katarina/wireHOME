@@ -760,4 +760,35 @@ public class InfluxDBService {
         return this.querySprinklerCommand(fluxQuery);
     }
 
+    public ArrayList<PyChartDTO> getByDeviceTypeForPropertyInRange(Integer id, Long start, Long end, String measurement) {
+        String fluxQuery = String.format(
+                "from(bucket:\"%s\") |> range(start: %d, stop: %d)" +
+                        "|> filter(fn: (r) => r[\"_measurement\"] == \"%s\" and r[\"property-id\"] == \"%s\")" +
+                        "|> group(columns: [\"device-type\"])" +  // Group by device-type
+                        "|> sum(column: \"_value\")",           // Summing the values
+                this.bucket, start, end, measurement, id);
+
+        return this.returnSumGroup(fluxQuery);
+    }
+
+    private ArrayList<PyChartDTO> returnSumGroup(String fluxQuery) {
+        ArrayList<PyChartDTO> dto = new ArrayList<>();
+        QueryApi queryApi = this.influxDbClient.getQueryApi();
+        List<FluxTable> tables = queryApi.query(fluxQuery);
+        for (FluxTable fluxTable : tables) {
+//            System.out.println("Zelim sumu svih property potrosnje " + fluxTable);
+            List<FluxRecord> records = fluxTable.getRecords();
+            for (FluxRecord fluxRecord : records) {
+
+//                System.out.println(fluxRecord.getValues());
+                Object valueObj = fluxRecord.getValueByKey("_value");
+
+                // Add a null check before unboxing
+                if (valueObj != null) {
+                    dto.add(new PyChartDTO((String) fluxRecord.getValueByKey("device-type"), (double) valueObj));
+                }
+            }
+        }
+        return dto;
+    }
 }
