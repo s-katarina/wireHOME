@@ -1,21 +1,31 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { ApiResponse, Battery, ChartData, GraphDTO, PyChartDTO, SolarPanel } from 'src/app/model/model';
+import { ApiResponse, Battery, Charger, ChartData, GraphDTO, PyChartDTO, SolarPanel } from 'src/app/model/model';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class LargeEnergyService {
-  
-  getGateEvents(id: string): Observable<ApiResponse> {
-    return this.http.get<ApiResponse>(environment.apiHost + `device/largeEnergy/${id}/recent`)
+  changePort(id:string, licencePlate: number): Observable<any> {
+    const params = new HttpParams().set('val', licencePlate);
+    return this.http.put<any>(environment.apiHost + `device/largeEnergy/charger/${id}/port`, {}, {params})
   }
 
-  getRangeGateEvents(id: string, start: string, end: string): Observable<ApiResponse> {
+  getCharger(id: string): Observable<Charger> {
+    return this.http.get<Charger>(environment.apiHost + `device/largeEnergy/charger/${id}`)
+  }
+  
+  getGateEvents(id: string, measurement: string): Observable<ApiResponse> {
+    const params = new HttpParams().set('measurement', measurement)
+    return this.http.get<ApiResponse>(environment.apiHost + `device/largeEnergy/${id}/recent`, {params})
+  }
+
+  getRangeGateEvents(id: string, start: string, end: string, measurement: string): Observable<ApiResponse> {
     const params = new HttpParams().set('start', start)
-                                    .set('end', end);
+                                    .set('end', end)
+                                    .set('measurement', measurement)
 
     return this.http.get<ApiResponse>(environment.apiHost + `device/largeEnergy/${id}/range`, {params})
   }
@@ -68,10 +78,24 @@ export class LargeEnergyService {
   }
 
 
-  getDeviceOnlineOfflinePyChart(id: string) : Observable<PyChartDTO[]> {
-    return this.http.get<PyChartDTO[]>(environment.apiHost + `device/onlinePercent/${id}`)
+  getDeviceOnlineOfflinePyChart(id: string, start: string, end: string) : Observable<PyChartDTO[]> {
+    const params = new HttpParams().set('start', start)
+                                    .set('end', end);
+    return this.http.get<PyChartDTO[]>(environment.apiHost + `device/onlinePercent/${id}`, {params})
+  }
+
+  getDeviceOnlineOfflineIntervalChart(id: string, start: string, end: string) : Observable<ApiResponse> {
+    const params = new HttpParams().set('start', start)
+                                    .set('end', end);
+    return this.http.get<ApiResponse>(environment.apiHost + `device/onlineIntervals/${id}`, {params})
   }
   
+  getDeviceOnlineOfflineTimeUnitChart(id: string, start: string, end: string) : Observable<ApiResponse> {
+    const params = new HttpParams().set('start', start)
+                                    .set('end', end);
+    return this.http.get<ApiResponse>(environment.apiHost + `device/onlinePerUnit/${id}`, {params})
+  }
+
   constructor(private readonly http: HttpClient) { }
 
   private selectedDevice = new BehaviorSubject<string>("");

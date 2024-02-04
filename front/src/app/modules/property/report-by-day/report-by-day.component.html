@@ -1,0 +1,56 @@
+<h3 class="margin-top">Energy overview by time of day</h3>
+<mat-divider></mat-divider>
+<div class="filter-section">
+    <mat-form-field>
+        <mat-label>Enter a date range</mat-label>
+        <mat-date-range-input [formGroup]="rangeProperty" [rangePicker]="picker">
+          <input matStartDate formControlName="start" placeholder="Start date">
+          <input matEndDate formControlName="end" placeholder="End date">
+        </mat-date-range-input>
+        <mat-hint>DD/MM/YYYY – DD/MM/YYYY</mat-hint>
+        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+        <mat-date-range-picker #picker></mat-date-range-picker>
+    
+        <mat-error *ngIf="rangeProperty.controls.start.hasError('matStartDateInvalid')">Invalid start date</mat-error>
+        <mat-error *ngIf="rangeProperty.controls.end.hasError('matEndDateInvalid')">Invalid end date</mat-error>
+    </mat-form-field>
+    <button mat-raised-button (click)="changeByPartOfDay()">View data</button>
+</div>
+<mat-card>
+    <mat-card-header>
+      <div class="car-plate">Data by Time of Day</div>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="car-info">
+        <div class="car-detail">
+          <span class="detail-label">Property consumption by day:</span>
+          <span class="detail-value">{{ timeOfDay?.dayElec | number:'1.2-2' }} kW</span>
+        </div>
+
+        <div class="car-detail">
+            <span class="detail-label">Property consumption by night:</span>
+          <span class="detail-value">{{ timeOfDay?.nightElec | number:'1.2-2' }} kW</span>
+        </div>
+        <div class="car-detail">
+          <span class="detail-label">From electrodistribution by day:</span>
+          <span class="detail-value">{{ timeOfDay?.dayDist | number:'1.2-2' }} kW</span>
+        </div>
+
+        <div class="car-detail">
+            <span class="detail-label">From electrodistribution by night:</span>
+            <span class="detail-value">{{ timeOfDay?.nightDist | number:'1.2-2' }} kW</span>
+          </div>
+      </div>
+    </mat-card-content>
+    <mat-card-footer>
+        <div class="car-detail">
+            <span class="detail-label">Total property consumption:</span>
+            <span class="detail-value">{{ elecTotal | number:'1.2-2'}} kW</span>
+          </div>
+          <div class="car-detail">
+            <span class="detail-label">Total from electrodistribution:</span>
+            <span class="detail-value">{{ distTotal | number:'1.2-2' }} kW</span>
+          </div>
+
+    </mat-card-footer>
+  </mat-card>

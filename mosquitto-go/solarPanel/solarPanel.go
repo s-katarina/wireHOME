@@ -131,13 +131,13 @@ func sendElectisityByMinute(client mqtt.Client) {
 		// fmt.Printf("Sun Altitude: %f deg\n", sunPos.Altitude*180/math.Pi)
 		duration := times[suncalc.Sunset].Value.Sub(times[suncalc.Sunrise].Value)
 		sunnyHours := duration.Hours()
-		fmt.Println(times[suncalc.Sunrise].Value)
+		// fmt.Println(times[suncalc.Sunrise].Value)
 	
 		var efficiency = solarPanel.SurfaceSize * 1000 * solarPanel.Efficiency
 		var outputByDay = (efficiency/100) * sunnyHours / 1000
-		fmt.Printf("Output by day: %f\n",outputByDay)
+		// fmt.Printf("Output by day: %f\n",outputByDay)
 		var outputByMinute = (outputByDay/(24*60)) * (1 - math.Abs(math.Cos(sunPos.Altitude*180/math.Pi)))
-		fmt.Printf("Output by min: %f\n",outputByMinute)
+		// fmt.Printf("Output by min: %f\n",outputByMinute)
 	
 		if (now.Before(times[suncalc.Sunrise].Value) || now.After(times[suncalc.Sunset].Value)) {
 			outputByMinute = 0.0

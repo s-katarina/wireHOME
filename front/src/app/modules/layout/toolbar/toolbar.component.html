@@ -26,8 +26,14 @@
     <button mat-button [routerLink]="['/properties']" *ngIf="this.user.email != null  && this.user.role == 'AUTH_USER'">
       Properties
     </button>
+    <button mat-button [routerLink]="['/sharing']" *ngIf="this.user.email != null  && this.user.role == 'AUTH_USER'">
+      Sharing
+    </button>
     <button mat-button [routerLink]="['/property-requests']" *ngIf="this.user.email != null && (this.user.role == 'SUPER_ADMIN' || this.user.role == 'ADMIN')">
       Property requests
+    </button>
+    <button mat-button [routerLink]="['/admin-overview']" *ngIf="this.user.email != null && (this.user.role == 'SUPER_ADMIN' || this.user.role == 'ADMIN')">
+      Property overview
     </button>
     <button mat-button (click)="logout()" *ngIf="this.user.email != null">
       Log out

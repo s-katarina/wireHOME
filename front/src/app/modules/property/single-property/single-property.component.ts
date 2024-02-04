@@ -4,6 +4,7 @@ import { DeviceDTO, PropertyDTO } from 'src/app/model/model';
 import { OutdoorDeviceService } from '../../devices/outdoor/service/outdoor-device-service';
 import { PropertyServiceService } from '../service/property-service.service';
 import { LargeEnergyService } from '../../devices/large-energy/large-energy.service';
+import { IndoorDeviceService } from '../../devices/indoor/service/indoor-device.service';
 
 @Component({
   selector: 'app-single-property',
@@ -21,6 +22,7 @@ export class SinglePropertyComponent implements OnInit {
   constructor(private readonly propertyService: PropertyServiceService,
     private readonly outdoorDeviceService: OutdoorDeviceService,
     private readonly largeEnergyDeviceService: LargeEnergyService,
+    private readonly indoorService: IndoorDeviceService,
     private router: Router) { 
     this.propertyService.currentProperty.subscribe(
       (property: PropertyDTO | undefined) => (this.property = property)
@@ -68,6 +70,8 @@ export class SinglePropertyComponent implements OnInit {
         return "Solar panel"
       case "battery":
         return "Battery"
+      case "charger":
+        return "Charger"
       default:
         return ""
     }
@@ -79,7 +83,9 @@ export class SinglePropertyComponent implements OnInit {
         this.router.navigate(['/lamp']);
     } else if (device.deviceType === "gate") {
         this.router.navigate(['/gate'])
-    }
+    } else if (device.deviceType === "sprinkler") {
+      this.router.navigate(['/sprinkler'])
+  }
   }
 
   navigateToLargeEnergyDevice(device: DeviceDTO) {
@@ -90,15 +96,22 @@ export class SinglePropertyComponent implements OnInit {
     else if (device.deviceType == 'battery') {
       this.router.navigate(['/battery'])
     }
+    else if (device.deviceType == 'charger') {
+      this.router.navigate(['/charger'])
+    }
   }
 
   navigateToIndoorDevice(device: DeviceDTO) {
+    this.indoorService.setSelectedIndoorDeviceId(device.id);
     if (device.deviceType === 'ambientSensor') {
       this.router.navigate(['/ambient-sensor']);
-  }
-  else if (device.deviceType == 'airConditioner') {
-    this.router.navigate(['/air-conditioner'])
-  }
+    }
+    else if (device.deviceType == 'airConditioner') {
+      this.router.navigate(['/air-conditioner'])
+    }
+    else if (device.deviceType == 'washingMachine') {
+      this.router.navigate(['/washing-machine'])
+    }
   }
 
 }

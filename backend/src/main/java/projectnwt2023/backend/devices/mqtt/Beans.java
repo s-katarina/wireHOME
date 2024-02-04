@@ -45,6 +45,14 @@ public class Beans {
     @Autowired
     IAirConditionerService airConditionerService;
 
+    @Autowired
+    IChargerService chargerService;
+
+    @Autowired
+    ISprinklerService sprinklerService;
+    @Autowired
+    IWashingMachineService washingMachineService;
+
     @Value("${mosquitto.username}")
     private String username;
 
@@ -90,7 +98,7 @@ public class Beans {
             public void handleMessage(Message<?> message) throws MessagingException {
                 String topic = (String) message.getHeaders().get(MqttHeaders.RECEIVED_TOPIC);
                 System.out.println(message.getPayload());
-                System.out.println(topic);
+//                System.out.println(topic);
                 PayloadDTO payloadDTO = getPayload(message, PayloadDTO.class);
                 if (topic == null){
                     System.out.println("null je topic");
@@ -116,6 +124,12 @@ public class Beans {
                     ambientSensorService.parseRequest(topic, message);
                 } else if (topic.contains("airConditioner")) {
                     airConditionerService.parseRequest(topic, message);
+                } else if (topic.contains("charger")) {
+                    chargerService.parseRequest(topic, message);
+                }   else if (topic.contains("sprinkler")) {
+                    sprinklerService.parseRequest(topic, message);
+                } else if (topic.contains("washingMachine")) {
+                    washingMachineService.parseRequest(topic, message);
                 }
 
 //                System.out.println(message.getPayload());

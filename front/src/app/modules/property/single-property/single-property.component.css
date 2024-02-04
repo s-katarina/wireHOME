@@ -67,7 +67,6 @@ p {
     font-size: 1.1em;
     font-family: 'Sora-regular', Roboto, "Helvetica Neue", sans-serif !important; 
     padding-top: 15px;
-    margin-bottom: 5px !important;
 }
 
 .sections {
@@ -85,9 +84,11 @@ p {
     display: flex;
     justify-content: flex-start;
     overflow-x: auto;   
+    overflow-y: visible !important;
     border-radius: 8px;
     background-color: #ffffff00 !important;
     flex-wrap: wrap;
+    height: 35vh;
 }
 
 .card {
@@ -197,4 +198,10 @@ p{
     .mat-button {
         width: 50%;
     }
+  }
+
+  .deviceType {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 0 !important;
   }

@@ -51,7 +51,11 @@
     <h5 matTooltip="Graphical chart displaying of data for true accessibility">Chart insights</h5>
     <mat-divider></mat-divider>
     
-    <div class="same-row">
+    
+
+<div class="chart-div">
+    <h2>Light sensor values in time range</h2>
+    <div>
         <mat-form-field class="margin-left">
             <mat-label>Select time range</mat-label>
             <mat-select [(ngModel)]="selectedOption" (selectionChange)="onDropdownChange()">
@@ -78,20 +82,21 @@
             <mat-error *ngIf="range.controls.start.hasError('matStartDateInvalid')">Invalid start date</mat-error>
             <mat-error *ngIf="range.controls.end.hasError('matEndDateInvalid')">Invalid end date</mat-error>
             <mat-error *ngIf="rangeOver30Days">Dates must be less than 30 days apart</mat-error>
-        </mat-form-field>
+            </mat-form-field>
+         </div>
+        <p *ngIf="rangeOver30Days">Dates must be less than 30 days apart</p>
+        <button mat-raised-button (click)="onSubmit()" class="view-data">View data</button>
     </div>
-    <p *ngIf="rangeOver30Days">Dates must be less than 30 days apart</p>
-    <button mat-raised-button (click)="onSubmit()" class="view-data">View data</button>
-</div>
-
-<div class="chart-div">
     <div id="chartContainer" style="height: 370px; width: 100%; margin:auto;"></div>    
 </div> 
 <div class="chart-div">
+    <h2>Bulb on/off in last 24 hours</h2>
+    <div *ngIf="!showChartBulb" style="display: flex; justify-content:center;"><h3>No bulb change in last 24 hours.</h3></div>
     <div id="chartBulbContainer" style="height: 370px; width: 100%; margin:auto;"></div>    
+    <mat-divider></mat-divider>
 </div>
 <div class="chart-div-online">
-    <app-online-offline-chart class="chart" [deviceId]="lamp!.id"></app-online-offline-chart>
+    <app-online-offline-chart class="chart" #onlineOfflineChart [deviceId]="lamp!.id"></app-online-offline-chart>
 </div>
 
 </div>

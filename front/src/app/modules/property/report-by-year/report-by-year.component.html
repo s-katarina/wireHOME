@@ -1,0 +1,13 @@
+<h3>Energy overview by month</h3>
+  <mat-divider></mat-divider>
+<div class="filter-section">
+    <mat-form-field>
+        <mat-label>Year for monthly report</mat-label>
+        <input matInput placeholder="Year: 2024" required type="number" [(ngModel)]="year">
+      </mat-form-field>
+    <button mat-raised-button (click)="changeYear()">View data</button>
+</div>
+
+<div>
+    <div class="barChart" id="barChartt"></div>    
+</div>

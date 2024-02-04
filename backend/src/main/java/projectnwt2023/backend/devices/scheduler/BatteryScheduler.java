@@ -42,10 +42,9 @@ public class BatteryScheduler {
             justSendBatteryState();
             sendPropertyConsumption();
         }
-        for (EnergyDTO energy:
-             energies) {
+        for (EnergyDTO energy: energies) {
             int propertyId = energy.getPropertyId();
-            System.out.println(energy);
+//            System.out.println(energy);
             if (!propertyEnergy.containsKey(propertyId)) {
                 propertyEnergy.put(propertyId, 0.0);
             }
@@ -63,9 +62,10 @@ public class BatteryScheduler {
 
     private void sendPropertyConsumption() {
         List<Property> propertyes = propertyService.getAllPropertyes();
-        System.out.println("propertu " + propertyes.size());
+//        System.out.println("propertu " + propertyes.size());
         for (Property property: propertyes) {
             Map<String, String> values = new HashMap<>();
+            values.put("city-id", String.valueOf(property.getCity().getId()));
             values.put("property-id", String.valueOf(property.getId()));
             influxDBService.save("property-electricity", 0, new Date(), values);
             this.simpMessagingTemplate.convertAndSend("/energy/" + property.getId(), 0);
@@ -84,6 +84,9 @@ public class BatteryScheduler {
     }
 
     private boolean isDeviceOnline(int deviceId) {
+        if (deviceId == 0) {
+            return false;
+        }
         Device device = deviceService.getById((long) deviceId);
         if (device.getTopic().equals("solarPanel")) return device.isDeviceOn();
         return device.getState() == State.online;
@@ -94,6 +97,8 @@ public class BatteryScheduler {
         double aggregatedAmount = entry.getValue();
 
         Map<String, String> values = new HashMap<>();
+        Property property = propertyService.getById((long) propertyId);
+        values.put("city-id", String.valueOf(property.getCity().getId()));
         values.put("property-id", String.valueOf(propertyId));
         influxDBService.save("property-electricity", (float) aggregatedAmount, new Date(), values);
         this.simpMessagingTemplate.convertAndSend("/energy/" + propertyId, aggregatedAmount);
@@ -101,7 +106,7 @@ public class BatteryScheduler {
 //        ArrayList<Battery> batteries = batteryService.getBatteriesByPropertyId((long) propertyId);
         ArrayList<Battery> batteries = batteryService.getOnlineBatteriesByPropertyId((long) propertyId); //TODO samo online baterija
 
-        System.out.println(batteries.size());
+//        System.out.println(batteries.size());
         if (batteries.size() == 0) {
             sendToElectroDistibution(propertyId, (float) aggregatedAmount);
             return;
@@ -115,7 +120,10 @@ public class BatteryScheduler {
         System.out.println("proces aktivnei baterija" + batteries.size());
         for(Battery battery: batteries)
         {
+            //ovde treba plus i nista vise
+
             double electrisity = battery.getCurrentFill() + perBattery;
+
             if (electrisity<0){
                 battery.setCurrentFill(0);
                 finalElectisity += electrisity;
@@ -127,6 +135,7 @@ public class BatteryScheduler {
                 //posalji koliko je poslao
             } else {
                 battery.setCapacity(electrisity);
+                deviceService.save(battery);
             }
             Map<String, String> values = new HashMap<>();
             values.put("device-id", String.valueOf(battery.getId()));
@@ -138,6 +147,8 @@ public class BatteryScheduler {
 
     private void sendToElectroDistibution(int propertyId, float aggregatedAmount) {
         Map<String, String> values = new HashMap<>();
+        Property property = propertyService.getById((long) propertyId);
+        values.put("city-id", String.valueOf(property.getCity().getId()));
         values.put("property-id", String.valueOf(propertyId));
         influxDBService.save("electrodeposition", aggregatedAmount, new Date(), values);
     }

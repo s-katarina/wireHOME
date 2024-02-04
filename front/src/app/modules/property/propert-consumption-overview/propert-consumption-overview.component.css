@@ -1,0 +1,164 @@
+.barChart {
+    height: 370px; width: 100%; margin:auto;
+    margin-top: 3vh;
+}
+
+.dayChart {
+  height: 200px; width: 25%; margin:auto;
+  margin-top: 3vh;
+}
+
+.page {
+  margin: 5%;
+}
+
+h2 {
+  font-size: 2em;
+  line-height: 1.3em;
+  font-family: 'Sora-semibold', Roboto, "Helvetica Neue", sans-serif !important; 
+  color: rgb(0, 0, 0);
+}
+h3 {
+  font-size: 1.6em;
+  line-height: 1.1em;
+  font-family: 'Sora-regular', Roboto, "Helvetica Neue", sans-serif !important; 
+  color: rgb(0, 0, 0);
+}
+
+.mat-divider {
+  border-top: 2px solid rgb(190, 190, 190);
+  margin-bottom: 10px;
+}
+
+.filter-section {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 3vh;
+    /* margin-bottom: 1vh; */
+}
+
+.filter-section .mat-form-field {
+    flex: 1; 
+}
+
+.filter-section-button {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.car-plate {
+    margin-left: 27px;
+    font-size: 1.3em;
+    padding: 1.5vh;
+  }
+  
+  .car-info {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .car-detail {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    margin-left: 27px;
+  }
+  
+  .detail-label {
+    font-weight: bold;
+    margin-right: 10px;
+    margin-left: 40px;
+  }
+  
+  .detail-value {
+    color: #007bff; /* You can customize the color */
+  }
+  .widthCard {
+    width: 80%;
+  }
+
+  .mat-form-field {
+    margin: 20px !important;
+    width: 30% !important;
+}
+  
+  
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+    color: rgb(57, 57, 57) !important;
+}
+
+::ng-deep .mat-form-field.mat-focused .mat-form-field-label {
+    color: black !important ;
+}
+
+.mat-raised-button {
+    margin: 20px;
+    height: 2.8em;
+    min-width: 160px;
+    width: 6vw;
+}
+
+.mat-tooltip {
+    font-family: 'Heebo-regular', Roboto, "Helvetica Neue", sans-serif !important; 
+    /* padding: 15px 28px !important;  */
+    padding: 0 !important;
+    font-size: medium;
+}
+
+.margin-top {
+  margin-top: 5vh;
+}
+
+
+.day-section {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.day-section > div {
+  width: 40%; /* Each div takes 25% of the container width */
+}
+
+.dayChart {
+  /* Your styles for the dayChart divs */
+  height: 200px; /* Example height */
+  margin:auto;
+  width: 100%; /* Each div takes 25% of the container width */
+
+}
+
+
+
+.same-row{
+  display: flex;
+  justify-content: flex-start;
+}
+.margin-left{
+  margin-left: 2vw;
+}
+
+
+.chart {
+  height: 370px; width: 100%; margin:auto;
+  margin-top: 3vh;
+}
+.view-data {
+  margin-left: 20px;
+}
+
+
+.mat-divider {
+  border-top: 2px solid rgb(190, 190, 190);
+  margin-bottom: 10px;
+}
+.page {
+  margin: 5%;
+}
+
+.view-data {
+  margin-left: 20px;
+}

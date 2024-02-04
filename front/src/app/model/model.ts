@@ -9,6 +9,13 @@ export interface CountryDTO {
     name: string;
 }
 
+export interface CityOverview {
+    city: CityDTO
+    propertyesNum: number
+    energy: number
+    electodistribution: number
+}
+
 export interface PropertyRequestDTO {
     propertyType: string;
     address: string;
@@ -53,9 +60,17 @@ export interface PropertyDTO {
     area: number | null;
     floorCount: number | null;
     propertyStatus: string;
+    energy?: number
+    electodistribution?: number
+
 }
 
-
+export interface ByTimeOfDay {
+    dayElec: number
+    nightElec: number
+    dayDist: number
+    nightDist: number
+}
 
 export interface LoginDTO {
     email: string;
@@ -86,6 +101,15 @@ export interface Gate extends DeviceDTO {
     licencePlates: string[]
 }
 
+export interface Sprinkler extends DeviceDTO {
+    scheduleMode: boolean
+    scheduleDTO: {
+        startHour: number,
+        endHour: number,
+        weekdays: number[]
+    }
+}
+
 export interface SolarPanel extends DeviceDTO {
     surfaceSize: number;
     efficiency: number;
@@ -96,9 +120,37 @@ export interface Battery extends DeviceDTO {
     currentFill: number;
 }
 
+export interface Charger extends DeviceDTO {
+    chargingStrength: number
+    portNumber: number
+    availablePortNumber: number
+    percentage: number
+}
+
+export interface AirConditionerDTO extends DeviceDTO {
+    regimes: string[],
+    currentAction: string,
+    temp: number,
+    minTemp: number,
+    maxTemp: number
+}
+
+export interface WashingMachineDTO extends DeviceDTO {
+    regimes: string[],
+    currentAction: string
+}
+
 export interface GateEvent  {
     caller: string,
     eventType: string
+    timestamp: string
+    callerUsername?: string,
+}
+
+export interface SprinklerCommand  {
+    caller: string,
+    callerUsername: string,
+    command: string
     timestamp: string
 }
 
@@ -124,6 +176,11 @@ export interface LightSensorDTO {
 
 export interface PyChartDTO {
     indexLabel: string
+    y: number
+}
+
+export interface BarChartDTO {
+    label: string
     y: number
 }
 
@@ -153,4 +210,51 @@ export interface AirConditionActionDTO {
     action: string,
     email: string,
     date: string
+}
+
+export interface Car {
+    plate: string,
+    batterySize: number,
+    percentage: number,
+    energyConsumed: number
+}
+
+export interface StartEnd {
+    start: number
+    end: number
+}
+
+export interface LabeledGraphDTO {
+    label: string
+    graphDTOS: GraphDTO[]
+}
+
+export interface ACIntervalDTO {
+    id: number,
+    startTime: string,
+    endTime: string,
+    action: string
+}
+
+export interface WMTaskDTO {
+    id: number,
+    startTime: string,
+    action: string
+}
+
+export interface SharedPropertyDTO {
+    id: number,
+    shareWith: AppUserDTO,
+    property: PropertyDTO
+}
+
+export interface SharedDeviceDTO {
+    id: number,
+    shareWith: AppUserDTO,
+    device: DeviceDTO
+}
+
+export interface ShareActionDTO {
+    email: string,
+    id: string
 }

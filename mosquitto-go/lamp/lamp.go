@@ -20,6 +20,8 @@ type Lamp struct {
 	device.BaseDevice
 	BulbState        bool `json:"bulbState"`
 	IsAutomatic      bool `json:"automatic"`
+	Latitude      	 float32 `json:"latitude"`
+	Longitude      	 float32 `json:"longitude"`
 	lightSensorValue int
 	client           mqtt.Client
 }
@@ -110,7 +112,7 @@ func (lamp Lamp) SubToAutomaticSet(client mqtt.Client) {
 }
 
 
-func getLamp(deviceId int) Lamp {
+func GetLamp(deviceId int) Lamp {
 
 	apiUrl := fmt.Sprintf("%s/lamp/%d", constants.ApiUrl, deviceId)
 	fmt.Println(apiUrl)
@@ -141,10 +143,10 @@ func getLamp(deviceId int) Lamp {
 
 }
 
-var lamp Lamp = getLamp(2)
+var lamp Lamp
 
 func SetLamp(id int) {
-	lamp = getLamp(id)
+	lamp = GetLamp(id)
 }
 
 var messagePubHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
@@ -243,17 +245,46 @@ func RunLamp() {
 	lamp.SubToAutomaticSet(client)
 	go pubLightSensorValue(client)
 	go lamp.TakesElectisity(client)
-	lamp.SendHeartBeat(client)
+	go lamp.SendHeartBeat(client)
 }
 
 func simulateLightSensor() int {
 
 	now := time.Now()
 	hour := float64(now.Hour()) + float64(now.Minute())/60.0
-	
+
+	seasonHourCoeficient := 6.0
+	seasonPiCoeficient := 12
+	// Winter
+	if now.Month() < 4 || now.Month() == 12 {
+		seasonHourCoeficient = 6.0
+		seasonPiCoeficient = 10
+	// Spring/Autumn
+	} else if (now.Month() >= 4 && now.Month() <= 6) || (now.Month() >= 9 && now.Month() < 12) {
+		seasonHourCoeficient = 7.0
+		seasonPiCoeficient = 12
+	// Summer
+	} else {
+		seasonHourCoeficient = 5.0
+		seasonPiCoeficient = 16
+	}
+
+	// Southern hemisphere, inverse seasons
+	if (lamp.Latitude < 0) {
+		// Summer
+		if now.Month() < 4 || now.Month() == 12 {
+			seasonHourCoeficient = 5.0
+			seasonPiCoeficient = 16
+		// Winter
+		} else {
+			seasonHourCoeficient = 6.0
+			seasonPiCoeficient = 10
+		}
+	}
+
 	// Use sinus function for simulation of continous change
 	// Daylight hours (06h to 18h) will be taken into account, because sin()>0
-	intensity := int(70000*(math.Sin((hour-6.0)*math.Pi/12)) + rand.Float64()*5000)
+	intensity := int(70000*(math.Sin((hour-seasonHourCoeficient)*math.Pi/float64(seasonPiCoeficient))) + rand.Float64()*5000)
 
 	if intensity < 0 {
 		intensity = int(rand.Int31n(1000))

@@ -1,6 +1,11 @@
 <div class="page">
     <h2>Pending properties requests</h2>
     <mat-divider></mat-divider>
+    <div style="display: flex; 
+        justify-content: center; 
+        align-items: center; padding: 40px;">
+            <mat-spinner *ngIf="loadingNotDone"></mat-spinner>
+    </div>
     <div class="grid">
         <div *ngFor="let request of requests">
             <mat-card class="request-card" >

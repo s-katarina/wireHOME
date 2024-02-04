@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
@@ -14,5 +15,5 @@ import java.util.Date;
 public class Measurement {
     private String name;
     private double value;
-    private Date timestamp;
+    private LocalDateTime timestamp;
 }

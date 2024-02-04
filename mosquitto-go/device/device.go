@@ -24,6 +24,7 @@ type BaseDevice struct {
 	ConsumptionAmount float64
 	PropertyId int
 	On bool
+	DeviceType string
 }
 
 
@@ -57,7 +58,7 @@ func (device BaseDevice) SendHeartBeat(client mqtt.Client) {
 			// log.Fatal(err)
 			fmt.Println("jbg")
 		}
-	
+		// fmt.Println("jbg")
         // text := fmt.Sprintf("Heartbeat %v", currentTime)
         token := client.Publish("heartbeat", 0, false, jsonData)
         token.Wait()
@@ -133,7 +134,7 @@ func (device BaseDevice) TakesElectisity(client mqtt.Client) {
 		}
 	topic := fmt.Sprintf("energy/%d/%s", device.Id, "any-device")
     for {
-		data := fmt.Sprintf("energy-maintaining,device-id=%d,property-id=%d value=%f", device.Id, device.PropertyId, -device.ConsumptionAmount)
+		data := fmt.Sprintf("energy-maintaining,device-id=%d,property-id=%d,device-type=%s value=%f", device.Id, device.PropertyId, device.DeviceType, -device.ConsumptionAmount/6)
 		token := client.Publish(topic, 0, false, data)
 		token.Wait()
         time.Sleep(time.Second * 15)

@@ -1,0 +1,25 @@
+.chart {
+    height: 600px; width: 100%; margin:auto;
+    margin-top: 3vh;
+}
+
+.chart-div {
+    display: block;
+    margin-top: 90px;
+    margin-bottom: 90px;
+}
+
+.filter-section {
+    width: fit-content;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10vh;
+    align-self: center;
+    /* margin-bottom: 1vh; */
+}
+
+.view-data {
+    margin-left: 20px;
+}

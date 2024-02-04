@@ -71,7 +71,19 @@
         <mat-error *ngIf="range.controls.start.hasError('matStartDateInvalid')">Invalid start date</mat-error>
         <mat-error *ngIf="range.controls.end.hasError('matEndDateInvalid')">Invalid end date</mat-error>
     </mat-form-field>
-    <button (click)="onSubmit('electrodeposition')"></button>
+    <button mat-raised-button (click)="onSubmit('electrodeposition')" class="view-data">View data</button>
+
   </div>
 </div>
+
+<app-report-by-year [id]="propertyId || ''"></app-report-by-year>
+
+<app-report-by-day [id]="propertyId || ''"></app-report-by-day>
+
+<app-report-by-week [id]="propertyId || ''"></app-report-by-week>
+
+<div class="chart-div">
+  <app-report-by-device-type class="chart" [deviceId]="propertyId || ''"></app-report-by-device-type>
+</div>
+
 </div>

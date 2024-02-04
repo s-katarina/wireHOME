@@ -9,7 +9,9 @@
 .page {
     margin: 5%;
 }
-
+.view-data {
+    margin-left: 20px;
+}
 h2 {
     font-size: 2em;
     line-height: 1.3em;
@@ -80,4 +82,15 @@ img {
     display: block;
     margin-top: 90px;
     margin-bottom: 90px;
+}
+
+.chart-div {
+    margin-top: 40px;
+    margin-bottom: 40px;
+  }
+  
+.chart-div-online {
+display: block;
+padding-top: 40px;
+padding-bottom: 200px;
 }

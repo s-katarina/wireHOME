@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import projectnwt2023.backend.devices.Device;
 import projectnwt2023.backend.devices.Lamp;
 import projectnwt2023.backend.devices.Measurement.BulbOnOffMeasurement;
-import projectnwt2023.backend.devices.dto.LampDTO;
+import projectnwt2023.backend.devices.dto.model.LampDTO;
 import projectnwt2023.backend.devices.dto.Measurement;
 import projectnwt2023.backend.devices.dto.PayloadDTO;
 import projectnwt2023.backend.devices.repository.DeviceRepository;

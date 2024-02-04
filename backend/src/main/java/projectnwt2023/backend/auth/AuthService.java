@@ -20,7 +20,7 @@ public class AuthService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<AppUser> ret = appUserRepository.findByEmail(username);
-        System.out.println(ret);
+        //System.out.Println(ret);
 
         if (ret.isPresent() && ret.get().getActive() ||
             ret.isPresent() && ret.get().getRole().equals(Role.SUPER_ADMIN))

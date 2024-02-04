@@ -1,0 +1,83 @@
+<div class="page">
+    <h2>{{city?.city?.name}}</h2>
+        <h3>Energy overview</h3>
+        <mat-divider></mat-divider>
+   
+    <div>
+        <div id="cityConsumtion" class="chart"></div>    
+    </div>    
+    <div class="same-row">
+    <mat-form-field class="margin-left">
+        <mat-label>Select time range</mat-label>
+        <mat-select [(ngModel)]="selectedOption" (selectionChange)="onDropdownChange($event, 'property-electricity')">
+          <mat-option value="6h">Last 6h</mat-option>
+          <mat-option value="12h">Last 12h</mat-option>
+          <mat-option value="24h">Last 24h</mat-option>
+          <mat-option value="7d">Last week</mat-option>
+          <mat-option value="30d">Last month</mat-option>
+          <mat-option value="range">Time range</mat-option>
+        </mat-select>
+      </mat-form-field>
+    
+      <div *ngIf="selectedOption == 'range'" class="margin-left">
+        <mat-form-field>
+            <mat-label>Enter a date range</mat-label>
+            <mat-date-range-input [formGroup]="range" [rangePicker]="picker">
+              <input matStartDate formControlName="start" placeholder="Start date">
+              <input matEndDate formControlName="end" placeholder="End date">
+            </mat-date-range-input>
+            <mat-hint>DD/MM/YYYY – DD/MM/YYYY</mat-hint>
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-date-range-picker #picker></mat-date-range-picker>
+        
+            <mat-error *ngIf="range.controls.start.hasError('matStartDateInvalid')">Invalid start date</mat-error>
+            <mat-error *ngIf="range.controls.end.hasError('matEndDateInvalid')">Invalid end date</mat-error>
+        </mat-form-field>
+        <button mat-raised-button (click)="onSubmit('property-electricity')" class="view-data">View data</button>
+      </div>
+        <p *ngIf="rangeOver30Days">Dates must be less than 30 days apart</p>
+    </div>
+    
+      <div>
+        <div id="cityElectro" class="chart"></div>    
+    </div> 
+    
+    <div class="same-row">
+    <mat-form-field class="margin-left">
+        <mat-label>Select time range</mat-label>
+        <mat-select [(ngModel)]="selectedOptionElectro" (selectionChange)="onDropdownChange($event, 'electrodeposition')">
+          <mat-option value="6h">Last 6h</mat-option>
+          <mat-option value="12h">Last 12h</mat-option>
+          <mat-option value="24h">Last 24h</mat-option>
+          <mat-option value="7d">Last week</mat-option>
+          <mat-option value="30d">Last month</mat-option>
+          <mat-option value="range">Time range</mat-option>
+        </mat-select>
+      </mat-form-field>
+    
+      <div *ngIf="selectedOptionElectro == 'range'" class="margin-left">
+        <mat-form-field>
+            <mat-label>Enter a date range</mat-label>
+            <mat-date-range-input [formGroup]="range" [rangePicker]="picker">
+              <input matStartDate formControlName="start" placeholder="Start date">
+              <input matEndDate formControlName="end" placeholder="End date">
+            </mat-date-range-input>
+            <mat-hint>DD/MM/YYYY – DD/MM/YYYY</mat-hint>
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-date-range-picker #picker></mat-date-range-picker>
+        
+            <mat-error *ngIf="range.controls.start.hasError('matStartDateInvalid')">Invalid start date</mat-error>
+            <mat-error *ngIf="range.controls.end.hasError('matEndDateInvalid')">Invalid end date</mat-error>
+        </mat-form-field>
+        <button mat-raised-button (click)="onSubmit('electrodeposition')" class="view-data">View data</button>
+
+      </div>
+    </div>
+
+    <app-report-by-year [id]="cityId.toString()" [whatId]="'city-id'" ></app-report-by-year>
+   
+    <app-report-by-day [id]="cityId.toString()" [whatId]="'city-id'" ></app-report-by-day>
+
+    <app-report-by-week [id]="cityId.toString()" [whatId]="'city-id'" ></app-report-by-week>
+
+    </div>

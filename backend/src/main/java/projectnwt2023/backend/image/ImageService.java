@@ -16,8 +16,8 @@ public class ImageService {
     private String uploadDirectory;
 
 
-    public void savePropertyImage(MultipartFile file, String customFileName) throws IOException {
-        String fileName = "property-" + customFileName + ".jpg";
+    public void savePropertyImage(MultipartFile file, String propertyId) throws IOException {
+        String fileName = "property-" + propertyId + ".jpg";
         Path filePath = Paths.get(uploadDirectory, fileName);
         System.out.println(filePath);
         Files.write(filePath, file.getBytes());

@@ -3,6 +3,7 @@ package projectnwt2023.backend.image;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,10 +22,11 @@ public class ImageController {
     private ImageService imageService;
 
     @PostMapping(value="/property/upload", consumes = { "multipart/form-data" })
+    @PreAuthorize(value = "hasRole('AUTH_USER')")
     public ResponseEntity<ApiResponse<MessageDTO>> uploadPropertyImage(@RequestParam("file") MultipartFile file,
-                                                                       @RequestParam("customFileName") String customFileName) {
+                                                                       @RequestParam("propertyId") String propertyId) {
         try {
-            imageService.savePropertyImage(file, customFileName);
+            imageService.savePropertyImage(file, propertyId);
             return new ResponseEntity<>(new ApiResponse<>(200, new MessageDTO("Image upload success.")), HttpStatus.OK);
         } catch (IOException e) {
             return new ResponseEntity<>(new ApiResponse<>(400, new MessageDTO("Image upload fail.")), HttpStatus.BAD_REQUEST);
@@ -32,6 +34,7 @@ public class ImageController {
     }
 
     @PostMapping(value="/device/upload", consumes = { "multipart/form-data" })
+    @PreAuthorize(value = "hasRole('AUTH_USER')")
     public ResponseEntity<ApiResponse<MessageDTO>> uploadDeviceImage(@RequestParam("file") MultipartFile file,
                                                                        @RequestParam("customFileName") String customFileName) {
         try {

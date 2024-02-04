@@ -25,25 +25,38 @@ Aplication desinged for monitoring and manipulating smart devices inside of your
    - Set credentials for authentication in application.properties (`spring.datasource.username` and `spring.datasource.password`) and create database with name `projectnwt2023`
 3. Install Mosquitto, add credentials and start it
    - Open cmd (it could require running it as Administrator) and position inside directory where Mosquitto is installed (on Windows machine default installation directory is `C:\Program Files\mosquitto`) 
-   - Run command `mosquitto_passwd -c <password file> <username>` (example: `mosquitto_passwd -c pwfile client`) and insert password when asked (in this example password is `password`)
-   - After that check if file with credentials is generated (in this example it is `pwfile`)
+   - Run command `mosquitto_passwd -c <password file> <username>` (example: `mosquitto_passwd -c pwfile client`) and insert password when asked (in this example password is `1234` and username `admin`)
+   - After that check if file with credentials is generated (in this example it is `brokerPassFile`)
    - Run Mosquitto broker ((re)start service or start stand-alone application)
    - Set required information in **application.properties** (`mqtt.host`, `mqtt.port`, `mqtt.username` and `mqtt.password`)
    - Run mosquitto with command `mosquitto -c -v <cofiguration-file>`
+   - Optionaly you can use the config files provided in folder `config files\mosquitto`
 4. Install InfluxDB and Telegraf and set telegraf.config file the same as the config file provided
    - Open cmd and position inside directory where InfluxDB is installed (on Windows machine default installation directory is `C:\Program Files\influxdata\InfluxDB`) and run `influxd.exe`
    - Open cmd and position inside directory where Telegraf is installed (on Windows machine default installation directory is `C:\Program Files\influxdata\Telegraf`) and run `telegraf --config telegraf.conf` or 'telegraf.exe'
-5. Load dependencies of backend (`pom.xml`) with Maven and start application
-6. Set your self in front folder. Run `npm install` and start application with `ng serve`
-7. mosquitto-go is ran by command `go run main.go`
-8. Run applications in following order:
+   - You can use the config files provided in folder `config files\telegraf`
+5. Download NGINX and start it
+   - You can use the config files provided in folder `config files\nginx` and place them in `nginx-1.24.0\conf`folder where you dowloaded NGINX.
+   - Start NGINX by double clicking nginx.exe inside your nginx-1.24 folder 
+6. Load dependencies of backend (`pom.xml`) with Maven and start application
+7. Set your self in front folder. Run `npm install` and start application with `ng serve`. And go to localhost
+8. mosquitto-go is ran by command `go run main.go`
+9. Run applications in following order:
    1) Mosquitto broker
    2) PostgreSQL database
-   3) Bakend application
-   4) Front application
-   5) InfluxDB
-   6) Telegraf
-   7) mosquitto-go (one or more of them)
+   3) NGINX
+   4) InfluxDB
+   5) Bakend application
+   6) Front application
+   7) Telegraf
+   8) mosquitto-go (one or more of them)
+
+
+## Reports
+Reports are given for load and performace testing and divided into three parts for each team member. Testing was done using Locust.
+* Member 1 report and scripts for testing are in the `reports1` folder
+* Member 2 report and scripts for testing are in the `reports2` folder
+* Member 3 report and scripts for testing are in the `reports3` folder
 
 
 ## Authors
@@ -53,4 +66,4 @@ Aplication desinged for monitoring and manipulating smart devices inside of your
 
 
 ## Project status
-Work in progress.
+Complete. 🎉

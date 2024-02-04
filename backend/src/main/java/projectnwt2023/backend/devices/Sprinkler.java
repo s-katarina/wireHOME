@@ -1,11 +1,16 @@
 package projectnwt2023.backend.devices;
 
 import lombok.*;
+import org.springframework.transaction.annotation.Transactional;
 import projectnwt2023.backend.devices.dto.DeviceRequestDTO;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -15,15 +20,27 @@ import java.util.Collection;
 @Table
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Sprinkler extends Device{
-//    private ArrayList<RegimeType> availableRegimes;
+    private boolean isOn;
+    private boolean scheduleMode;
 
-    @OneToMany(fetch = FetchType.LAZY,
-            mappedBy = "device")
-    private Collection<Regime> programedRegimes;
-
+    @Embedded
+    private SprinklerSchedule schedule;
     public Sprinkler(DeviceRequestDTO deviceRequestDTO) {
         super(deviceRequestDTO);
-        this.programedRegimes = new ArrayList<>();
+        this.isOn = false;
         this.setTopic("sprinkler");
+        this.scheduleMode = false;
     }
+
+    public void CustomSetSchedule(int startHour, int endHour, int[] weekdays){
+        SprinklerSchedule schedule = new SprinklerSchedule();
+        schedule.setStartHour(startHour);
+        schedule.setEndHour(endHour);
+        schedule.setWeekdays(Arrays.stream(weekdays)
+                .boxed()
+                .collect(Collectors.toSet()));
+        this.schedule = schedule;
+    }
+
 }
+

@@ -2,13 +2,16 @@ package projectnwt2023.backend.property.service.interfaces;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import projectnwt2023.backend.devices.dto.GraphDTO;
+import projectnwt2023.backend.devices.dto.PyChartDTO;
 import projectnwt2023.backend.property.City;
 import projectnwt2023.backend.property.Property;
 import projectnwt2023.backend.property.PropertyStatus;
-import projectnwt2023.backend.property.dto.PropertyRequestDTO;
+import projectnwt2023.backend.property.dto.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public interface IPropertyService {
 
@@ -25,8 +28,20 @@ public interface IPropertyService {
 
     Property rejectProperty(Long id, String reason);
 
-    String sendMailApproved(Property property);
-    String sendMailRejected(Property property, String reason);
-
     List<Property> getAllPropertyes();
+
+    ArrayList<PyChartDTO> getPychartForCities(Map<City, List<Property>> propertiesByCity, Long start, Long end, String measurement);
+
+    double getElictricityForProperty(Long id, Long start, Long end, String measurement);
+
+    ArrayList<GraphDTO> findPropertyEnergyForDate(CityGraphDTO graphRequestDTO);
+
+    ArrayList<LabeledGraphDTO> findPropertyEnergyByDayForDate(CityGraphDTO graphRequestDTO);
+
+
+    ArrayList<BarChartDTO> getBarChartForPropertyForYear(Integer propertyId, int year, String measurement,String whatId);
+
+    ByTimeOfDayDTO getByTimeOfDayForPropertyInRange(Integer propertyId, Long start, Long end, String whatId);
+
+    ArrayList<PyChartDTO> getPychartByDeviceType(Integer id, Long start, Long end, String s);
 }
