@@ -45,9 +45,9 @@ Aplication desinged for monitoring and manipulating smart devices inside of your
    1) Mosquitto broker
    2) PostgreSQL database
    3) NGINX
-   4) Bakend application
-   5) Front application
-   6) InfluxDB
+   4) InfluxDB
+   5) Bakend application
+   6) Front application
    7) Telegraf
    8) mosquitto-go (one or more of them)
 
