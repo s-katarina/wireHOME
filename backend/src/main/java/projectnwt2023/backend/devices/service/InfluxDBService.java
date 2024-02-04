@@ -588,10 +588,10 @@ public class InfluxDBService {
             interval = "30m";      // Calculate percentage every 24 hours
         }
         if (duration.getSeconds() >= 60 * 60 * 24 * 7) {
-            interval = "3h";      // Calculate percentage every 24 hours
+            interval = "1h";      // Calculate percentage every 24 hours
         }
         if (duration.getSeconds() > 60 * 60 * 24 * 7*2) {
-            interval = "10h";      // Calculate percentage every 24 hours
+            interval = "3h";      // Calculate percentage every 24 hours
         }
         return interval;
     }
