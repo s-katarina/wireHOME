@@ -1,0 +1,343 @@
+.report-btn {
+  background-color: white;
+  border-color: black;
+  padding: 10px 15px;
+  margin: 10px 0;
+}
+
+.oneLine {
+  margin: 0 20px 0 0;
+}
+
+.report-btn:hover {
+  background-color: lightgray;
+  cursor: pointer;
+}
+
+.moja-mat-tabela {
+  border-collapse: separate;
+  border-spacing: 10px; /* Postavite željeni razmak između kolona */
+}
+
+.mat-header-cell, .mat-cell {
+  padding: 10px; /* Opciono: Postavite željeni padding za sadržaj ćelija */
+}
+
+.page {
+  margin: 5%;
+  margin-bottom: 10vh;
+  padding-bottom: 30vh !important;
+}
+
+h2 {
+  font-size: 2em;
+  line-height: 1.3em;
+  font-family: 'Sora-semibold', Roboto, "Helvetica Neue", sans-serif !important; 
+  color: rgb(0, 0, 0);
+}
+h3 {
+  font-size: 1.6em;
+  line-height: 1.1em;
+  font-family: 'Sora-regular', Roboto, "Helvetica Neue", sans-serif !important; 
+  color: rgb(0, 0, 0);
+}
+
+h4 {
+  font-size: 1.5em;
+  line-height: 1.3em;
+  font-family: 'Sora-semibold', Roboto, "Helvetica Neue", sans-serif !important; 
+  color: rgb(0, 0, 0);
+  cursor: default;
+}
+h5 {
+  font-size: 1.3em;
+  line-height: 1.1em;
+  font-family: 'Sora-regular', Roboto, "Helvetica Neue", sans-serif !important; 
+  color: rgb(0, 0, 0);
+  cursor: default;
+}
+
+.mat-divider {
+  border-top: 2px solid rgb(190, 190, 190);
+  margin-bottom: 10px;
+}
+
+img {
+  height: auto;
+  width: 30vw;
+  border-radius: 20px;
+}
+
+.cols {
+  display: flex;
+}
+
+.left-column {
+  flex: 1; 
+  flex-direction: column;
+}
+
+.right-column {
+  flex: 0; 
+  margin-left: 20px; 
+}
+
+.placeholder-btn, .disabled-button {
+  pointer-events: none; 
+  cursor: not-allowed;
+}
+
+.settings-group {
+  margin: 10px 0;
+}
+
+.disabled-section {
+  background-color: rgba(208, 208, 208, 0.385); 
+  color: rgb(149, 149, 149); 
+  border-radius: 20px;
+}
+
+.changeable-section {
+  border-radius: 20px;
+  padding: 15px;
+  margin-left: 30px;
+  margin-bottom: 40px;
+}
+
+.view-data {
+  margin-left: 20px;
+}
+
+.mat-tooltip {
+  font-family: 'Heebo-regular', Roboto, "Helvetica Neue", sans-serif !important; 
+  padding: 0 !important;
+  font-size: medium;
+}
+
+.chart-div {
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+#chartOnlineContainer > * {
+  color: rgb(190, 19, 19) !important;
+  font: 400 16px/24px 'Sora-semibold', sans-serif !important;
+}
+
+.chart-div-online {
+  display: block;
+  padding-top: 40px;
+  padding-bottom: 200px;
+}
+
+::ng-deep mat-card {
+  max-width: 800px;
+  min-width: 250px;
+  max-height: 400px !important;
+  margin-bottom: 8px;
+  border-radius: 20px !important;
+  box-shadow: 0 4px 8px rgba(0, 0.1, 0.1, 0.1) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.grid { 
+  padding-top: 10vh;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(auto, 500px));
+  grid-row-gap: 8vh;
+  grid-column-gap: 4vh !important;
+  align-items: stretch !important;
+  justify-content: space-evenly;
+}
+
+mat-card-header{
+  padding: 2vh !important;
+}
+
+.title {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.locations {
+  display: block;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+mat-card-actions {
+  padding-right: 5px;
+}
+
+::ng-deep .mat-card-header-text {  
+  margin: 0 !important;
+}
+
+
+mat-card-title {
+  font-family: 'Sora-semibold', Roboto, "Helvetica Neue", sans-serif !important;
+  margin-bottom: 4vh !important;
+}
+
+mat-card-subtitle {
+  font-family: 'Sora-semibold', Roboto, "Helvetica Neue", sans-serif !important;
+  color: rgb(41, 41, 41) !important;
+}
+
+mat-card-content {
+  padding: 2vh !important;
+  padding-top: 4vh !important;
+  margin-bottom: 0 !important;
+}
+
+
+::ng-deep .mat-tooltip {
+  font-family: 'Heebo-regular', Roboto, "Helvetica Neue", sans-serif !important; 
+  padding: 15px 28px !important; 
+  font-size: medium;
+}
+
+::ng-deep mat-body p {
+  font-family: 'Heebo-medium', Roboto, "Helvetica Neue", sans-serif !important; 
+} 
+
+::ng-deep mat-icon.type-area{
+  margin-left: 2vh;
+  margin-right: 0.7em;
+  font-size: 1.5em !important;
+}
+
+.hover-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; 
+  visibility: hidden; 
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.property-card:hover .hover-image {
+  opacity: 1;
+  visibility: visible !important;
+  border-radius: 20px !important;
+  cursor: pointer;
+}
+
+.property-card:hover ::ng-deep mat-card-actions button {
+  background-color: rgba(0, 0, 0, 0.399);
+  transition: background-color 1.3s ease; 
+}
+
+.property-card:hover ::ng-deep mat-card-content {
+  margin-bottom: 0 !important;
+}
+
+.sections {
+  display: flex;
+  flex-direction: column; 
+  width: 90%;
+  margin: 0 2vw 1vw 2vw;
+}
+
+.section {
+  margin-bottom: 20px;
+}
+
+.card-container {
+  display: flex;
+  justify-content: flex-start;
+  overflow-x: auto;   
+  border-radius: 8px;
+  background-color: #ffffff00 !important;
+  flex-wrap: wrap;
+}
+
+.card {
+  flex: 0 0 auto;
+  width: 13vw;
+  height: 10vw;
+  margin: 20px;
+  border-radius: 20px;
+  background-color: rgb(255, 255, 255);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.423);
+  cursor: pointer;
+}
+.card .img-card {
+  width: 13vw;
+  height: 8vw;
+  border-radius: 20px;
+}
+
+@media (max-width: 820px) and (max-height: 1200px) {
+  .content {
+      width: 100%;
+      height: 60vh; 
+  }
+
+  .content img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+  }
+  
+  .overlay {
+      position: absolute;
+      background: rgba(73, 73, 73, 0.486);
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+  }
+  
+  
+  .title-container {
+      color: #fff;
+      padding: 4vh;
+      margin-top: 2vh;
+      margin-bottom: 5vh;
+  }
+  
+
+  .sections {
+      display: flex;
+      flex-direction: column; 
+      width: 90%;
+      margin: 0 2vw 1vw 2vw;
+  }
+  
+  .section {
+      margin-bottom: 20px;
+  }
+  
+  .card-container {
+      display: flex;
+      justify-content: flex-start;
+      overflow-x: auto;   
+      border-radius: 8px;
+      background-color: #ffffff00 !important;
+      flex-wrap: wrap;
+  }
+  
+  .card {
+      flex: 0 0 auto;
+      height: 10vh;
+      width: 90%;
+      margin: 20px;
+      border-radius: 20px;
+      background-color: rgb(255, 255, 255);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.423);
+  }
+
+  .mat-button {
+      width: 50%;
+  }
+}

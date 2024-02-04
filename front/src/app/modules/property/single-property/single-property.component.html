@@ -18,7 +18,8 @@
                     <div class="card-container">
                         <div *ngFor="let device of appliances">
                             <div class="card" (click)="navigateToIndoorDevice(device)">
-                                <p>{{getDeviceTypeDisplayName(device)}}</p>
+                                <p>{{device.modelName}}</p>
+                                <p class="deviceType">{{getDeviceTypeDisplayName(device)}}</p>
                                 <img class="img-card" [src]="device.imagePath" alt="{{device.modelName}}">
 
                             </div>
@@ -33,7 +34,8 @@
                     <div class="card-container">
                         <div *ngFor="let device of outdoor">
                             <div class="card" (click)="navigateToOutdoorDevice(device)">
-                                <p>{{getDeviceTypeDisplayName(device)}}</p>
+                                <p>{{device.modelName}}</p>
+                                <p class="deviceType">{{getDeviceTypeDisplayName(device)}}</p>
                                 <img class="img-card" [src]="device.imagePath" alt="{{device.modelName}}">
                             </div>
                         </div>
@@ -46,7 +48,8 @@
                     <div class="card-container">
                         <div *ngFor="let device of energyDevices">
                             <div class="card" (click)="navigateToLargeEnergyDevice(device)">
-                                <p>{{getDeviceTypeDisplayName(device)}}</p>
+                                <p >{{device.modelName}}</p>
+                                <p class="deviceType">{{getDeviceTypeDisplayName(device)}}</p>
                                 <img class="img-card" [src]="device.imagePath" alt="{{device.modelName}}">
                             </div>
                         </div>

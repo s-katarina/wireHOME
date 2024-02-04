@@ -39,6 +39,7 @@ export class GateComponent implements OnInit, AfterViewInit, OnDestroy {
   dataSource!: MatTableDataSource<GateEvent>;
   events : GateEvent[] = [];
   recentEvents: GateEvent[] = [];
+  loadingNotDone: boolean = false;
 
   @ViewChild(MatPaginator) paginator! : MatPaginator;
   @ViewChild(MatSort) sort! : MatSort;
@@ -184,6 +185,10 @@ export class GateComponent implements OnInit, AfterViewInit, OnDestroy {
     this.length = this.events.length;
   }
 
+  displayEventType(eventType: string): string {
+    return eventType.toLowerCase()
+  }
+
   displayCaller(caller: string): string {
     switch (caller) {
       case "GATE_EVENT":
@@ -224,8 +229,10 @@ export class GateComponent implements OnInit, AfterViewInit, OnDestroy {
     // Date range filter
     if ((this.range.value.start != null && this.range.value.start != null) 
         && this.range.controls.start.valid && this.range.controls.end.valid) { 
+        this.loadingNotDone = true;
         this.gateService.getRangeGateEvents(this.gate!.id, Math.floor(this.range.value.start!.getTime()).toString(), Math.floor(this.range.value.end!.getTime()).toString()).subscribe((res: ApiResponse) => {
           if (res.status == 200) {
+            this.loadingNotDone = false;
             filteredEvents = res.data.filter((event: { caller: string; eventType: string; }) =>
               event.caller.toLowerCase().includes(this.filterInitiator.toLowerCase()) &&
               event.eventType.toLowerCase().includes(this.filterEvent.toLowerCase())

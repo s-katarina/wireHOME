@@ -1,9 +1,7 @@
 package projectnwt2023.backend.devices.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import projectnwt2023.backend.devices.Battery;
-import projectnwt2023.backend.devices.Device;
-import projectnwt2023.backend.devices.State;
+import projectnwt2023.backend.devices.*;
 
 import java.util.ArrayList;
 
@@ -17,4 +15,6 @@ public interface DeviceRepository extends JpaRepository<Device, Long> {
     ArrayList<Battery> findByTopicAndPropertyIdAndState(String battery, Long propertyId, State online);
 
     ArrayList<Battery> findByTopicAndState(String battery, State online);
+
+    ArrayList<Device> findByState(State online);
 }

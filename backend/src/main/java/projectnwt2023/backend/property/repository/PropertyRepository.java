@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import projectnwt2023.backend.property.Property;
 import projectnwt2023.backend.property.PropertyStatus;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public interface PropertyRepository extends JpaRepository<Property, Long> {
@@ -13,4 +14,5 @@ public interface PropertyRepository extends JpaRepository<Property, Long> {
     Page<Property> findByPropertyStatus(PropertyStatus status, Pageable pageable);
     List<Property> findByPropertyOwner_IdAndPropertyStatusIn(Long id, List<PropertyStatus> statuses);
 
+    ArrayList<Property> findByPropertyStatusAndCity_Id(PropertyStatus accepted, Long id);
 }

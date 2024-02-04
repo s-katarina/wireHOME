@@ -65,6 +65,7 @@ export class SolarPanelComponent implements OnInit {
 
   isButtonHovered: boolean = false;
   chart: any;
+loadingNotDone: boolean = false;
 	
   constructor( private readonly largeEnergyDeviceService: LargeEnergyService,
     private socketService: WebsocketService,) { 
@@ -102,7 +103,7 @@ export class SolarPanelComponent implements OnInit {
     })
     this.dataSource = new MatTableDataSource<GateEvent>(this.events);
     this.dataSource.paginator = this.paginator;
-    this.largeEnergyDeviceService.getGateEvents(this.panelId).subscribe((res: any) => {
+    this.largeEnergyDeviceService.getGateEvents(this.panelId, "on/off").subscribe((res: any) => {
       console.log(res)
       this.recentEvents = res.data
       this.events = this.recentEvents
@@ -237,9 +238,12 @@ export class SolarPanelComponent implements OnInit {
     // Date range filter
     if ((this.range2.value.start != null && this.range2.value.start != null) 
         && this.range2.controls.start.valid && this.range2.controls.end.valid) { 
-        this.largeEnergyDeviceService.getRangeGateEvents(this.panel!.id, Math.floor(this.range2.value.start!.getTime()).toString(), Math.floor(this.range2.value.end!.getTime()).toString()).subscribe((res: ApiResponse) => {
+        this.loadingNotDone = true
+          this.largeEnergyDeviceService.getRangeGateEvents(this.panel!.id, Math.floor(this.range2.value.start!.getTime()).toString(), Math.floor(this.range2.value.end!.getTime()).toString(), "on/off").subscribe((res: ApiResponse) => {
           if (res.status == 200) {
             console.log(res.data)
+            this.loadingNotDone = false
+
             filteredEvents = res.data.filter((event: { caller: string; eventType: string; }) =>
             ((event.caller?.toLowerCase()) || "").includes(this.filterInitiator.toLowerCase()));
             this.events = filteredEvents

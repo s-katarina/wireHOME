@@ -106,6 +106,12 @@
 
         <p *ngIf="filterApplied">*Filter is applied. Clear filter to view new real-time gate events, as they happen.</p>
 
+        <div style="display: flex; 
+        justify-content: center; 
+        align-items: center; padding: 40px;">
+            <mat-spinner *ngIf="loadingNotDone"></mat-spinner>
+        </div>
+
         <table
             mat-table
             #eventTable
@@ -116,7 +122,7 @@
             <ng-container matColumnDef="eventType">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>Event</th>
                 <td mat-cell *matCellDef="let element">
-                    {{ element.eventType }}</td>
+                    {{ displayEventType(element.eventType) }}</td>
             </ng-container>
     
             <ng-container matColumnDef="caller">

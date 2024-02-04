@@ -76,10 +76,11 @@
                     <mat-error *ngIf="range.controls.start.hasError('matStartDateInvalid')">Invalid start date</mat-error>
                     <mat-error *ngIf="range.controls.end.hasError('matEndDateInvalid')">Invalid end date</mat-error>
                 </mat-form-field>
-                <button (click)="onSubmit()"></button>
+                <button mat-raised-button (click)="onSubmit()" class="view-data">View data</button>
+
             </div>
         </div>
-    </div>
-<div class="chart-div">
-    <app-online-offline-chart class="chart" [deviceId]="batteryId"></app-online-offline-chart>
+        <div class="chart-div">
+            <app-online-offline-chart class="chart-div-online" [deviceId]="batteryId"></app-online-offline-chart>
+        </div>
 </div>

@@ -24,6 +24,16 @@ public class ExceptionHandlerAdvice {
         }
     }
 
+    @ExceptionHandler(IntervalNotValidException.class)
+    protected ResponseEntity<String> handleIntervalNotValidException(IntervalNotValidException ex) {
+        return new ResponseEntity<>(ex.message, ex.httpStatus);
+    }
+
+    @ExceptionHandler(AirConditionerRegimeNotSupportedException.class)
+    protected ResponseEntity<String> handleAirConditionerRegimeNotSupportedException(AirConditionerRegimeNotSupportedException ex) {
+        return new ResponseEntity<>(ex.message, ex.httpStatus);
+    }
+
     @ExceptionHandler(EntityNotFoundException.class)
     protected ResponseEntity<String> handleEntityNotFound(EntityNotFoundException ex) {
         System.out.println("HANDLING");

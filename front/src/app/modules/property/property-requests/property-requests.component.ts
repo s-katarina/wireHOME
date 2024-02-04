@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { PropertyDTO } from 'src/app/model/model';
 import { PropertyServiceService } from '../service/property-service.service';
@@ -9,11 +9,12 @@ import Swal from 'sweetalert2';
   templateUrl: './property-requests.component.html',
   styleUrls: ['./property-requests.component.css']
 })
-export class PropertyRequestsComponent implements OnInit {
+export class PropertyRequestsComponent implements OnInit, AfterViewInit {
 
   constructor(private readonly propertyService: PropertyServiceService) { }
 
   requests : PropertyDTO[] = []
+  loadingNotDone: boolean = false;
 
   private deleted$ = new BehaviorSubject<any>({});
   selectedValue$ = this.deleted$.asObservable();
@@ -27,8 +28,15 @@ export class PropertyRequestsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.loadingNotDone = true
+  }
+
+  ngAfterViewInit(): void {
     this.propertyService.getPendingProperties().subscribe((res: any) => {
       this.requests = res
+      this.loadingNotDone = false
+    }, (error) => {
+      this.fireSwalToast(false, "Oops. Something went wrong.")
     })
   }
 
@@ -42,7 +50,6 @@ export class PropertyRequestsComponent implements OnInit {
           })
         this.fireSwalToast(true, "Successfully accepted.")
       }, (error) => {
-      console.error('Error accepting:', error);
       this.fireSwalToast(false, "Oops. Something went wrong.")
     })
   }
@@ -63,7 +70,6 @@ export class PropertyRequestsComponent implements OnInit {
           })
       this.fireSwalToast(true, "Successfully rejected.")
     }, (error) => {
-      console.error('Error rejecting:', error);
       this.fireSwalToast(false, "Oops. Something went wrong.")
     })
     this.showRejectionPopup = false;

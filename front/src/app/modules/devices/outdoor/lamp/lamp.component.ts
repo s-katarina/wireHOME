@@ -5,6 +5,7 @@ import { ApiResponse, Lamp } from 'src/app/model/model';
 import Swal from 'sweetalert2';
 import { OutdoorDeviceService } from '../service/outdoor-device-service';
 import { CanvasJS } from '@canvasjs/angular-charts';
+import { timestamp } from 'rxjs';
 
 @Component({
   selector: 'app-lamp',
@@ -30,7 +31,7 @@ export class LampComponent implements OnInit, AfterViewInit, OnDestroy {
 
   isButtonHovered: boolean = false;
 
-  selectedOption: string = ""
+  selectedOption: string = "24h"
   
   range = new FormGroup({
     start: new FormControl<Date | null>(null),
@@ -39,6 +40,7 @@ export class LampComponent implements OnInit, AfterViewInit, OnDestroy {
 
   chart: any;
   chartBulb: any;
+  showChartBulb: boolean = true;
 
   ngOnInit(): void {
     this.chart = new CanvasJS.Chart("chartContainer", 
@@ -46,28 +48,38 @@ export class LampComponent implements OnInit, AfterViewInit, OnDestroy {
       zoomEnabled: true,
       exportEnabled: true,
       theme: "light2",
-      title: {
-      text: "Light sensor values"
-      },
       data: [{
       type: "line",
       xValueType: "dateTime",
       dataPoints: []
       }]
     })
+
+    var yLabels = ["Off","On"];
+
     this.chartBulb = new CanvasJS.Chart("chartBulbContainer", 
     {
       zoomEnabled: true,
       exportEnabled: true,
       theme: "light2",
-      title: {
-      text: "Bulb on/off in last 24 hours"
-      },
       data: [{
       type: "scatter",
       xValueType: "dateTime",
       dataPoints: []
-      }]
+      }],
+      axisX:{
+        gridThickness: 0,
+        lineThickness: 0,
+      },
+      axisY: {
+        labelFormatter: function (e: any) {  
+          if (e.value != 1 && e.value != 0) return "" 
+          return yLabels[e.value];
+        },
+        gridThickness: 0,
+        lineThickness: 0,
+        minimum: -0.25,
+      },
     })
     this.chart.render();
     this.lampService.getLamp(this.lampId).subscribe((res: any) => {
@@ -114,13 +126,32 @@ export class LampComponent implements OnInit, AfterViewInit, OnDestroy {
     this.lampService.getRangeBulb(this.lamp!.id, (Math.floor(start)).toString(), (Math.floor(current.getTime())).toString()).subscribe((res: ApiResponse) => {
       if (res.status == 200) {
         console.log(res.data)
+        let point_label = "on"
+        
         const dataPoints = res.data.map((item: { timestamp: string; value: string; }) => ({
           x: parseInt(item.timestamp),
-          y: parseInt(item.value)
+          y: parseInt(item.value),
+          markerSize: 35,
+          label: parseInt(item.value) == 1 ? "on at " + this.displayTimestamp(item.timestamp) : "off at " + this.displayTimestamp(item.timestamp)
         }));
         console.log(dataPoints)
+        if (dataPoints.length > 0) this.showChartBulb = true;
+        else this.showChartBulb = false;
         this.chartBulb.options.data[0].dataPoints = dataPoints;
         this.chartBulb.render();
+      }
+    });
+
+    this.lampService.getRangeLightSensor(this.lamp!.id, (Math.floor(start)).toString(), (Math.floor(current.getTime())).toString()).subscribe((res: ApiResponse) => {
+      if (res.status == 200) {
+        console.log(res.data)
+        const dataPoints = res.data.map((item: { timestamp: string; value: string; }) => ({
+          x: parseInt(item.timestamp),
+          y: parseFloat(item.value)
+        }));
+        console.log(dataPoints)
+        this.chart.options.data[0].dataPoints = dataPoints;
+        this.chart.render();
       }
     });
 
@@ -128,16 +159,6 @@ export class LampComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.socketService.closeWebSocket();
-  }
-
-  onOffClick(): void {
-    if (this.lamp?.state) {
-      this.lampService.postOff(this.lamp.id).subscribe((res: any) => {
-        console.log(res);
-      });
-    } else this.lampService.postOn(this.lamp!.id).subscribe((res: any) => {
-      console.log(res);
-    });
   }
 
   onBulbOnOffClick(): void {
@@ -158,6 +179,25 @@ export class LampComponent implements OnInit, AfterViewInit, OnDestroy {
     } else this.lampService.postAutomaticOnOff(this.lamp!.id, true).subscribe((res: any) => {
       console.log(res);
     });
+  }
+
+  displayTimestamp(timestamp: string): string {
+    const unixTimestamp = parseInt(timestamp, 10);
+  
+    if (isNaN(unixTimestamp)) {
+      return 'Invalid timestamp';
+    }
+  
+    const date = new Date(unixTimestamp);
+    const options: Intl.DateTimeFormatOptions = {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+  };
+    return new Intl.DateTimeFormat('en-GB', options).format(date);
   }
 
   dateFrom = ""

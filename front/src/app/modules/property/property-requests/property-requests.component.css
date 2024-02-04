@@ -147,3 +147,7 @@ textarea {
     display: flex;
     justify-content: center;
 }
+
+::ng-deep .mat-progress-spinner circle, .mat-spinner circle {
+    stroke: #4d6f76;
+}

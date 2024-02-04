@@ -18,7 +18,7 @@
                     </div>
                 </mat-card-header>
                 <mat-divider></mat-divider>
-                <mat-card-content>
+                <mat-card-content (click)="navigateToSingleProperty()">
                     <h3>Details</h3>
                     <p *ngIf="property.propertyOwner.email != authService.getEmail()">Owned by: {{property.propertyOwner.name}} {{property.propertyOwner.lastName}}</p>
                     <p><mat-icon class="type-area">location_city</mat-icon>Floor count: {{property.floorCount}}</p>

@@ -22,6 +22,8 @@ public class WashingMachine extends Device{
             mappedBy = "device")
     private Collection<Regime> programedRegimes;
 
+    private String currentAction;
+
     public WashingMachine(DeviceRequestDTO deviceRequestDTO) {
         super(deviceRequestDTO);
         ArrayList<RegimeWashingMachine> types = new ArrayList<>();
@@ -31,5 +33,6 @@ public class WashingMachine extends Device{
         this.availableRegimes = types;
         this.programedRegimes = new ArrayList<>();
         this.setTopic("washingMachine");
+        this.setCurrentAction("OFF");
     }
 }

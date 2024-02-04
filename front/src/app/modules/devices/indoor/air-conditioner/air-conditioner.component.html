@@ -1,0 +1,223 @@
+<div class="page">
+    <h2>{{airConditioner!.modelName}}</h2>
+    <h3>Air conditioner</h3>
+    <mat-divider></mat-divider>
+    <div class="cols">
+        <div class="left-column">
+
+          <div class="settings-group">
+            <button class="placeholder-btn"  mat-button><mat-icon>linear_scale</mat-icon></button>
+            <button  class="placeholder-btn" mat-button>Current temperature: {{currentTemp}}</button>
+          </div>
+
+        
+          <div class="settings-group">
+            <button class="placeholder-btn"  mat-button><mat-icon>swap_vertical_circle</mat-icon></button>
+            <button  class="placeholder-btn" mat-button>Current action: {{currentAction}}</button>
+          </div>
+
+          <div class="settings-group">
+            <button class="placeholder-btn"  mat-button></button>
+            <button  class="placeholder-btn" mat-button>Action status: {{actionStatus}}</button>
+          </div>
+
+          <div class="settings-group">
+            <button class="placeholder-btn"  mat-button></button>
+
+            <mat-form-field class="margin-left">
+              <mat-label>Set new action</mat-label>
+              <mat-select [(ngModel)]="selectedOption" (selectionChange)="onDropdownChange()">
+                  <mat-option value="temp">Set temperature</mat-option>
+                  <mat-option *ngFor="let regime of airConditioner?.regimes" [value]="regime">
+                    {{ regime | titlecase }}
+                  </mat-option>
+                  <mat-option value="off">Turn off</mat-option>
+              </mat-select>
+            </mat-form-field>
+
+            <div *ngIf="selectedOption == 'temp'" class="margin-left">
+              <form [formGroup]="tempForm" (ngSubmit)="setTemp()">
+                <mat-form-field class="oneLine">
+                    <mat-label>Set temperature</mat-label>
+                    <input matInput type="number" name="temp" formControlName="temp" />
+                </mat-form-field>
+                <button type="submit" class="report-btn">Set temp</button>
+              </form>
+            </div>
+
+            <div *ngIf="selectedOption == 'automatic'" class="margin-left">
+              <mat-form-field class="example-chip-list" appearance="fill">
+                <mat-label>AC Intervals</mat-label>
+                <mat-chip-list #chipList aria-label="Fruit selection">
+                  <mat-chip *ngFor="let interval of intervals" (removed)="removeInterval(interval)">
+                    {{interval.startTime}} - {{interval.endTime}} - {{interval.action}}
+                    <button matChipRemove>
+                      <mat-icon>cancel</mat-icon>
+                    </button>
+                  </mat-chip>
+                  <input placeholder="New AC Interval..."
+                         [matChipInputFor]="chipList"
+                         [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                         [matChipInputAddOnBlur]="addOnBlur"
+                         (matChipInputTokenEnd)="addInterval($event)">
+                </mat-chip-list>
+              </mat-form-field>
+              <button (click)="automation()" class="report-btn">Automate</button>
+            </div>
+
+          </div>
+
+        </div>
+        
+        <div class="right-column">
+        <img class="img-card" [src]="airConditioner!.imagePath" alt="Air conditioner Image">
+        </div>
+    </div>
+
+    
+    <h4 matTooltip="Get intel on generated report data">Historical data</h4>
+    <mat-divider></mat-divider>
+    
+    <div class="same-row">
+      <form [formGroup]="emailForm" (ngSubmit)="filterEmail()">
+        <mat-form-field class="oneLine">
+            <mat-label>User email</mat-label>
+            <input matInput type="text" name="email" formControlName="email" />
+        </mat-form-field>
+        <button type="submit" class="report-btn">Filter email</button>
+      </form>
+
+      <form [formGroup]="dateForm" (ngSubmit)="filterPeriod()">
+        <mat-form-field class="oneLine">
+            <mat-label>Start date</mat-label>
+            <input matInput type="datetime-local" name="startDate" formControlName="startDate" />
+        </mat-form-field>
+        <mat-form-field class="oneLine">
+            <mat-label>End Date</mat-label>
+            <input matInput type="datetime-local" name="endDate" formControlName="endDate" />
+        </mat-form-field>
+        <button type="submit" class="report-btn">In period</button>
+      </form>
+
+      <button class="report-btn" (click)="fetch()">Load actions</button>
+    </div>
+
+    <div style="display: flex; 
+        justify-content: center; 
+        align-items: center; padding: 40px;">
+            <mat-spinner *ngIf="loadingNotDone"></mat-spinner>
+    </div>
+    
+    <div class="mat-elevation-z8">
+      <table mat-table class="moja-mat-tabela" [dataSource]="dataSource">
+    
+  
+        <ng-container matColumnDef="email">
+          <th mat-header-cell *matHeaderCellDef> Email </th>
+          <td mat-cell *matCellDef="let element"> {{element.email}} </td>
+        </ng-container>
+    
+  
+        <ng-container matColumnDef="action">
+          <th mat-header-cell *matHeaderCellDef> Action </th>
+          <td mat-cell *matCellDef="let element"> {{element.action}} </td>
+        </ng-container>
+  
+        <ng-container matColumnDef="date">
+          <th mat-header-cell *matHeaderCellDef> Date </th>
+          <td mat-cell *matCellDef="let element"> {{element.date}} </td>
+        </ng-container>
+    
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    
+      <mat-paginator [pageSizeOptions]="[5, 10, 20]"
+                     showFirstLastButtons
+                     aria-label="Select page of periodic elements">
+      </mat-paginator>
+    </div>
+
+    <h4 matTooltip="Get intel on generated real-time event data" style="margin-top:80px">Detailed data values</h4>
+    <h5 matTooltip="Graphical chart displaying of data for true accessibility">Chart insights</h5>
+    <mat-divider></mat-divider>
+    <div class="chart-div-online" style="margin-top: 50px;">
+      <app-online-offline-chart class="chart" #onlineOfflineChart [deviceId]="airConditioner!.id"></app-online-offline-chart>
+    </div>
+
+</div>
+
+<!-- <div>
+
+  <h3>Current temperature: {{currentTemp}}</h3>
+  <h2>Current action: {{currentAction}}</h2>
+  <h3>Action status: {{actionStatus}}</h3>
+
+  <button class="report-btn" (click)="turnOff()">Turn off</button>
+
+  <form [formGroup]="tempForm" (ngSubmit)="setTemp()">
+    <mat-form-field class="oneLine">
+        <mat-label>Set temperature</mat-label>
+        <input matInput type="number" name="temp" formControlName="temp" />
+    </mat-form-field>
+    <button type="submit" class="report-btn">Set temp</button>
+  </form>
+
+  <button class="report-btn" (click)="cooling()">Cooling</button>
+  <button class="report-btn" (click)="heating()">Heating</button>
+  <button class="report-btn" (click)="ventilation()">Ventilation</button>
+
+  <form [formGroup]="emailForm" (ngSubmit)="filterEmail()">
+    <mat-form-field class="oneLine">
+        <mat-label>User email</mat-label>
+        <input matInput type="text" name="email" formControlName="email" />
+    </mat-form-field>
+    <button type="submit" class="report-btn">Filter email</button>
+  </form>
+
+  <form [formGroup]="dateForm" (ngSubmit)="filterPeriod()">
+    <mat-form-field class="oneLine">
+        <mat-label>Start date</mat-label>
+        <input matInput type="datetime-local" name="startDate" formControlName="startDate" />
+    </mat-form-field>
+    <mat-form-field class="oneLine">
+        <mat-label>End Date</mat-label>
+        <input matInput type="datetime-local" name="endDate" formControlName="endDate" />
+    </mat-form-field>
+    <button type="submit" class="report-btn">In period</button>
+  </form>
+
+  <button class="report-btn" (click)="fetch()">Load actions</button>
+
+  <div class="mat-elevation-z8">
+    <table mat-table class="moja-mat-tabela" [dataSource]="dataSource">
+  
+
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef> Email </th>
+        <td mat-cell *matCellDef="let element"> {{element.email}} </td>
+      </ng-container>
+  
+
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef> Action </th>
+        <td mat-cell *matCellDef="let element"> {{element.action}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="date">
+        <th mat-header-cell *matHeaderCellDef> Date </th>
+        <td mat-cell *matCellDef="let element"> {{element.date}} </td>
+      </ng-container>
+  
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]"
+                   showFirstLastButtons
+                   aria-label="Select page of periodic elements">
+    </mat-paginator>
+  </div>
+  
+
+</div> -->

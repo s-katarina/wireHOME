@@ -16,8 +16,15 @@ import { GateComponent } from '../modules/devices/outdoor/gate/gate.component';
 import { EnergyOverviewComponent } from '../modules/devices/large-energy/energy-overview/energy-overview.component';
 import { SolarPanelComponent } from '../modules/devices/large-energy/solar-panel/solar-panel.component';
 import { BatteryComponent } from '../modules/devices/large-energy/battery/battery.component';
-import { AmbientSensorComponent } from '../modules/devices/ambient-sensor/ambient-sensor.component';
-import { AirConditionerComponent } from '../modules/devices/air-conditioner/air-conditioner.component';
+import { ChargerComponent } from '../modules/devices/large-energy/charger/charger.component';
+import { AdminPropertyOverviewComponent } from '../modules/property/admin-property-overview/admin-property-overview.component';
+import { CityOverviewComponent } from '../modules/property/city-overview/city-overview.component';
+import { PropertConsumptionOverviewComponent } from '../modules/property/propert-consumption-overview/propert-consumption-overview.component';
+import { SprinklerComponent } from '../modules/devices/outdoor/sprinkler/sprinkler.component';
+import { AmbientSensorComponent } from '../modules/devices/indoor/ambient-sensor/ambient-sensor.component';
+import { AirConditionerComponent } from '../modules/devices/indoor/air-conditioner/air-conditioner.component';
+import { WashingMachineComponent } from '../modules/devices/indoor/washing-machine/washing-machine.component';
+import { SharingComponent } from '../modules/devices/sharing/sharing.component';
 
 const routes: Routes = [
   { path: 'properties', component: PropertyOverviewComponent, canActivate: [TokenGuard, RoleGuard ], data: {roles: ["AUTH_USER"]}  },
@@ -28,13 +35,20 @@ const routes: Routes = [
   { path: 'register', component: RegisterComponent, canActivate: [UnregisteredGuard] },
   { path: 'property-requests', component: PropertyRequestsComponent, canActivate: [TokenGuard, RoleGuard ], data: {roles: ["SUPER_ADMIN", "ADMIN"]}  },
   { path: 'register-admin', component: RegisterComponent, canActivate: [TokenGuard, RoleGuard ], data: {roles: ["SUPER_ADMIN"]} },
+  { path: 'admin-overview', component: AdminPropertyOverviewComponent, canActivate: [TokenGuard, RoleGuard ], data: {roles: ["SUPER_ADMIN", "ADMIN"]}},
+  { path: 'city-overview', component: CityOverviewComponent, canActivate: [TokenGuard, RoleGuard ], data: {roles: ["SUPER_ADMIN", "ADMIN"]}},
+  { path: 'property-consumption-overview', component: PropertConsumptionOverviewComponent, canActivate: [TokenGuard, RoleGuard ], data: {roles: ["SUPER_ADMIN", "ADMIN"]}},
   { path: 'lamp', component: LampComponent },
   { path: 'gate', component: GateComponent },
+  { path: 'sprinkler', component: SprinklerComponent },
   { path: 'energy-overwiev', component:EnergyOverviewComponent},
   { path: 'solarPanel', component:SolarPanelComponent},
   { path: 'battery', component: BatteryComponent},
   { path: 'ambient-sensor', component: AmbientSensorComponent},
   { path: 'air-conditioner', component: AirConditionerComponent},
+  { path: 'charger', component: ChargerComponent},
+  { path: 'washing-machine', component: WashingMachineComponent},
+  { path: 'sharing', component: SharingComponent},
   { path: '**', component: LandingComponent }
 ];
 

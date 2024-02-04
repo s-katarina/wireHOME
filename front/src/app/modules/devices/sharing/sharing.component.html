@@ -1,0 +1,81 @@
+<div class="page">
+  
+  <h4 matTooltip="Get intel sharing">Give and remove permissions</h4>
+  <mat-divider></mat-divider>
+  
+  <div class="same-row">
+    <mat-form-field class="margin-left">
+      <mat-label>Select property</mat-label>
+      <mat-select [(ngModel)]="selectedProperty">
+          <mat-option *ngFor="let property of myProperties" [value]="property">
+            {{ property.address }}
+          </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="oneLine">
+      <mat-label>User email</mat-label>
+      <input matInput type="text" name="email" [(ngModel)]="email" />
+    </mat-form-field>
+    <button (click)="shareProperty()" class="report-btn">Give</button>
+    <button (click)="removeProperty()" class="report-btn">Remove</button>
+  </div>
+
+  <div class="same-row">
+    <mat-form-field class="margin-left">
+      <mat-label>Select device</mat-label>
+      <mat-select [(ngModel)]="selectedDevice">
+          <mat-option *ngFor="let device of myDevices" [value]="device">
+            {{ device.modelName }}
+          </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field class="oneLine">
+      <mat-label>User email</mat-label>
+      <input matInput type="text" name="email" [(ngModel)]="email2" />
+    </mat-form-field>
+    <button (click)="shareDevice()" class="report-btn">Give</button>
+    <button (click)="removeDevice()" class="report-btn">Remove</button>
+  </div>
+
+  <h4 matTooltip="Get intel sharing">Properties shared with you</h4>
+  <mat-divider></mat-divider>
+
+  <div class="grid">
+    <div *ngFor="let sharedPropery of sharedProperties">
+        <mat-card class="property-card"  (mouseenter)="showImage(sharedPropery.property.id)" (mouseleave)="hideImage()">
+            <mat-card-header class="locations">
+                <div class="title">
+                    <mat-card-title>{{sharedPropery.property.propertyType}}</mat-card-title>
+                    <mat-card-subtitle *ngIf="sharedPropery.property.propertyStatus === 'PENDING'"
+                        matTooltip="Waiting for admin approval"
+                        [matTooltipPosition]='"above"'>PENDING</mat-card-subtitle>
+                </div>
+                <div class="locations">
+                    <mat-card-subtitle>Address: {{sharedPropery.property.address}}</mat-card-subtitle>
+                    <mat-card-subtitle>City: {{sharedPropery.property.city.name}}, {{sharedPropery.property.city.country.name}}</mat-card-subtitle>
+                </div>
+            </mat-card-header>
+            <mat-divider></mat-divider>
+            <img [src]="sharedPropery.property.imagePath" class="hover-image" (error)="handleImageError($event)"
+            (click)="navigateToSingleProperty()"/>
+        </mat-card>
+    </div>
+  </div>
+
+  <h4 matTooltip="Get intel sharing">Devices shared with you</h4>
+  <mat-divider></mat-divider>
+
+  <div class="sections">
+    <div class="section">
+      <div class="card-container">
+        <div *ngFor="let sharedDevice of sharedDevices">
+          <div class="card" (click)="navigateToDevice(sharedDevice.device)">
+            <p>{{getDeviceTypeDisplayName(sharedDevice.device)}}</p>
+            <img class="img-card" [src]="sharedDevice.device.imagePath" alt="{{sharedDevice.device.modelName}}">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
