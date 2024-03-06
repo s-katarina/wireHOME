@@ -1,11 +1,7 @@
-# project nwt2023
-
-
-
-## Smart Home Monitoring
-Aplication desinged for monitoring and manipulating smart devices inside of your smart homes or appartmants.
-
-
+# wireHOME 💡 - Smart Home Monitoring
+   ### Project for course Advanced Web Technologies
+Application designed for monitoring and controlling smart devices inside smart properties.
+      
 ## Requirements
 * Java 17
 * Node.js and npm
@@ -60,9 +56,9 @@ Reports are given for load and performace testing and divided into three parts f
 
 
 ## Authors
-* [Katarina Spremić]()
-* [Miloš Stojanović]()
-* [Selena Milutin]()
+* Milos Stojanovic ([github link](https://github.com/miloss01))
+* Selena Milutin ([github link](https://github.com/SelenaMilutin))
+* Katarina Spremic ([github link](https://github.com/s-katarina))
 
 
 ## Project status
